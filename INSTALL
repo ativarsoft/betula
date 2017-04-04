@@ -1,0 +1,6 @@
+How to enable templatizer.
+apt-get install php5-cgi
+a2dismod php5
+a2enmod cgi # necessary, else you get forbidden
+a2enmod actions # necessary for php5-cgi
+a2enconf php5-cgi

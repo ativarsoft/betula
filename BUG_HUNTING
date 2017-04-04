@@ -1,0 +1,3 @@
+if a script crashes for unknown reason on the server but it runs
+flawlessly as a standalone cgi, then restart the server.
+the library may not have been unloaded completely.

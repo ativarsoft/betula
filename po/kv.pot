@@ -1,0 +1,56 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-02-13 00:10-0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: kv.c:33
+msgid "key size must be positive"
+msgstr ""
+
+#: kv.c:40
+msgid "value size shall not be negative"
+msgstr ""
+
+#: kv.c:52
+msgid "key size not specified"
+msgstr ""
+
+#: kv.c:59
+msgid "could not create LMDB environment"
+msgstr ""
+
+#: kv.c:64
+msgid ""
+"the version of the LMDB library doesn't match the version that created the "
+"database environment"
+msgstr ""
+
+#: kv.c:66
+msgid "the environment file headers are corrupted"
+msgstr ""
+
+#: kv.c:68
+msgid "the directory specified by the path parameter doesn't exist"
+msgstr ""
+
+#: kv.c:70
+msgid "the user didn't have permission to access the environment files"
+msgstr ""
+
+#: kv.c:72
+msgid "the environment was locked by another process"
+msgstr ""

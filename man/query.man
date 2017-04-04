@@ -1,0 +1,41 @@
+.TH url 1 "13 Feb 2017"
+
+.SH NAME
+query \- parses URI query.
+
+.SH SYNOPSIS
+.B query
+[\fB-q\fR \fIquery\fR | \fB-e\fR | \fB-f\fR \fIfile\fR] [\fB-b\fR \fIprecision\fR]
+
+.SH DESCRIPTION
+Splits URI query into key tokens and value tokens. Input is taken from standard input by default.
+.SS Options
+.TP
+.BR -q
+Parsers \fIquery\fR.
+.TP
+.BR -e
+Parses URI query from QUERY_STRING environment variable.
+.TP
+.BR -f
+Parses URI query from \fIfile\fR. CONTENT_LENGTH environment variable is used if present.
+.TP
+.BR -b
+Prints binary length-prefixed strings. Length has size specified in bytes.
+
+.SH AUTHOR
+Written by Mateus de Lima Oliveira <mateus@ativarsoft.com>
+
+.SH REPORTING BUGS
+Ativarsoft online help: <http://ativarsoft.com/webutils>
+
+.SH COPYRIGHT
+Copyright (C) 2017 Mateus de Lima Oliveira.
+Licence: Libertarian License.
+There is NO WARRANTY, to the extent permitted by law.
+
+.SH "SEE ALSO"
+.IR url (1),
+.IR percent (1),
+.IR kv (1)
+.IR templatizer (1)

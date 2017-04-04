@@ -1,0 +1,79 @@
+.TH url 1 "13 Feb 2017"
+.SH NAME
+percent \- percent codec
+.SH SYNOPSIS
+.B percent
+[\fB-v\fR]
+[\fB-e\fR | \fB-d\fR]
+[\fB-a\fR | \fB-l\fR \fIlength\fR] [\fB-i\fR \fIprecision\fR]
+[\fB-o\fR \fIprecision\fR]
+.SH DESCRIPTION
+Encode or decode percent encoding, also known as URL encoding.
+.P
+\fBpercent\fR is especially useful for piping data into other programs
+that interpret the decoded binary data or saving it to files.
+.P
+If standard output is not redirected, binary data may be printed since
+percent encoding can encode non-printable bytes.
+Terminals are known for not suporting well binary data, especially
+the null character.
+.P
+Input and output data can be length-prefixed. The default is no prefix.
+If the output is not length-prefixed then the input is not buffered and
+the input prefix is skipped.
+Integer \fIprecision\fR must be supported by the compiler for the host machine.
+If \fIprecision\fR is zero, it means that there is no prefix and buffer size is
+set to automatic or it is read from \fIlength\fR.
+If precision is -1 prefix size is set to size_t, which corresponds to the
+maximum addressable memory on the host machine.
+.SS Options
+.TP
+.BR -e
+Encode the input.
+.TP
+.BR -d
+Decode the input. This is the default.
+.TP
+.BR -a
+Automatic memory management.
+This is the default.
+\fImax\fR sets the maximum length of input or zero for infinite.
+Buffer grows in exponencial size.
+This is not recommended if saving memory is necessary.
+.TP
+.BR -l
+Input is size of \fIlength\fR bytes.
+If real input length is greatar than specified, it will be truncated.
+If real input length is less than specified, memory will be allocated but not used.
+.TP
+.BR -i
+Input is prefixed with an integer with precision \fIbytes\fR.
+.TP
+.BR -o
+Outputs is prefixed with integer with precision \fIbytes\fR.
+.TP
+.BR -v
+Prints version and copyright information and quits.
+
+.SH EXAMPLE
+The following shell script decodes a url encoded string and prints "a b"
+to the standard output.
+
+.nf
+.RS
+echo "a+b" | url
+.RE
+.fi
+
+.SH AUTHOR
+Written by Mateus de Lima Oliveira <mateus@ativarsoft.com>
+.SH REPORTING BUGS
+Ativarsoft online help: <http://ativarsoft.com/webutils>
+.SH COPYRIGHT
+Copyright (C) 2017 Mateus de Lima Oliveira.
+Licence: Libertarian License.
+There is NO WARRANTY, to the extent permitted by law.
+.SH SEE ALSO
+.IR url (1),
+.IR kv (1),
+.IR templatizer (1)

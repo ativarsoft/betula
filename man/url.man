@@ -1,0 +1,68 @@
+.TH url 1 "13 Feb 2017"
+
+.SH NAME
+url \- parses URLs
+
+.SH SYNOPSIS
+.B url
+[\fB-h\fR]
+[\fB-q\fR]
+[\fB-b\fR \fIbytes\fR]
+.B url
+[\fB-u\fR \fIurl\fR]
+[\fB-e\fR]
+[\fB-f\fR \fIfile\fR]
+
+.SH DESCRIPTION
+Splits URLs into parts.
+.SS Options
+.TP
+.BR -a
+Prints all parts.
+.TP
+.BR -s
+Prints the scheme. Examples: \fIhttp\fR, \fIhttps\fR, \fIftp\fR.
+.TP
+.BR -A
+Prints the authority. Example: \fIexample.com:80\fR.
+.TP
+.BR -h
+Prints the host. Example: \fIexample.com\fR.
+.BR -P
+Prints the port. Example \fI80\fR.
+.TP
+.BR -p
+Prints the path. Example: \fI/cgi-bin/example.cgi\fR.
+.TP
+.BR -q
+Prints the query. Example: \fIfruit=apple&color=red\fR.
+.TP
+.BR -f
+Prints the fragment. Example: \fIparagraph1\fR.
+.TP
+.BR -b
+binary
+.TP
+.BR -u
+Parsers \fIurl\fR and prints tokens.
+.TP
+.BR -e
+Parses URL from QUERY_STRING environment variable and prints keys and values.
+.TP
+.BR -f
+Parses URL from file. CONTENT_LENGTH environment variable is used if present. Default is standard input.
+Prints binary length prefixed strings. Length has size specified in bytes.
+
+.SH AUTHOR
+Written by Mateus de Lima Oliveira <mateus@ativarsoft.com>
+
+.SH REPORTING BUGS
+Ativarsoft online help: <http://ativarsoft.com/webutils>
+
+.SH COPYRIGHT
+Copyright (C) 2017 Mateus de Lima Oliveira.
+Licence: Libertarian License.
+There is NO WARRANTY, to the extent permitted by law.
+
+.SH SEE ALSO
+\fIpercent\fR(1), \fIkv\fR(1), \fItemplatizer\fR(1)

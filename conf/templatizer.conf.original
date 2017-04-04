@@ -1,0 +1,34 @@
+# version 1.0.0
+
+# This file replaces old system MIME types and sets them only in the
+# Apache webserver
+
+# application/x-httpd-tmpl                        tmpl
+<FilesMatch ".+\.tmpl$">
+    SetHandler application/x-httpd-tmpl
+</FilesMatch>
+# application/x-httpd-tmpl-source                 tmpls
+<FilesMatch ".+\.tmpls$">
+    SetHandler application/x-httpd-tmpl-source
+    # Deny access to raw tmpl sources by default
+    # To re-enable it's recommended to enable access to the files
+    # only in specific virtual host or directory
+    Require all denied
+</FilesMatch>
+# Deny access to files without filename (e.g. '.tmpl')
+<FilesMatch "^\.tmpl$">
+    Require all denied
+</FilesMatch>
+
+# To enable Templatizer CGI site-wide, just uncomment following lines, however
+# as a security measure, it's recommended to enable Templatizer just in the
+# specific virtual servers or just specific directories
+
+#ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+#<Directory "/usr/lib/cgi-bin">
+#    AllowOverride None
+#    Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+#    Order allow,deny
+#    Allow from all
+#</Directory>
+#Action application/x-httpd-tmpl /cgi-bin/templatizer
