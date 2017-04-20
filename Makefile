@@ -1,10 +1,10 @@
 CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb
-EXEC=templatizer libtemplatizer.so test.so
+EXEC=templatizer test.so
 
 all: $(EXEC)
 	make -C libtemplatizer
 
-templatizer.o: templatizer.c templatizer.h
+templatizer.o: templatizer.c
 
 templatizer: templatizer.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lexpat -ldl
@@ -16,7 +16,9 @@ test: templatizer test.so
 	$(MAKE) -C tests
 
 install: templatizer
-	cp templatizer /usr/lib/cgi-bin/
+	cp -f templatizer /usr/lib/cgi-bin/
+	cp -f -r include/templatizer /usr/include
+	make -C libtemplatizer install
 
 clean:
 	rm -f $(EXEC) *.o

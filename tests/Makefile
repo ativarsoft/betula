@@ -1,7 +1,7 @@
 TESTS=simple.xhtml library.xhtml placeholder.xhtml
 CFLAGS=-O0 -ggdb
 LDFLAGS=-ltemplatizer
-EXEC=cookie
+EXEC=cookie percent
 
 all: $(TESTS) $(EXEC)
 
