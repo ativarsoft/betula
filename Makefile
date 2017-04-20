@@ -1,4 +1,4 @@
-CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb
+CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb -Iinclude
 EXEC=templatizer test.so
 
 all: $(EXEC)

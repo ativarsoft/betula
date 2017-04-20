@@ -1,5 +1,5 @@
-#ifndef TEMPLATIZER_H
-#define TEMPLATIZER_H
+#ifndef TMPL_TEMPLATIZER_H
+#define TMPL_TEMPLATIZER_H
 
 #include <stdlib.h>
 
