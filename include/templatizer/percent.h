@@ -5,6 +5,6 @@
 
 size_t percent_encoded_len(const char *in);
 size_t percent_decoded_len(const char *in);
-void percent_decode(const char *in, char *out);
+size_t percent_decode(const char *in, char *out);
 
 #endif

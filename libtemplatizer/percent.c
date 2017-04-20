@@ -63,9 +63,10 @@ size_t percent_decoded_len(const char *in)
 }
 
 /* In can be the same as out. */
-void percent_decode(const char *in, char *out)
+size_t percent_decode(const char *in, char *out)
 {
 	const char *p;
+	size_t len = 0;
 
 	for (p = in; *p; p++) {
 		if (*p == '%') {
@@ -74,7 +75,9 @@ void percent_decode(const char *in, char *out)
 		} else {
 			*(out++) = *p;
 		}
+		len++;
 	}
+	return len;
 }
 
 void percent_encode(char *in)
