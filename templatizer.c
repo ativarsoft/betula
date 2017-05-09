@@ -165,7 +165,7 @@ nomem:
 	return NULL;
 }
 
-int add_filler_text(struct context *data, char *text)
+int add_filler_text(struct context *data, const char *text)
 {
 	struct input *p;
 

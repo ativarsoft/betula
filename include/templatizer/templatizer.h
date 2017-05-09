@@ -10,6 +10,13 @@
 #define SWHILE_TRUE TMPL_NOT_JMP
 #define SWHILE_FALSE TMPL_JMP
 
+#define tmpl_assert(err) \
+	if (!err) { \
+		fprintf(stderr, "assertion failed in file %s, function %s, line %d\n", __FILE__, __FUNCTION__, __LINE__); \
+		printf("Status: 500\r\n\r\n"); \
+		exit(1); \
+	}
+
 struct context;
 
 typedef void (*kv_callback)(void *data, char *key, size_t key_len, char *value, size_t value_len);
@@ -38,13 +45,18 @@ struct templatizer_callbacks {
 	void (*send_default_headers)(struct context *data);
 	void (*set_output_format)(struct context *data, enum templatizer_format fmt);
 
-	int (*add_filler_text)(struct context *data, char *text);
+	int (*add_filler_text)(struct context *data, const char *text);
 	int (*add_control_flow)(struct context *data, int b); /* for conditionals */
 };
 
 struct templatizer_plugin {
 	int (*init)(struct context *data, struct templatizer_callbacks *cb);
 	void (*quit)();
+};
+
+struct key_pair {
+	const char *key;
+	char *value;
 };
 
 int parse_query_string_get(void *data, kv_callback cb);
