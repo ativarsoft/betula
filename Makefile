@@ -1,5 +1,5 @@
 CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb -Iinclude
-EXEC=templatizer test.so kv rest
+EXEC=templatizer kv rest
 
 all: $(EXEC)
 
