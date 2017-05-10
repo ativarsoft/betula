@@ -9,11 +9,10 @@
 #include <ctype.h>
 #include <libintl.h>
 #include <lmdb.h>
-#include "config.h"
 
 #define _ gettext
 
-static const char copyright[] = COPYRIGHT;
+static const char copyright[] = "Copyright (C) 2017 Mateus de Lima Oliveira";
 
 int main(int argc, char **argv)
 {

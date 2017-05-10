@@ -1,13 +1,21 @@
 CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb -Iinclude
-EXEC=templatizer test.so
+EXEC=templatizer test.so kv rest
 
 all: $(EXEC)
+
+libtemplatizer/libtemplatizer.so: libtemplatizer
 	make -C libtemplatizer
 
 templatizer.o: templatizer.c
 
 templatizer: templatizer.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lexpat -ldl
+
+kv: kv.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -llmdb
+
+rest: rest.o libtemplatizer/libtemplatizer.so
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -ltemplatizer -lcurl
 
 test.so: test.o
 	$(CC) $(LDFLAGS) --shared -o $@ $^

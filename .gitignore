@@ -1,3 +1,5 @@
 *.o
 *.so
 templatizer
+kv
+rest
