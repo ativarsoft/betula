@@ -127,3 +127,24 @@ void tmpl_throw_error(const char *status, const char *url, const char *msg)
 	printf("\r\n");
 	exit(0);
 }
+
+void tmpl_alloc_query(void *query, char *key, int key_len, char *value, int value_len)
+{
+	unsigned int i;
+	struct tmpl_query q = *((struct tmpl_query *) query);
+
+	for (i = 0; i < q.num_params; i++)
+		if (strncmp(q.keys[i], key, key_len) == 0)
+			if (q.values[i] == NULL)
+				q.values[i] = strndup(value, value_len);
+}
+
+void tmpl_free_query(void *query, char *key, int key_len, char *value, int value_len)
+{
+	unsigned int i;
+	struct tmpl_query q = *((struct tmpl_query *) query);
+
+	for (i = 0; i < q.num_params; i++)
+		if (q.values[i] != NULL)
+			free(q.values[i]);
+}
