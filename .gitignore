@@ -1,5 +1,5 @@
 *.o
 *.so
-templatizer
+/templatizer
 kv
 rest

@@ -119,3 +119,11 @@ int parse_query_string_post(void *data, kv_callback cb)
 	free(query);
 	return 0;
 }
+
+void tmpl_throw_error(const char *status, const char *url, const char *msg)
+{
+	printf("Status: 200\r\n"); /* redirect without changing the url */
+	printf("Location: %s?status=%s&%s\r\n", url, status, msg);
+	printf("\r\n");
+	exit(0);
+}
