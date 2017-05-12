@@ -9,7 +9,7 @@
    cookie-string = cookie-pair *( ";" SP cookie-pair )
    cookie-pair   = cookie-name "=" cookie-value
 */
-int parse_cookie_string(void *data, kv_callback cb)
+int tmpl_parse_cookie_string(void *data, tmpl_kv_callback cb)
 {
 	char *query, *p, *token;
 	char *key, *value;
@@ -52,7 +52,7 @@ int parse_cookie_string(void *data, kv_callback cb)
 	return 0;
 }
 
-void parse_query_string(char *query, void *data, kv_callback cb)
+void tmpl_parse_query_string(char *query, void *data, tmpl_kv_callback cb)
 {
 	char *p, *token;
 	char *key, *value;
@@ -86,18 +86,18 @@ void parse_query_string(char *query, void *data, kv_callback cb)
 	}
 }
 
-int parse_query_string_get(void *data, kv_callback cb)
+int tmpl_parse_query_string_get(void *data, tmpl_kv_callback cb)
 {
 	char *query;
 
 	query = getenv("QUERY_STRING");
 	if (query == NULL)
 		return 1;
-	parse_query_string(query, data, cb);
+	tmpl_parse_query_string(query, data, cb);
 	return 0;
 }
 
-int parse_query_string_post(void *data, kv_callback cb)
+int tmpl_parse_query_string_post(void *data, tmpl_kv_callback cb)
 {
 	char *content_length, *query;
 	int len;
@@ -115,7 +115,7 @@ int parse_query_string_post(void *data, kv_callback cb)
 		return 1;
 	}
 	fprintf(stderr, "post: query: %s\n", query);
-	parse_query_string(query, data, cb);
+	tmpl_parse_query_string(query, data, cb);
 	free(query);
 	return 0;
 }

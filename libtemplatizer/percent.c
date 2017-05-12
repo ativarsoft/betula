@@ -27,7 +27,7 @@ static int hex(const char *str)
 	return n;
 }
 
-size_t percent_encoded_len(const char *in)
+size_t tmpl_percent_encoded_len(const char *in)
 {
 	const char *p;
 	size_t len = 0;
@@ -45,7 +45,7 @@ size_t percent_encoded_len(const char *in)
 	return len;
 }
 
-size_t percent_decoded_len(const char *in)
+size_t tmpl_percent_decoded_len(const char *in)
 {
 	const char *p;
 	size_t len = 0;
@@ -63,7 +63,7 @@ size_t percent_decoded_len(const char *in)
 }
 
 /* In can be the same as out. */
-size_t percent_decode(const char *in, char *out)
+size_t tmpl_percent_decode(const char *in, char *out)
 {
 	const char *p;
 	size_t len = 0;
@@ -80,7 +80,7 @@ size_t percent_decode(const char *in, char *out)
 	return len;
 }
 
-void percent_encode(char *in)
+void tmpl_percent_encode(char *in)
 {
 	/*int len;*/
 
