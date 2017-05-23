@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h> /* strchr() */
 #include <stdlib.h> /* getenv() */
-#include <templatizer.h>
+#include <templatizer/templatizer.h>
 
 /* based on rfc6265 */
 /*
