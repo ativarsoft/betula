@@ -11,7 +11,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <expat.h>
-#include "templatizer.h"
+#include <templatizer/templatizer.h>
 
 #define BUFFER_SIZE 4096
 #define MAX_LABELS 128
