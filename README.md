@@ -18,3 +18,13 @@ Input plugins read url-encoded and JSON
 input from the client. Those values are then used in a
 script using the '@' symbol. Input plugins can be selected
 using the 'templatizer' tag.
+
+## Compiling from source
+
+Templatizer was only tested on Linux.
+
+It requires:
+
+  * sys/queue.h for list macros;
+  * libdl for dynamically loading libraries;
+  * libexpat
