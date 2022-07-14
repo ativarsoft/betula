@@ -1,34 +1,27 @@
 CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb -Iinclude
-EXEC=templatizer kv rest
+EXEC=templatizer
 
-all: $(EXEC)
+all: $(EXEC) plugins
 
-libtemplatizer/libtemplatizer.so: libtemplatizer
-	make -C libtemplatizer
+plugins:
+	make -C plugins
 
 templatizer.o: templatizer.c
 
 templatizer: templatizer.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lexpat -ldl
 
-kv: kv.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -llmdb
-
-rest: rest.o libtemplatizer/libtemplatizer.so
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -ltemplatizer -lcurl
-
-test.so: test.o
-	$(CC) $(LDFLAGS) --shared -o $@ $^
-
-test: templatizer test.so
-	$(MAKE) -C tests
+test: templatizer plugins
+	$(MAKE) -C tests test
 
 install: templatizer
 	cp -f templatizer /usr/lib/cgi-bin/
-	cp -f -r include/templatizer /usr/include
-	make -C libtemplatizer install
+	cp -f include/templatizer.h /usr/include
+	make -C plugins install
 
 clean:
 	rm -f $(EXEC) *.o
-	rm -f -r db
-	make -C libtemplatizer clean
+	make -C plugins clean
+	make -C tests clean
+
+.PHONY: plugins test install clean

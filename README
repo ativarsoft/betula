@@ -1,8 +1,0 @@
-webutils was created with the intent to stick to the unix philosophy's aspects of keeping things simple and modular
-while making it fast and keeping the memory consumption low.
-webutils input and output uses length-prefixed strings instead of null terminated input or lines.
-this choise was made to avoid allocating memory beyond the amout necessary and simplicity.
-
-if your server is having a bottleneck, if you're obcessed with optimization or if you are just curious,
-you can make webutils commands built-in your program or shell. By doing this, each call to a command will
-run on the same process instead of creating a new one. You can even make it built-in busybox on an embedded system.
