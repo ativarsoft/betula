@@ -21,8 +21,8 @@
 
 static int parse_xml_file(struct context *data, const char *tmpl);
 
-static const char version[] = VERSION;
-static const char copyright[] = COPYRIGHT;
+const char version[] = VERSION;
+const char copyright[] = COPYRIGHT;
 
 enum node_type {
 	NODE_START,
