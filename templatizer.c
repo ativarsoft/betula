@@ -10,6 +10,7 @@
 #include <stdlib.h> /* atoi() */
 #include <string.h>
 #include <ctype.h>
+#include <sys/queue.h>
 #include <expat.h>
 #include <templatizer.h>
 
@@ -30,37 +31,36 @@ enum node_type {
 	NODE_CHARACTER_DATA
 };
 
-struct node_header {
-	enum node_type type;
-	union node *next;
-};
-
 struct node_start {
-	struct node_header header;
 	char *el;
 	int num_attributes;
 	char **attr;
-	struct node_end *jmp;
+	struct node *jmp; /* node_end */
 };
 
 struct node_end {
-	struct node_header header;
 	char *el;
 	bool conditional_jmp;
-	struct node_start *jmp;
+	struct node *jmp; /* node_start */
 };
 
 struct node_character_data {
-	struct node_header header;
 	char *data;
 };
 
-union node {
-	struct node_header header;
+union node_data {
 	struct node_start start;
 	struct node_end end;
 	struct node_character_data character_data;
 };
+
+struct node {
+	enum node_type type;
+	TAILQ_ENTRY(node) entries;
+	union node_data data;
+};
+
+TAILQ_HEAD(node_list_head, node);
 
 enum input_type {
 	INPUT_FILLER_TEXT,
@@ -69,6 +69,7 @@ enum input_type {
 
 struct input {
 	struct input *next;
+	TAILQ_ENTRY(input) entries;
 	enum input_type type;
 	union {
 		char *filler_text;
@@ -76,17 +77,19 @@ struct input {
 	} data;
 };
 
+TAILQ_HEAD(input_list_head, input);
+
 struct tag {
 	struct tag *next;
 	XML_Char *s;
 };
 
 struct context {
-	union node *first_node, *last_node;
+	struct node_list_head *nodes;
 	/* This list is freed as it is consumed. */
-	struct input *first_input, *last_input;
+	struct input_list_head *input;
 	struct tag *tag_head;
-	struct node_start *labels[MAX_LABELS];
+	struct node *labels[MAX_LABELS];
 	struct program *bin;
 	int num_labels;
 	XML_Parser parser;
@@ -155,9 +158,9 @@ static struct input *add_input(struct context *data)
 {
 	struct input *n;
 
-	n = data->last_input;
-	if ((data->last_input = n->next = malloc(sizeof(struct input))) == NULL)
+	if ((n = malloc(sizeof(struct input))) == NULL)
 		goto nomem;
+	TAILQ_INSERT_TAIL(data->input, n, entries);
 	return n;
 nomem:
 	fprintf(stderr, "not enough memory for new input\n");
@@ -314,13 +317,12 @@ static void dump_string(struct context *data)
 {
 	struct input *p;
 
-	if (data->first_input == data->last_input)
+	if (TAILQ_EMPTY(data->input))
 		return;
-	p = data->first_input;
+	p = TAILQ_FIRST(data->input);
 	fputs(p->data.filler_text, stdout);
-	p = p->next;
-	free(data->first_input);
-	data->first_input = p;
+	TAILQ_REMOVE(data->input, p, entries);
+	free(p);
 }
 
 /* NOTE: not all keywords here are related to control flow anymore. */
@@ -385,33 +387,32 @@ enum control_flow {
 	NEXT_INSTRUCTION
 };
 
-static enum control_flow print_node(struct context *data, union node *n)
+static enum control_flow print_node(struct context *data, struct node *n)
 {
 	struct input *p;
 	enum control_flow r;
 
-	switch (n->header.type) {
+	switch (n->type) {
 	case NODE_START:
-		if (n->start.jmp) {
-			if (data->first_input == data->last_input) {
+		if (n->data.start.jmp) {
+			if (TAILQ_EMPTY(data->input)) {
 				fprintf(stderr, "missing input for tag that requires input\n");
 				exit(1);
 			}
-			p = data->first_input;
+			p = TAILQ_FIRST(data->input);
 			if (p->data.control_flow)
 				r = JMP_FOWARD;
 			else
 				r = NEXT_INSTRUCTION;
-			p = p->next;
-			free(data->first_input);
-			data->first_input = p;
+			TAILQ_REMOVE(data->input, p, entries);
+			free(p);
 			return r;
 		}
-		print_start_node(data, &n->start);
+		print_start_node(data, &n->data.start);
 		break;
 	case NODE_END:
-		if (n->end.jmp) {
-			if (n->end.conditional_jmp) {
+		if (n->data.end.jmp) {
+			if (n->data.end.conditional_jmp) {
 				if (0) /* TODO */
 					return JMP_BACKWARD;
 				else
@@ -420,10 +421,10 @@ static enum control_flow print_node(struct context *data, union node *n)
 				return JMP_BACKWARD;
 			}
 		}
-		print_end_node(&n->end);
+		print_end_node(&n->data.end);
 		break;
 	case NODE_CHARACTER_DATA:
-		print_character_data_node(data, &n->character_data);
+		print_character_data_node(data, &n->data.character_data);
 		break;
 	}
 	return NEXT_INSTRUCTION;
@@ -431,19 +432,19 @@ static enum control_flow print_node(struct context *data, union node *n)
 
 static void print_list(struct context *data)
 {
-	union node *p;
+	struct node *p;
 
-	p = data->first_node;
-	while (p != data->last_node) {
+	p = TAILQ_FIRST(data->nodes);
+	while (p != TAILQ_LAST(data->nodes, node_list_head)) {
 		switch (print_node(data, p)) {
 			case JMP_FOWARD:
-			p = (union node *) p->start.jmp->header.next;
+			p = TAILQ_NEXT(p->data.start.jmp, entries);
 			break;
 			case JMP_BACKWARD:
-			p = (union node *) p->end.jmp;
+			p = p->data.end.jmp;
 			break;
 			default:
-			p = p->header.next;
+			p = TAILQ_NEXT(p, entries);
 			break;
 		}
 #if 1
@@ -452,13 +453,13 @@ static void print_list(struct context *data)
 	}
 }
 
-static union node *add_node(struct context *data)
+static struct node *add_node(struct context *data)
 {
-	union node *n;
+	struct node *n;
 
-	n = data->last_node;
-	if ((data->last_node = n->header.next = malloc(sizeof(union node))) == NULL)
+	if ((n = calloc(1, sizeof(struct node))) == NULL)
 		goto nomem;
+	TAILQ_INSERT_TAIL(data->nodes, n, entries);
 	return n;
 nomem:
 	fprintf(stderr, "not enough memory for new node\n");
@@ -479,7 +480,7 @@ static void start(struct context *data, const XML_Char *el, const XML_Char **att
 {
 	int i;
 	void *p;
-	union node *n;
+	struct node *n;
 
 	if (strcmp("templatizer", el) == 0)
 		parse_templatizer_tag(data, attr);
@@ -487,9 +488,10 @@ static void start(struct context *data, const XML_Char *el, const XML_Char **att
 		parse_include_tag(data, attr);
 		return;
 	}
-	n = data->last_node;
-	n->header.type = NODE_START;
-	if ((n->start.el = tag_pool_lookup(data, el)) == NULL) {
+	n = add_node(data);
+	if (n == NULL) return;
+	n->type = NODE_START;
+	if ((n->data.start.el = tag_pool_lookup(data, el)) == NULL) {
 		fputs("no memory for element tag\n", stderr);
 		XML_StopParser(data->parser, 0);
 		return;
@@ -497,7 +499,7 @@ static void start(struct context *data, const XML_Char *el, const XML_Char **att
 	for (i = 0; attr[i]; i++);
 	if (i > 0) {
 		if ((p = malloc(i * sizeof(char *))) == NULL) {
-			free(n->start.el);
+			free(n->data.start.el);
 			fputs("no memory for new attribute\n", stderr);
 			XML_StopParser(data->parser, 0);
 			return;
@@ -505,67 +507,65 @@ static void start(struct context *data, const XML_Char *el, const XML_Char **att
 	} else {
 		p = NULL;
 	}
-	n->start.num_attributes = i;
-	n->start.attr = (char **) p;
-	n->start.jmp = NULL;
+	n->data.start.num_attributes = i;
+	n->data.start.attr = (char **) p;
+	n->data.start.jmp = NULL;
 	for (i = 0; attr[i]; i++) {
-		if ((n->start.attr[i] = strdup(attr[i])) == NULL) {
-			free(n->start.el);
-			free_attr_array(n->start.attr, i);
+		if ((n->data.start.attr[i] = strdup(attr[i])) == NULL) {
+			free(n->data.start.el);
+			free_attr_array(n->data.start.attr, i);
 			return;
 		}
 	}
 	if (is_control_flow_keyword(el)) {
 		if (data->num_labels >= MAX_LABELS) {
-			free(n->start.el);
-			free_attr_array(n->start.attr, n->start.num_attributes);
+			free(n->data.start.el);
+			free_attr_array(n->data.start.attr, n->data.start.num_attributes);
 			fputs("control flow stack overflow\n", stderr);
 			XML_StopParser(data->parser, 0);
 			return;
 		}
-		data->labels[data->num_labels++] = &n->start;
+		data->labels[data->num_labels++] = n;
 	}
-	n = add_node(data);
-	if (n == NULL) return;
 }
 
 static void end(struct context *data, const XML_Char *el)
 {
-	union node *n;
+	struct node *n;
 
 	if (strcmp("include", el) == 0)
 		return;
-	n = data->last_node;
-	n->header.type= NODE_END;
-	n->end.el = tag_pool_lookup(data, el);
+	n = add_node(data);
+	if (n == NULL) return;
+	n->type = NODE_END;
+	n->data.end.el = tag_pool_lookup(data, el);
 	if (strcmp("ewhile", el) == 0) {
 		/* This node will jump to the previous label (start tag). */
-		n->end.jmp = data->labels[--data->num_labels];
-		n->end.conditional_jmp = true;
+		n->data.end.jmp = data->labels[--data->num_labels];
+		n->data.end.conditional_jmp = true;
 	} else if (strcmp("if", el) == 0) {
 		/* The previous label (start tag) will jump to this node. */
-		data->labels[--data->num_labels]->jmp = &n->end;
-		n->end.jmp = NULL; /* This node does not jump. */
+		data->labels[--data->num_labels]->data.start.jmp = n;
+		n->data.end.jmp = NULL; /* This node does not jump. */
 	} else if (strcmp("swhile", el) == 0) {
 		data->num_labels--;
 		/* The previous label (start tag) will jump to this node. */
-		data->labels[data->num_labels]->jmp = &n->end;
+		data->labels[data->num_labels]->data.start.jmp = n;
 		/* This node will jump to the previous label (start tag). */
-		n->end.jmp = data->labels[data->num_labels];
-		n->end.conditional_jmp = false;
+		n->data.end.jmp = data->labels[data->num_labels];
+		n->data.end.conditional_jmp = false;
 	} else {
-		n->end.jmp = NULL;
+		n->data.end.jmp = NULL;
 	}
-	n = add_node(data);
-	if (n == NULL) return;
 }
 
 static void character_data(struct context *data, const XML_Char *s, int len)
 {
-	union node *n;
+	struct node *n;
 
-	n = data->last_node;
-	n->header.type = NODE_CHARACTER_DATA;
+	n = add_node(data);
+	if (n == NULL) return;
+	n->type = NODE_CHARACTER_DATA;
 #if 0
 	while (len > 0 && isspace(s[len-1]))
 		len--;
@@ -574,9 +574,7 @@ static void character_data(struct context *data, const XML_Char *s, int len)
 		len--;
 	}
 #endif
-	n->character_data.data = strndup(s, len);
-	n = add_node(data);
-	if (n == NULL) return;
+	n->data.character_data.data = strndup(s, len);
 }
 
 static void free_tag_pool(struct context *data)
@@ -592,40 +590,32 @@ static void free_tag_pool(struct context *data)
 
 static void free_all_nodes(struct context *data)
 {
-	union node *p, *next, *last;
+	struct node *p;
 
-	p = data->first_node;
-	last = data->last_node;
-	while (p != last) {
-		next = p->header.next;
-		if (p->header.type == NODE_START) {
-			free_attr_array(p->start.attr, p->start.num_attributes);
-		} else if (p->header.type == NODE_END) {
-		} else if (p->header.type == NODE_CHARACTER_DATA) {
-			free(p->character_data.data);
+	TAILQ_FOREACH(p, data->nodes, entries) {
+		if (p->type == NODE_START) {
+			free_attr_array(p->data.start.attr, p->data.start.num_attributes);
+		} else if (p->type == NODE_END) {
+		} else if (p->type == NODE_CHARACTER_DATA) {
+			free(p->data.character_data.data);
 		}
 		free(p);
-		p = next;
 	};
-	free(last);
+	free(data->nodes);
 }
 
 static void free_all_input(struct context *data)
 {
-	struct input *p, *next, *last;
+	struct input *p;
 
-	p = data->first_input;
-	last = data->last_input;
-	while (p != last) {
-		next = p->next;
+	TAILQ_FOREACH(p, data->input, entries) {
 		if (p->type == INPUT_FILLER_TEXT) {
 			free(p->data.filler_text);
 		} else if (p->type == INPUT_CONTROL_FLOW) {
 		}
 		free(p);
-		p = next;
 	};
-	free(last);
+	free(data->input);
 }
 
 static int parse_xml_file(struct context *data, const char *tmpl)
@@ -683,11 +673,13 @@ int main(int argc, char **argv)
 	}
 
 	/*data.parser = parser;*/
-	if ((data.last_node = data.first_node = malloc(sizeof(union node))) == NULL)
+	if ((data.nodes = calloc(1, sizeof(struct node_list_head))) == NULL)
 		return 1;
-	if ((data.last_input = data.first_input = malloc(sizeof(struct input))) == NULL)
+	TAILQ_INIT(data.nodes);
+	if ((data.input = calloc(1, sizeof(struct input))) == NULL)
 		return 1;
 	data.num_labels = 0;
+	TAILQ_INIT(data.input);
 	data.tag_head = NULL;
 	data.plugin_handle = NULL;
 	data.output_format = TMPL_FMT_XHTML;
@@ -704,3 +696,4 @@ int main(int argc, char **argv)
 #endif
 	return 0;
 }
+
