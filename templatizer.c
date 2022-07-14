@@ -1,4 +1,4 @@
-/* Copyright (C) 2017 Mateus de Lima Oliveira */
+/* Copyright (C) 2017-2022 Mateus de Lima Oliveira */
 
 #include <unistd.h>
 #include <libgen.h>
@@ -17,7 +17,7 @@
 #define MAX_LABELS 128
 
 #define VERSION "0.1"
-#define COPYRIGHT "Copyright (C) 2017 Mateus de Lima Oliveira"
+#define COPYRIGHT "Copyright (C) 2017-2022 Mateus de Lima Oliveira"
 
 static int parse_xml_file(struct context *data, const char *tmpl);
 
