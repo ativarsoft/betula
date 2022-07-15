@@ -1,0 +1,15 @@
+<templatizer lib="../plugins/input/in_helloworld.so">
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Database input</title>
+	</head>
+	<body>
+		<link lib="../plugins/database/kv.so"/>
+		<kv op="get" key="users/mateus/age"/>
+		<let var="ret" value="$$"/>
+		<p>$ret</p>
+		<p>@</p>
+	</body>
+</html>
+</templatizer>

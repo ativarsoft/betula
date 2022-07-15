@@ -68,7 +68,6 @@ enum input_type {
 };
 
 struct input {
-	struct input *next;
 	TAILQ_ENTRY(input) entries;
 	enum input_type type;
 	union {
@@ -78,6 +77,12 @@ struct input {
 };
 
 TAILQ_HEAD(input_list_head, input);
+
+struct element_callback {
+	TAILQ_ENTRY(element_callback) entries;
+};
+
+TAILQ_HEAD(element_callback_head, element_callback);
 
 struct tag {
 	struct tag *next;
@@ -91,7 +96,9 @@ struct context {
 	struct tag *tag_head;
 	struct node *labels[MAX_LABELS];
 	struct program *bin;
+	struct element_callback_head *on_element_callbacks;
 	int num_labels;
+	int status; /* value returned by the last call */
 	XML_Parser parser;
 
 	void *plugin_handle;
@@ -100,6 +107,11 @@ struct context {
 	enum templatizer_compression output_compression;
 	bool keep_alive;
 };
+
+static struct context *get_tmpl_context(tmpl_ctx_t ctx)
+{
+	return (struct context *) ctx;
+}
 
 static void *templatizer_malloc(struct context *data, size_t size)
 {
@@ -168,7 +180,7 @@ nomem:
 	return NULL;
 }
 
-int add_filler_text(struct context *data, const char *text)
+static int add_filler_text(struct context *data, const char *text)
 {
 	struct input *p;
 
@@ -179,7 +191,7 @@ int add_filler_text(struct context *data, const char *text)
 	return 0;
 }
 
-int add_control_flow(struct context *data, int b)
+static int add_control_flow(struct context *data, int b)
 {
 	struct input *p;
 
@@ -188,6 +200,23 @@ int add_control_flow(struct context *data, int b)
 	p->data.control_flow = (bool) b;
 	p->type = INPUT_CONTROL_FLOW;
 	return 0;
+}
+
+static int register_element_tag(tmpl_ctx_t ctx, char *s, on_element_callback_t cb)
+{
+	struct context *data = get_tmpl_context(ctx);
+	struct element_callback *p;
+	p = calloc(1, sizeof(struct element_callback));
+	if (p == NULL)
+		return 1;
+	TAILQ_INSERT_TAIL(data->on_element_callbacks, p, entries);
+	return 0;
+}
+
+static void tmpl_exit(tmpl_ctx_t ctx, int status)
+{
+	struct context *data = get_tmpl_context(ctx);
+	data->status = status;
 }
 
 static struct templatizer_callbacks callbacks = {
@@ -199,7 +228,9 @@ static struct templatizer_callbacks callbacks = {
 	&send_default_headers,
 	&set_output_format,
 	&add_filler_text,
-	&add_control_flow
+	&add_control_flow,
+	&register_element_tag,
+	&tmpl_exit
 };
 
 #ifdef _WIN32
@@ -666,6 +697,8 @@ int main(int argc, char **argv)
 
 	(void) argc;
 
+	memset(&data, 0, sizeof(data));
+
 	tmpl = getenv("PATH_TRANSLATED");
 	if (tmpl == NULL) {
 		fprintf(stderr, "%s: missing template file\n", argv[0]);
@@ -677,6 +710,9 @@ int main(int argc, char **argv)
 		return 1;
 	TAILQ_INIT(data.nodes);
 	if ((data.input = calloc(1, sizeof(struct input))) == NULL)
+		return 1;
+	data.on_element_callbacks = calloc(1, sizeof(struct element_callback_head));
+	if (data.on_element_callbacks == NULL)
 		return 1;
 	data.num_labels = 0;
 	TAILQ_INIT(data.input);

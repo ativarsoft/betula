@@ -1,10 +1,15 @@
 # Copyright (C) 2022 Mateus de Lima Oliveira
 
-all: $(EXEC)
+all:
 	make -C input
+	make -C database
 
 install: templatizer
 	make -C input install
+	make -C database install
 
 clean:
 	make -C input clean
+	make -C database clean
+
+.PHONY: install clean
