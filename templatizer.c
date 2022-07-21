@@ -25,6 +25,24 @@ static int parse_xml_file(struct context *data, const char *tmpl);
 const char version[] = VERSION;
 const char copyright[] = COPYRIGHT;
 
+typedef int (*declare_variable_t)(struct context *data, char *name, char *type);
+
+struct parameter {
+	TAILQ_ENTRY(parameter) entries;
+	char *name;
+	int type;
+};
+
+TAILQ_HEAD(parameter_list_head, parameter);
+
+struct prototype {
+	TAILQ_ENTRY(prototype) entries;
+	char *return_type;
+	char *name;
+};
+
+TAILQ_HEAD(prototype_list_head, prototype);
+
 enum node_type {
 	NODE_START,
 	NODE_END,
@@ -106,9 +124,12 @@ struct context {
 	struct node *labels[MAX_LABELS];
 	struct program *bin;
 	struct element_callback_head *on_element_callbacks;
+	struct prototype_list_head prototypes;
 	int num_labels;
 	int status; /* value returned by the last call */
 	XML_Parser parser;
+	declare_variable_t declare_variable;
+	struct prototype *current_prototype;
 
 	void *plugin_handle;
 	struct templatizer_plugin *plugin_data;
@@ -116,6 +137,8 @@ struct context {
 	enum templatizer_compression output_compression;
 	bool keep_alive;
 };
+
+static struct node *add_node(struct context *data);
 
 static struct context *get_tmpl_context(tmpl_ctx_t ctx)
 {
@@ -332,6 +355,40 @@ static int parse_include_tag(struct context *data, const XML_Char **attr)
 			free(full_path);
 		}
 	}
+	return 0;
+}
+
+static int declare_variable_prototype(struct context *data, char *name, char *type)
+{
+	struct prototype *p = data->current_prototype;
+	if (p == NULL)
+		return 1;
+	return 0;
+}
+
+static struct prototype *create_prototype_node(struct context *data)
+{
+	void *p;
+	(void) data;
+	p = malloc(sizeof(struct prototype));
+	return (struct prototype *) p;
+}
+
+static int parse_prototype_tag(struct context *data, const XML_Char **attr)
+{
+	int i;
+	struct prototype *n;
+
+	n = create_prototype_node(data);
+
+	for (i = 0; attr[i]; i += 2) {
+		if (strcmp("name", attr[i]) == 0) {
+			n->name = strdup(attr[i+1]);
+		} else if (strcmp("return", attr[i]) == 0) {
+			n->return_type = strdup(attr[i+1]);
+		}
+	}
+	data->declare_variable = &declare_variable_prototype;
 	return 0;
 }
 
@@ -568,6 +625,10 @@ static void start(struct context *data, const XML_Char *el, const XML_Char **att
 		parse_extern_tag(data, attr);
 		return;
 	}
+	if (strcmp("prototype", el) == 0) {
+		parse_prototype_tag(data, attr);
+		return;
+	}
 	n = add_node(data);
 	if (n == NULL) return;
 	n->type = NODE_START;
@@ -764,8 +825,10 @@ int main(int argc, char **argv)
 	if (data.on_element_callbacks == NULL)
 		return 1;
 	data.num_labels = 0;
+	data.declare_variable = NULL;
 	TAILQ_INIT(data.input);
 	TAILQ_INIT(&data.imports);
+	TAILQ_INIT(&data.prototypes);
 	data.tag_head = NULL;
 	data.plugin_handle = NULL;
 	data.output_format = TMPL_FMT_XHTML;

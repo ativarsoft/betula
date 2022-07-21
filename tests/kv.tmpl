@@ -6,6 +6,11 @@
 	</head>
 	<body>
 		<link lib="../plugins/database/kv.so"/>
+		<prototype name="kv" return="int">
+			<string name="op"/>
+			<string name="key"/>
+		</prototype>
+		<extern name="kv"/>
 		<kv op="get" key="users/mateus/age"/>
 		<let var="ret" value="$$"/>
 		<p>$ret</p>
