@@ -62,6 +62,14 @@ struct node {
 
 TAILQ_HEAD(node_list_head, node);
 
+struct import {
+	TAILQ_ENTRY(import) entries;
+	char *name;
+	void *address;
+};
+
+TAILQ_HEAD(import_list_head, import);
+
 enum input_type {
 	INPUT_FILLER_TEXT,
 	INPUT_CONTROL_FLOW
@@ -91,6 +99,7 @@ struct tag {
 
 struct context {
 	struct node_list_head *nodes;
+	struct import_list_head imports;
 	/* This list is freed as it is consumed. */
 	struct input_list_head *input;
 	struct tag *tag_head;
@@ -267,12 +276,18 @@ static void *load_library(struct context *data, const char *path)
 		return NULL;
 	}
 	free(full_path);
+	data->plugin_handle = handle;
 	return handle;
 }
 
 static void unload_library(struct context *data)
 {
 	dlclose(data->plugin_handle);
+}
+
+static void *get_symbol(struct context *data, const char *name)
+{
+	return dlsym(data->plugin_handle, name);
 }
 #endif
 
@@ -315,6 +330,34 @@ static int parse_include_tag(struct context *data, const XML_Char **attr)
 			if (parse_xml_file(data, full_path))
 				return 1;
 			free(full_path);
+		}
+	}
+	return 0;
+}
+
+static struct import *create_import_node(struct context *data)
+{
+	void *p;
+	(void) data;
+	p = malloc(sizeof(struct import));
+	return (struct import *) p;
+}
+
+static int parse_extern_tag(struct context *data, const XML_Char **attr)
+{
+	int i;
+	void *sym;
+	struct import *n;
+	char *name;
+
+	for (i = 0; attr[i]; i += 2) {
+		if (strcmp("name", attr[i]) == 0) {
+			name = strdup(attr[i+1]);
+			sym = get_symbol(data, name);
+			n = create_import_node(data);
+			n->name = name;
+			n->address = sym;
+			TAILQ_INSERT_TAIL(&data->imports, n, entries);
 		}
 	}
 	return 0;
@@ -513,10 +556,16 @@ static void start(struct context *data, const XML_Char *el, const XML_Char **att
 	void *p;
 	struct node *n;
 
-	if (strcmp("templatizer", el) == 0)
+	if (strcmp("templatizer", el) == 0) {
 		parse_templatizer_tag(data, attr);
+		return;
+	}
 	if (strcmp("include", el) == 0) {
 		parse_include_tag(data, attr);
+		return;
+	}
+	if (strcmp("extern", el) == 0) {
+		parse_extern_tag(data, attr);
 		return;
 	}
 	n = add_node(data);
@@ -716,6 +765,7 @@ int main(int argc, char **argv)
 		return 1;
 	data.num_labels = 0;
 	TAILQ_INIT(data.input);
+	TAILQ_INIT(&data.imports);
 	data.tag_head = NULL;
 	data.plugin_handle = NULL;
 	data.output_format = TMPL_FMT_XHTML;
