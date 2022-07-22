@@ -27,18 +27,20 @@ const char copyright[] = COPYRIGHT;
 
 typedef int (*declare_variable_t)(struct context *data, char *name, char *type);
 
-struct parameter {
-	TAILQ_ENTRY(parameter) entries;
+struct variable {
+	TAILQ_ENTRY(variable) entries;
 	char *name;
-	int type;
+	char *type;
 };
 
-TAILQ_HEAD(parameter_list_head, parameter);
+TAILQ_HEAD(variable_list_head, variable);
 
 struct prototype {
 	TAILQ_ENTRY(prototype) entries;
 	char *return_type;
 	char *name;
+	int num_stack_frame_words;
+	struct variable_list_head variables;
 };
 
 TAILQ_HEAD(prototype_list_head, prototype);
@@ -358,20 +360,42 @@ static int parse_include_tag(struct context *data, const XML_Char **attr)
 	return 0;
 }
 
+static struct variable *add_variable
+	(struct context *data,
+	 struct variable_list_head *head)
+{
+	struct variable *n;
+	n = (struct variable *) calloc(1, sizeof(struct variable));
+	if (n == NULL)
+		return NULL;
+	TAILQ_INSERT_TAIL(head, n, entries);
+	return n;
+}
+
 static int declare_variable_prototype(struct context *data, char *name, char *type)
 {
 	struct prototype *p = data->current_prototype;
+	struct variable *var;
 	if (p == NULL)
 		return 1;
+	if (strcmp(type, "string") == 0) {
+		var = add_variable(data, &p->variables);
+		var->name = name;
+		var->type = type;
+		p->num_stack_frame_words++;
+	}
 	return 0;
 }
 
 static struct prototype *create_prototype_node(struct context *data)
 {
-	void *p;
+	struct prototype *n;
 	(void) data;
-	p = malloc(sizeof(struct prototype));
-	return (struct prototype *) p;
+	n = (struct prototype *) malloc(sizeof(struct prototype));
+	if (n == NULL)
+		return NULL;
+	TAILQ_INIT(&n->variables);
+	return n;
 }
 
 static int parse_prototype_tag(struct context *data, const XML_Char **attr)
@@ -417,6 +441,20 @@ static int parse_extern_tag(struct context *data, const XML_Char **attr)
 			TAILQ_INSERT_TAIL(&data->imports, n, entries);
 		}
 	}
+	return 0;
+}
+
+static int parse_string_tag(struct context *data, const XML_Char **attr)
+{
+	int i;
+	char *name;
+
+	for (i = 0; attr[i]; i += 2) {
+		if (strcmp("name", attr[i]) == 0) {
+			name = strdup(attr[i+1]);
+		}
+	}
+	data->declare_variable(data, name, "string");
 	return 0;
 }
 
@@ -629,6 +667,10 @@ static void start(struct context *data, const XML_Char *el, const XML_Char **att
 		parse_prototype_tag(data, attr);
 		return;
 	}
+	if (strcmp("string", el) == 0) {
+		parse_string_tag(data, attr);
+		return;
+	}
 	n = add_node(data);
 	if (n == NULL) return;
 	n->type = NODE_START;
@@ -675,6 +717,12 @@ static void end(struct context *data, const XML_Char *el)
 	struct node *n;
 
 	if (strcmp("include", el) == 0)
+		return;
+	if (strcmp("extern", el) == 0)
+		return;
+	if (strcmp("prototype", el) == 0)
+		return;
+	if (strcmp("string", el) == 0)
 		return;
 	n = add_node(data);
 	if (n == NULL) return;
