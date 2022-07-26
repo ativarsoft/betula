@@ -1,0 +1,19 @@
+<templatizer lib="../plugins/input/in_helloworld.so">
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Database input</title>
+	</head>
+	<body>
+		<link lib="../plugins/database/sql.so"/>
+		<prototype name="sql" return="int">
+			<string name="key"/>
+		</prototype>
+		<extern name="sql"/>
+		<sql query="SELECT * FROM test"/>
+		<let var="ret" value="$$"/>
+		<p>$ret</p>
+		<p>@</p>
+	</body>
+</html>
+</templatizer>

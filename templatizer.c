@@ -13,6 +13,7 @@
 #include <sys/queue.h>
 #include <expat.h>
 #include <templatizer.h>
+#include <ctype.h>
 
 #define BUFFER_SIZE 4096
 #define MAX_LABELS 128
@@ -39,7 +40,8 @@ struct prototype {
 	TAILQ_ENTRY(prototype) entries;
 	char *return_type;
 	char *name;
-	int num_stack_frame_words;
+	int num_words; /* number of stack frame words */
+	int num_variables;
 	struct variable_list_head variables;
 };
 
@@ -382,7 +384,7 @@ static int declare_variable_prototype(struct context *data, char *name, char *ty
 		var = add_variable(data, &p->variables);
 		var->name = name;
 		var->type = type;
-		p->num_stack_frame_words++;
+		p->num_words++;
 	}
 	return 0;
 }
@@ -391,10 +393,11 @@ static struct prototype *create_prototype_node(struct context *data)
 {
 	struct prototype *n;
 	(void) data;
-	n = (struct prototype *) malloc(sizeof(struct prototype));
+	n = (struct prototype *) calloc(1, sizeof(struct prototype));
 	if (n == NULL)
 		return NULL;
 	TAILQ_INIT(&n->variables);
+	n->num_words = n->num_variables = 0;
 	return n;
 }
 
@@ -645,12 +648,106 @@ static void free_attr_array(char **attr, int num_attributes)
 	free(attr);
 }
 
+enum variable_location {
+	LOCATION_STACK,
+	LOCATION_GLOBAL,
+	LOCATION_CONSTANT
+};
+
+struct stack_entry {
+	enum variable_location location;
+	int value;
+};
+
+static int lookup_stack_variable
+    (struct context *data,
+     const char *name)
+{
+	return -1;
+}
+
+static int lookup_global_variable
+    (struct context *data,
+     const char *name)
+{
+	return -1;
+}
+
+static int create_param
+    (struct context *data,
+     struct stack_entry *entry,
+     const XML_Char *attr)
+{
+	int index;
+	if (isalpha(attr[0])) {
+		if ((index = lookup_stack_variable(data, attr)) >= 0) {
+			entry->location = LOCATION_STACK;
+			entry->value = index;
+		} else if ((index = lookup_global_variable(data, attr)) >= 0) {
+			entry->location = LOCATION_GLOBAL;
+			entry->value = index;
+		} else {
+			fprintf(stderr, "undefined variable: %s\n", attr);
+			return 1;
+		}
+	} else if (isdigit(attr[0])) {
+		entry->location = LOCATION_CONSTANT;
+		entry->value = atoi(attr);
+	}
+	return 0;
+}
+
+static int add_callspecial_node(struct context *data, struct prototype *proto, const XML_Char **attr)
+{
+	struct variable *param;
+	struct node *n;
+	struct stack_entry *param_list;
+	int num_params, position;
+	int i;
+
+	num_params = proto->num_variables;;
+	if (num_params > 0) {
+		param_list = (struct stack_entry *)
+			calloc(num_params, sizeof(struct stack_entry));
+		if (param_list == NULL)
+			return 1;
+	} else {
+		param_list = NULL;
+	}
+	position = 0;
+	TAILQ_FOREACH(param, &proto->variables, entries) {
+		for (i = 0; attr[i]; i += 2) {
+			if (strcmp(param->name, attr[i]) == 0)
+				create_param(data, &param_list[position], attr[i+1]);
+		}
+		position++;
+	}
+
+	n = add_node(data);
+	if (n == NULL) {
+		free(param_list);
+		return 1;
+	}
+	return 0;
+}
+
+static int parse_registered_tags(struct context *data, const XML_Char *el, const XML_Char **attr)
+{
+	struct prototype *p;
+	TAILQ_FOREACH(p, &data->prototypes, entries) {
+		if (strcmp(p->name, el) == 0)
+			return add_callspecial_node(data, p, attr);
+	}
+	return 1;
+}
+
 static void start(struct context *data, const XML_Char *el, const XML_Char **attr)
 {
-	int i;
+	int i, r;
 	void *p;
 	struct node *n;
 
+	/* keywords */
 	if (strcmp("templatizer", el) == 0) {
 		parse_templatizer_tag(data, attr);
 		return;
@@ -671,6 +768,13 @@ static void start(struct context *data, const XML_Char *el, const XML_Char **att
 		parse_string_tag(data, attr);
 		return;
 	}
+
+	/* registered tags */
+	/*r = parse_registered_tags(data, el, attr);
+	if (r == 0)
+		return;*/
+
+	/* unregistered and unknown tags */
 	n = add_node(data);
 	if (n == NULL) return;
 	n->type = NODE_START;
