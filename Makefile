@@ -1,5 +1,6 @@
 CFLAGS=-fPIC -Wall -O0 -ggdb -Iinclude
 EXEC=templatizer
+VERSION=0.1
 
 all: $(EXEC) plugins
 
@@ -27,8 +28,21 @@ install: templatizer
 	cp -f include/templatizer.h /usr/include
 	make -C plugins install
 
+templatizer.deb: templatizer
+	mkdir -p templatizer-$(VERSION)
+	mkdir -p templatizer-$(VERSION)/DEBIAN
+	cp debian/control debian/postinst templatizer-$(VERSION)/DEBIAN/
+	chmod 0775 templatizer-$(VERSION)/DEBIAN/*
+	mkdir -p templatizer-$(VERSION)/usr/lib/cgi-bin/
+	cp templatizer templatizer-$(VERSION)/usr/lib/cgi-bin/
+	mkdir -p templatizer-$(VERSION)/etc/apache2/conf-available/
+	cp conf/templatizer.conf.original templatizer-$(VERSION)/etc/apache2/conf-available/templatizer.conf
+	dpkg-deb --build templatizer-$(VERSION)
+
 clean:
 	rm -f $(EXEC) *.o lex.yy.c y.tab.c y.tab.h
+	rm -fr templatizer-$(VERSION)
+	rm -f templatizer-$(VERSION).deb
 	make -C plugins clean
 	make -C tests clean
 
