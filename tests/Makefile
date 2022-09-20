@@ -20,3 +20,5 @@ clean:
 	rm -f library.xhtml
 	rm -f placeholder.xhtml
 	rm -f kv.xhtml
+
+.PHONY: clean
