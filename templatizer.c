@@ -890,6 +890,7 @@ static void free_tag_pool(struct context *data)
 static void free_all_nodes(struct context *data)
 {
 	struct node *p;
+	struct node *last_node = NULL;
 
 	TAILQ_FOREACH(p, data->nodes, entries) {
 		if (p->type == NODE_START) {
@@ -898,22 +899,27 @@ static void free_all_nodes(struct context *data)
 		} else if (p->type == NODE_CHARACTER_DATA) {
 			free(p->data.character_data.data);
 		}
-		//free(p);
+		free(last_node);
+		last_node = p;
 	};
+	free(last_node);
 	free(data->nodes);
 }
 
 static void free_all_input(struct context *data)
 {
 	struct input *p;
+	struct input *last_node = NULL;
 
 	TAILQ_FOREACH(p, data->input, entries) {
 		if (p->type == INPUT_FILLER_TEXT) {
 			free(p->data.filler_text);
 		} else if (p->type == INPUT_CONTROL_FLOW) {
 		}
-		//free(p);
+		free(last_node);
+		last_node = p;
 	};
+	free(last_node);
 	free(data->input);
 }
 
