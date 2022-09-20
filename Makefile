@@ -1,4 +1,4 @@
-CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb -Iinclude
+CFLAGS=-fPIC -Wall -O0 -ggdb -Iinclude
 EXEC=templatizer
 
 all: $(EXEC) plugins
@@ -17,7 +17,7 @@ y.tab.o: y.tab.c
 templatizer.o: templatizer.c
 
 templatizer: y.tab.o lex.yy.o templatizer.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lexpat -ldl
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lexpat -ldl -lapr-1
 
 test: templatizer plugins
 	$(MAKE) -C tests test

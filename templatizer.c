@@ -14,6 +14,7 @@
 #include <expat.h>
 #include <templatizer.h>
 #include <ctype.h>
+#include <apr-1.0/apr_pools.h>
 
 #define BUFFER_SIZE 4096
 #define MAX_LABELS 128
@@ -27,6 +28,7 @@ const char version[] = VERSION;
 const char copyright[] = COPYRIGHT;
 
 typedef int (*declare_variable_t)(struct context *data, char *name, char *type);
+typedef apr_pool_t *tmpl_pool_t;
 
 struct variable {
 	TAILQ_ENTRY(variable) entries;
@@ -140,6 +142,10 @@ struct context {
 	enum templatizer_format output_format;
 	enum templatizer_compression output_compression;
 	bool keep_alive;
+
+	struct {
+		tmpl_pool_t process;
+	} pools;
 };
 
 static struct node *add_node(struct context *data);
@@ -743,7 +749,7 @@ static int parse_registered_tags(struct context *data, const XML_Char *el, const
 
 static void start(struct context *data, const XML_Char *el, const XML_Char **attr)
 {
-	int i, r;
+	int i;
 	void *p;
 	struct node *n;
 
@@ -956,6 +962,7 @@ int main(int argc, char **argv)
 {
 	char *tmpl;
 	struct context data;
+	apr_status_t status;
 
 	(void) argc;
 
@@ -964,6 +971,13 @@ int main(int argc, char **argv)
 	tmpl = getenv("PATH_TRANSLATED");
 	if (tmpl == NULL) {
 		fprintf(stderr, "%s: missing template file\n", argv[0]);
+		return 1;
+	}
+
+	apr_initialize();
+	status = apr_pool_create(&data.pools.process, NULL);
+	if (status != 0) {
+		fputs("Failed to create process pool.\n", stderr);
 		return 1;
 	}
 
@@ -988,13 +1002,19 @@ int main(int argc, char **argv)
 	data.keep_alive = false;
 	parse_xml_file(&data, tmpl);
 	print_list(&data);
+
 #if 1
-	free_tag_pool(&data);
-	free_all_nodes(&data);
-	free_all_input(&data); /* free unused input */
+	if (0) {
+		free_tag_pool(&data);
+		free_all_nodes(&data);
+		free_all_input(&data); /* free unused input */
+	} else {
+		apr_pool_destroy(data.pools.process);
+	}
 	if (data.plugin_handle)
 		unload_library(&data);
 #endif
+	apr_terminate();
 	return 0;
 }
 
