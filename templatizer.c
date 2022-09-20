@@ -15,6 +15,7 @@
 #include <templatizer.h>
 #include <ctype.h>
 #include <apr-1.0/apr_pools.h>
+#include <apr-1.0/apr_strings.h>
 
 #define BUFFER_SIZE 4096
 #define MAX_LABELS 128
@@ -157,14 +158,18 @@ static struct context *get_tmpl_context(tmpl_ctx_t ctx)
 
 static void *templatizer_malloc(struct context *data, size_t size)
 {
-	(void) data;
+#if 1
+	return apr_pcalloc(data->pools.process, size);
+#else
 	return malloc(size);
+#endif
 }
 
 static void templatizer_free(struct context *data, void *ptr)
 {
 	(void) data;
-	free(ptr);
+	(void) ptr;
+	//free(ptr);
 }
 
 void set_compression(struct context *data, enum templatizer_compression opt)
@@ -212,7 +217,7 @@ static struct input *add_input(struct context *data)
 {
 	struct input *n;
 
-	if ((n = malloc(sizeof(struct input))) == NULL)
+	if ((n = templatizer_malloc(data, sizeof(struct input))) == NULL)
 		goto nomem;
 	TAILQ_INSERT_TAIL(data->input, n, entries);
 	return n;
@@ -227,7 +232,7 @@ static int add_filler_text(struct context *data, const char *text)
 	struct input *p;
 
 	p = add_input(data);
-	if ((p->data.filler_text = strdup(text)) == NULL)
+	if ((p->data.filler_text = apr_pstrdup(data->pools.process, text)) == NULL)
 		return 1;
 	p->type = INPUT_FILLER_TEXT;
 	return 0;
@@ -285,30 +290,30 @@ static void *load_library(struct context *data, const char *path)
 
 	path_translated = getenv("PATH_TRANSLATED");
 	if (path_translated == NULL) return NULL;
-	path_translated = strdup(path_translated);
+	path_translated = apr_pstrdup(data->pools.process, path_translated);
 	if (path_translated == NULL) return NULL;
 	dir = dirname(path_translated);
-	full_path = malloc(strlen(dir) + 1 + strlen(path) + 1);
+	full_path = templatizer_malloc(data, strlen(dir) + 1 + strlen(path) + 1);
 	if (full_path == NULL) {
-		free(path_translated);
+		templatizer_free(data, path_translated);
 		return NULL;
 	}
 	sprintf(full_path, "%s/%s", dir, path);
-	free(path_translated);
+	templatizer_free(data, path_translated);
 	handle = dlopen(full_path, RTLD_LAZY);
 	if (handle == NULL) {
 		fprintf(stderr, "%s\n", dlerror());
-		free(full_path);
+		templatizer_free(data, full_path);
 		return NULL;
 	}
 	data->plugin_data = dlsym(handle, "templatizer_plugin_v1");
 	if (data->plugin_data == NULL) {
 		dlclose(handle);
 		fprintf(stderr, "%s\n", dlerror());
-		free(full_path);
+		templatizer_free(data, full_path);
 		return NULL;
 	}
-	free(full_path);
+	templatizer_free(data, full_path);
 	data->plugin_handle = handle;
 	return handle;
 }
@@ -350,19 +355,19 @@ static int parse_include_tag(struct context *data, const XML_Char **attr)
 		if (strcmp("file", attr[i]) == 0) {
 			path_translated = getenv("PATH_TRANSLATED");
 			if (path_translated == NULL) return 1;
-			path_translated = strdup(path_translated);
+			path_translated = apr_pstrdup(data->pools.process, path_translated);
 			if (path_translated == NULL) return 1;
 			dir = dirname(path_translated);
-			full_path = malloc(strlen(dir) + 1 + strlen(attr[i + 1]) + 1);
+			full_path = templatizer_malloc(data, strlen(dir) + 1 + strlen(attr[i + 1]) + 1);
 			if (full_path == NULL) {
-				free(path_translated);
+				templatizer_free(data, path_translated);
 				return 1;
 			}
 			sprintf(full_path, "%s/%s", dir, attr[i + 1]);
-			free(path_translated);
+			templatizer_free(data, path_translated);
 			if (parse_xml_file(data, full_path))
 				return 1;
-			free(full_path);
+			templatizer_free(data, full_path);
 		}
 	}
 	return 0;
@@ -416,9 +421,9 @@ static int parse_prototype_tag(struct context *data, const XML_Char **attr)
 
 	for (i = 0; attr[i]; i += 2) {
 		if (strcmp("name", attr[i]) == 0) {
-			n->name = strdup(attr[i+1]);
+			n->name = apr_pstrdup(data->pools.process, attr[i+1]);
 		} else if (strcmp("return", attr[i]) == 0) {
-			n->return_type = strdup(attr[i+1]);
+			n->return_type = apr_pstrdup(data->pools.process, attr[i+1]);
 		}
 	}
 	data->declare_variable = &declare_variable_prototype;
@@ -429,7 +434,7 @@ static struct import *create_import_node(struct context *data)
 {
 	void *p;
 	(void) data;
-	p = malloc(sizeof(struct import));
+	p = templatizer_malloc(data, sizeof(struct import));
 	return (struct import *) p;
 }
 
@@ -442,7 +447,7 @@ static int parse_extern_tag(struct context *data, const XML_Char **attr)
 
 	for (i = 0; attr[i]; i += 2) {
 		if (strcmp("name", attr[i]) == 0) {
-			name = strdup(attr[i+1]);
+			name = apr_pstrdup(data->pools.process, attr[i+1]);
 			sym = get_symbol(data, name);
 			n = create_import_node(data);
 			n->name = name;
@@ -460,7 +465,7 @@ static int parse_string_tag(struct context *data, const XML_Char **attr)
 
 	for (i = 0; attr[i]; i += 2) {
 		if (strcmp("name", attr[i]) == 0) {
-			name = strdup(attr[i+1]);
+			name = apr_pstrdup(data->pools.process, attr[i+1]);
 		}
 	}
 	data->declare_variable(data, name, "string");
@@ -471,9 +476,9 @@ static char *tag_pool_add(struct context *data, const XML_Char *el)
 {
 	struct tag *new;
 
-	if ((new = malloc(sizeof(struct tag))) == NULL)
+	if ((new = templatizer_malloc(data, sizeof(struct tag))) == NULL)
 		return NULL;
-	if ((new->s = strdup(el)) == NULL)
+	if ((new->s = apr_pstrdup(data->pools.process, el)) == NULL)
 		return NULL;
 	new->next = data->tag_head;
 	data->tag_head = new;
@@ -500,7 +505,7 @@ static void dump_string(struct context *data)
 	p = TAILQ_FIRST(data->input);
 	fputs(p->data.filler_text, stdout);
 	TAILQ_REMOVE(data->input, p, entries);
-	free(p);
+	templatizer_free(data, p);
 }
 
 /* NOTE: not all keywords here are related to control flow anymore. */
@@ -583,7 +588,7 @@ static enum control_flow print_node(struct context *data, struct node *n)
 			else
 				r = NEXT_INSTRUCTION;
 			TAILQ_REMOVE(data->input, p, entries);
-			free(p);
+			templatizer_free(data, p);
 			return r;
 		}
 		print_start_node(data, &n->data.start);
@@ -645,13 +650,13 @@ nomem:
 	return NULL;
 }
 
-static void free_attr_array(char **attr, int num_attributes)
+static void free_attr_array(struct context *data, char **attr, int num_attributes)
 {
 	int i;
 
 	for (i = 0; i < num_attributes; i++)
-		free(attr[i]);
-	free(attr);
+		templatizer_free(data, attr[i]);
+	templatizer_free(data, attr);
 }
 
 enum variable_location {
@@ -731,7 +736,7 @@ static int add_callspecial_node(struct context *data, struct prototype *proto, c
 
 	n = add_node(data);
 	if (n == NULL) {
-		free(param_list);
+		templatizer_free(data, param_list);
 		return 1;
 	}
 	return 0;
@@ -791,8 +796,8 @@ static void start(struct context *data, const XML_Char *el, const XML_Char **att
 	}
 	for (i = 0; attr[i]; i++);
 	if (i > 0) {
-		if ((p = malloc(i * sizeof(char *))) == NULL) {
-			free(n->data.start.el);
+		if ((p = templatizer_malloc(data, i * sizeof(char *))) == NULL) {
+			templatizer_free(data, n->data.start.el);
 			fputs("no memory for new attribute\n", stderr);
 			XML_StopParser(data->parser, 0);
 			return;
@@ -804,16 +809,16 @@ static void start(struct context *data, const XML_Char *el, const XML_Char **att
 	n->data.start.attr = (char **) p;
 	n->data.start.jmp = NULL;
 	for (i = 0; attr[i]; i++) {
-		if ((n->data.start.attr[i] = strdup(attr[i])) == NULL) {
-			free(n->data.start.el);
-			free_attr_array(n->data.start.attr, i);
+		if ((n->data.start.attr[i] = apr_pstrdup(data->pools.process, attr[i])) == NULL) {
+			templatizer_free(data, n->data.start.el);
+			free_attr_array(data, n->data.start.attr, i);
 			return;
 		}
 	}
 	if (is_control_flow_keyword(el)) {
 		if (data->num_labels >= MAX_LABELS) {
-			free(n->data.start.el);
-			free_attr_array(n->data.start.attr, n->data.start.num_attributes);
+			templatizer_free(data, n->data.start.el);
+			free_attr_array(data, n->data.start.attr, n->data.start.num_attributes);
 			fputs("control flow stack overflow\n", stderr);
 			XML_StopParser(data->parser, 0);
 			return;
@@ -882,8 +887,8 @@ static void free_tag_pool(struct context *data)
 
 	for (p = data->tag_head; p; p = next) {
 		next = p->next;
-		free(p->s);
-		free(p);
+		templatizer_free(data, p->s);
+		templatizer_free(data, p);
 	}
 }
 
@@ -894,16 +899,16 @@ static void free_all_nodes(struct context *data)
 
 	TAILQ_FOREACH(p, data->nodes, entries) {
 		if (p->type == NODE_START) {
-			free_attr_array(p->data.start.attr, p->data.start.num_attributes);
+			free_attr_array(data, p->data.start.attr, p->data.start.num_attributes);
 		} else if (p->type == NODE_END) {
 		} else if (p->type == NODE_CHARACTER_DATA) {
-			free(p->data.character_data.data);
+			templatizer_free(data, p->data.character_data.data);
 		}
-		free(last_node);
+		templatizer_free(data, last_node);
 		last_node = p;
 	};
-	free(last_node);
-	free(data->nodes);
+	templatizer_free(data, last_node);
+	templatizer_free(data, data->nodes);
 }
 
 static void free_all_input(struct context *data)
@@ -913,14 +918,14 @@ static void free_all_input(struct context *data)
 
 	TAILQ_FOREACH(p, data->input, entries) {
 		if (p->type == INPUT_FILLER_TEXT) {
-			free(p->data.filler_text);
+			templatizer_free(data, p->data.filler_text);
 		} else if (p->type == INPUT_CONTROL_FLOW) {
 		}
-		free(last_node);
+		templatizer_free(data, last_node);
 		last_node = p;
 	};
-	free(last_node);
-	free(data->input);
+	templatizer_free(data, last_node);
+	templatizer_free(data, data->input);
 }
 
 static int parse_xml_file(struct context *data, const char *tmpl)
