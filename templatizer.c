@@ -16,6 +16,7 @@
 #include <ctype.h>
 #include <apr-1.0/apr_pools.h>
 #include <apr-1.0/apr_strings.h>
+#include <time.h>
 
 #define BUFFER_SIZE 4096
 #define MAX_LABELS 128
@@ -974,8 +975,19 @@ int main(int argc, char **argv)
 	char *tmpl;
 	struct context data;
 	apr_status_t status;
+	clock_t begin;
+	clock_t end;
+	double time_spent;
+	FILE *log;
 
 	(void) argc;
+
+	begin = clock();
+
+	log = fopen("access.log", "a");
+	if (log == NULL) {
+		return 1;
+	}
 
 	memset(&data, 0, sizeof(data));
 
@@ -1026,6 +1038,13 @@ int main(int argc, char **argv)
 		unload_library(&data);
 #endif
 	apr_terminate();
+
+	end = clock();
+	time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+
+	fprintf(log, "[%lf] %s\n", time_spent, tmpl);
+	fclose(log);
+
 	return 0;
 }
 
