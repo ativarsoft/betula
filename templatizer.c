@@ -892,7 +892,7 @@ static void free_all_nodes(struct context *data)
 		} else if (p->type == NODE_CHARACTER_DATA) {
 			free(p->data.character_data.data);
 		}
-		free(p);
+		//free(p);
 	};
 	free(data->nodes);
 }
@@ -906,7 +906,7 @@ static void free_all_input(struct context *data)
 			free(p->data.filler_text);
 		} else if (p->type == INPUT_CONTROL_FLOW) {
 		}
-		free(p);
+		//free(p);
 	};
 	free(data->input);
 }
