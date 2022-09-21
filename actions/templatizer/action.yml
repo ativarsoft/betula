@@ -1,6 +1,6 @@
 runs:
+  using: "composite"
   steps:
-    using: "composite"
     - run: make test
       shell: bash
 
