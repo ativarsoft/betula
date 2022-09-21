@@ -31,4 +31,4 @@
 #    Order allow,deny
 #    Allow from all
 #</Directory>
-#Action application/x-httpd-tmpl /cgi-bin/templatizer
+Action application/x-httpd-tmpl /cgi-bin/templatizer
