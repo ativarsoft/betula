@@ -10,14 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Update repository
-        run: sudo apt-get update
-      - name: Install dependencies
-        run: sudo apt-get install libexpat1-dev flex bison build-essential libapr1-dev
-      - name: make
-        run: make
-      - name: make test
-        run: make test
+      - uses: m4t3uz/templatizer/.github/workflows/templatizer.yml@main
       - name: Build
         run: echo ${{ github.sha }} > Release.txt
       - name: Test
