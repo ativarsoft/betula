@@ -9,8 +9,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./github/workflows
       - uses: actions/checkout@v3
+      - uses: ./github/workflows
       - name: Build
         run: echo ${{ github.sha }} > Release.txt
       - name: Test
