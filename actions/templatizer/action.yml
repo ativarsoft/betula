@@ -4,10 +4,14 @@ runs:
     - uses: actions/checkout@v3
     - name: Update repository
       run: sudo apt-get update
+      shell: bash
     - name: Install dependencies
       run: sudo apt-get install libexpat1-dev flex bison build-essential libapr1-dev
+      shell: bash
     - name: make
       run: make
+      shell: bash
     - name: make test
       run: make test
+      shell: bash
 
