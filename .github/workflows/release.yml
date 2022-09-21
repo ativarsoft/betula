@@ -7,7 +7,7 @@ on:
 
 jobs:
   call-templatizer-workflow:
-    uses: m4t3uz/templatizer/.github/workflows/templatizer.yml@main
+    uses: ./.github/workflows/templatizer.yml
   build:
     runs-on: ubuntu-latest
     steps:
