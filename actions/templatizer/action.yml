@@ -1,6 +1,6 @@
 runs:
   using: "composite"
   steps:
-    - run: make test
+    - run: $GITHUB_ACTION_PATH/script.sh
       shell: bash
 
