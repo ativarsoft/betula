@@ -1,8 +1,8 @@
 CFLAGS=-fPIC -Wall -O0 -ggdb -Iinclude
 EXEC=templatizer
-VERSION=0.1
+VERSION=0.3
 
-all: $(EXEC) plugins
+all: $(EXEC) plugins templatizer-$(VERSION).deb
 
 plugins:
 	make -C plugins
@@ -28,7 +28,7 @@ install: templatizer
 	cp -f include/templatizer.h /usr/include
 	make -C plugins install
 
-templatizer.deb: templatizer
+templatizer-$(VERSION).deb: templatizer
 	mkdir -p templatizer-$(VERSION)
 	mkdir -p templatizer-$(VERSION)/DEBIAN
 	cp debian/control debian/postinst templatizer-$(VERSION)/DEBIAN/
