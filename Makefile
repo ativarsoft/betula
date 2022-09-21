@@ -1,6 +1,6 @@
 CFLAGS=-fPIC -Wall -O0 -ggdb -Iinclude
 EXEC=templatizer
-VERSION=0.5
+VERSION=0.7
 
 all: $(EXEC) plugins templatizer-$(VERSION).deb
 
