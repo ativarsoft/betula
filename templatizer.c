@@ -984,7 +984,7 @@ int main(int argc, char **argv)
 
 	begin = clock();
 
-	log = fopen("access.log", "a");
+	log = fopen("/var/log/templatizer/access.log", "a");
 	if (log == NULL) {
 		return 1;
 	}

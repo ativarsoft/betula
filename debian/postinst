@@ -1,1 +1,4 @@
+mkdir /var/log/templatizer
+chown www-data:www-data /var/log/templatizer/
 a2enconf templatizer
+service apache2 reload
