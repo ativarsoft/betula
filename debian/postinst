@@ -1,4 +1,6 @@
 mkdir /var/log/templatizer
 chown www-data:www-data /var/log/templatizer/
 a2enconf templatizer
-service apache2 reload
+a2enmod cgi
+a2enmod actions
+service apache2 restart
