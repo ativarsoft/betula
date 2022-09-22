@@ -4,7 +4,7 @@ all:
 	make -C input
 	make -C database
 
-install: templatizer
+install:
 	make -C input install
 	make -C database install
 
