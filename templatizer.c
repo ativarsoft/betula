@@ -972,20 +972,28 @@ out:
 
 int main(int argc, char **argv)
 {
+	const char access_log_path[] = "/var/log/templatizer/access.log";
+	const char error_log_path[] = "/var/log/templatizer/error.log";
 	char *tmpl;
 	struct context data;
 	apr_status_t status;
 	clock_t begin;
 	clock_t end;
 	double time_spent;
-	FILE *log;
+	FILE *access_log, *error_log;
 
 	(void) argc;
 
 	begin = clock();
 
-	log = fopen("/var/log/templatizer/access.log", "a");
-	if (log == NULL) {
+	error_log = fopen(error_log_path, "a");
+	if (error_log == NULL) {
+		fprintf(stderr, "Unable to open log file at '%s'.\n", error_log_path);
+		return 1;
+	}
+	access_log = fopen(access_log_path, "a");
+	if (access_log == NULL) {
+		fprintf(error_log, "Unable to open log file at '%s'.\n", access_log_path);
 		return 1;
 	}
 
@@ -993,14 +1001,14 @@ int main(int argc, char **argv)
 
 	tmpl = getenv("PATH_TRANSLATED");
 	if (tmpl == NULL) {
-		fprintf(stderr, "%s: missing template file\n", argv[0]);
+		fprintf(error_log, "%s: missing template file\n", argv[0]);
 		return 1;
 	}
 
 	apr_initialize();
 	status = apr_pool_create(&data.pools.process, NULL);
 	if (status != 0) {
-		fputs("Failed to create process pool.\n", stderr);
+		fputs("Failed to create process pool.\n", error_log);
 		return 1;
 	}
 
@@ -1042,8 +1050,9 @@ int main(int argc, char **argv)
 	end = clock();
 	time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
-	fprintf(log, "[%lf] %s\n", time_spent, tmpl);
-	fclose(log);
+	fprintf(access_log, "[%lf] %s\n", time_spent, tmpl);
+	fclose(access_log);
+	fclose(error_log);
 
 	return 0;
 }
