@@ -1,6 +1,6 @@
 CFLAGS=-fPIC -Wall -O0 -ggdb -Iinclude
 EXEC=templatizer
-VERSION=0.9
+VERSION=$(shell ./version.sh)
 
 all: $(EXEC) plugins templatizer-$(VERSION).deb
 
@@ -29,6 +29,7 @@ install: templatizer
 	make -C plugins install
 
 templatizer-$(VERSION).deb: templatizer include/templatizer.h conf/templatizer.conf.original
+	./gen_control.sh
 	mkdir -p templatizer-$(VERSION)
 	mkdir -p templatizer-$(VERSION)/DEBIAN
 	cp debian/control debian/postinst templatizer-$(VERSION)/DEBIAN/
@@ -40,6 +41,7 @@ templatizer-$(VERSION).deb: templatizer include/templatizer.h conf/templatizer.c
 	mkdir -p templatizer-$(VERSION)/etc/apache2/conf-available/
 	cp conf/templatizer.conf.original templatizer-$(VERSION)/etc/apache2/conf-available/templatizer.conf
 	dpkg-deb --build templatizer-$(VERSION)
+	rm -r templatizer-$(VERSION)/
 
 clean:
 	rm -f $(EXEC) *.o lex.yy.c y.tab.c y.tab.h
