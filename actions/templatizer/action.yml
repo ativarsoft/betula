@@ -8,13 +8,13 @@ runs:
     - name: Install dependencies
       run: sudo apt-get install libexpat1-dev flex bison build-essential libapr1-dev
       shell: bash
-    - name: make
+    - name: Build
       run: make
       shell: bash
-    - name: make test
+    - name: Test
       run: make test
       shell: bash
-    - name: make install
-      run: make install
+    - name: Install
+      run: sudo make install
       shell: bash
 
