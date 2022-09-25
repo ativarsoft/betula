@@ -47,5 +47,6 @@ It requires:
 
   * sys/queue.h for list macros;
   * libdl for dynamically loading libraries;
-  * libexpat;
+  * libexpat1-dev;
   * flex and bison.
+  * libapr1-dev
