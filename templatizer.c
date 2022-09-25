@@ -497,14 +497,35 @@ static char *tag_pool_lookup(struct context *data, const XML_Char *el)
 	return tag_pool_add(data, el);
 }
 
+static void print_html_escaped(char *s, size_t len)
+{
+    int i;
+    char c;
+    for (i = 0; i < len; i++) {
+        c = s[i];
+        switch (c) {
+            case '\"': puts("&quot");   //quotation mark
+            case '\'': puts("&apos");    //apostrophe 
+            case '&':  puts("&amp");    //ampersand
+            case '<':  puts("&lt");     //less-than
+            case '>':  puts("&gt");      //greater-than
+            default:
+            putchar(c);
+        }
+    }
+}
+
 static void dump_string(struct context *data)
 {
 	struct input *p;
+	const char *s;
 
 	if (TAILQ_EMPTY(data->input))
 		return;
 	p = TAILQ_FIRST(data->input);
-	fputs(p->data.filler_text, stdout);
+	//fputs(p->data.filler_text, stdout);
+	s= p->data.filler_text;
+        print_html_escaped(s, strlen(s));
 	TAILQ_REMOVE(data->input, p, entries);
 	templatizer_free(data, p);
 }
