@@ -14,4 +14,7 @@ runs:
     - name: make test
       run: make test
       shell: bash
+    - name: make install
+      run: make install
+      shell: bash
 
