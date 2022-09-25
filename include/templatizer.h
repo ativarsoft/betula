@@ -20,6 +20,59 @@
 		exit(1); \
 	}
 
+#define TMPL_ASSERT(err) tmpl_assert(err)
+
+#define TMPL_ADD(a, b, c) \
+{ \
+    if (__builtin_add_overflow(a, b, &c)) { \
+        fprintf(stderr, "%s:%d: integer overflow.\n", __FILE__, __LINE__); \
+        printf("Status: 500\r\n"); \
+        printf("Content-Type: text/plain\r\n"); \
+        printf("\r\n"); \
+        printf("Integer overflow.\n"); \
+        exit(1); \
+    } \
+}
+
+#define TMPL_ASSIGN_PTR(lhs, rhs) \
+{ \
+    if (lhs) { \
+        *lhs = rhs; \
+    } else { \
+        fprintf(stderr, "%s:%d: null pointer exception.\n", __FILE__, __LINE__); \
+        printf("Status: 500\r\n"); \
+        printf("Content-Type: text/plain\r\n"); \
+        printf("\r\n"); \
+        printf("Null pointer exception.\n"); \
+        exit(1); \
+    } \
+}
+
+#define TMPL_ASSIGN(lhs, rhs) \
+{ \
+    lhs = rhs; \
+    if (lhs != rhs) { \
+        fprintf(stderr, "%s:%d: assignment error.\n", __FILE__, __LINE__); \
+        printf("Status: 500\r\n"); \
+        printf("Content-Type: text/plain\r\n"); \
+        printf("\r\n"); \
+        printf("Assignment error.\n"); \
+        exit(1); \
+    } \
+}
+
+#ifndef ADD
+#define ADD(a, b, c) TMPL_ADD(a, b, c)
+#endif
+
+#ifndef ASSIGN_PTR
+#define ASSIGN_PTR(lhs, rhs) TMPL_ASSIGN_PTR(lhs, rhs)
+#endif
+
+#ifndef ASSIGN
+#define ASSIGN(lhs, rhs) TMPL_ASSIGN(lhs, rhs)
+#endif
+
 struct context;
 typedef struct context *tmpl_ctx_t;
 
