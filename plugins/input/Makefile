@@ -1,6 +1,7 @@
 CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb -I../../include
+PLUGINS=in_helloworld.so in_percent.so
 
-all: in_helloworld.so in_percent.so
+all: $(PLUGINS)
 
 in_helloworld.so: helloworld.o
 	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^
@@ -11,8 +12,9 @@ in_percent.so: percent.o
 in_json.so: jsonc.o
 	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^ -llaxjson
 
-install: libtemplatizer.so
-	cp -f libtemplatizer.so /usr/lib
+install:
 
 clean:
-	rm -f libtemplatizer.so *.o
+	rm -f $(PLUGINS) *.o
+
+.PHONY: install clean
