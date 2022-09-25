@@ -1,6 +1,6 @@
 chown root:root /usr/lib/cgi-bin/templatizer
 chmod 755 /usr/lib/cgi-bin/templatizer
-mkdir /var/log/templatizer
+mkdir -p /var/log/templatizer
 chown www-data:www-data /var/log/templatizer/
 a2enconf templatizer
 a2enmod cgi
