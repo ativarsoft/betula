@@ -4,6 +4,9 @@ VERSION=$(shell ./version.sh)
 
 all: $(EXEC) plugins templatizer-$(VERSION).deb
 
+dependencies:
+	apt-get install $(shell cat dependencies.list)
+
 plugins:
 	make -C plugins
 
@@ -50,4 +53,4 @@ clean:
 	make -C plugins clean
 	make -C tests clean
 
-.PHONY: plugins test install clean
+.PHONY: dependencies plugins test install clean
