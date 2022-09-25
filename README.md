@@ -26,6 +26,12 @@ mitigate use-after-free, buffer overflows and buffer underflows.
 A good explanation can be found
 [here](http://www.apachetutor.org/dev/pools).
 
+setuid can be used to make Apache run Templatizer as root.
+Templatizer gets the user and password from the CGI environment
+flags and use setuid to drop privileges to the specified user.
+This can be used to restrict filesystem access without using
+fakechroot. fakechroot provides wrappers for common system calls.
+
 ## Plugins
 
 Input plugins read url-encoded and JSON
