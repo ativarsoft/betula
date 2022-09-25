@@ -14,7 +14,7 @@
 #define TMPL_INIT_CALLBACKS(var, cb) var = cb
 
 #define tmpl_assert(err) \
-	if (!err) { \
+	if (!(err)) { \
 		fprintf(stderr, "assertion failed in file %s, function %s, line %d\n", __FILE__, __FUNCTION__, __LINE__); \
 		printf("Status: 500\r\n\r\n"); \
 		exit(1); \
