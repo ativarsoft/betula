@@ -497,7 +497,7 @@ static char *tag_pool_lookup(struct context *data, const XML_Char *el)
 	return tag_pool_add(data, el);
 }
 
-static void print_html_escaped(char *s, size_t len)
+static void print_html_escaped(const char *s, size_t len)
 {
     int i;
     char c;
@@ -1007,7 +1007,11 @@ int main(int argc, char **argv)
 
 	log = fopen("/var/log/templatizer/access.log", "a");
 	if (log == NULL) {
-		return 1;
+		log = fopen("access.log", "a");
+		if (log == NULL) {
+			fputs("Unable to open log file.\n", stderr);
+			return 1;
+		}
 	}
 
 	memset(&data, 0, sizeof(data));

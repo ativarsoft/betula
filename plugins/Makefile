@@ -12,4 +12,4 @@ clean:
 	make -C input clean
 	make -C database clean
 
-.PHONY: install clean
+.PHONY: all install clean

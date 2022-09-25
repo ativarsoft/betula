@@ -6,13 +6,13 @@ EXEC= #cookie percent json
 test: $(TESTS) $(EXEC)
 
 simple.xhtml: simple.tmpl ../templatizer
-	$(shell PATH_TRANSLATED="simple.tmpl" ../templatizer > $@)
+	./run-templatizer.sh $< $@
 library.xhtml: library.tmpl ../templatizer
-	$(shell PATH_TRANSLATED="library.tmpl" ../templatizer > $@)
+	./run-templatizer.sh $< $@
 placeholder.xhtml: placeholder.tmpl ../templatizer
-	$(shell PATH_TRANSLATED="placeholder.tmpl" ../templatizer > $@)
+	./run-templatizer.sh $< $@
 kv.xhtml: kv.tmpl ../templatizer
-	$(shell PATH_TRANSLATED="kv.tmpl" ../templatizer > $@)
+	./run-templatizer.sh $< $@
 
 clean:
 	rm -f $(EXEC) *.o
