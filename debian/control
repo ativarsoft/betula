@@ -1,5 +1,5 @@
 Package: templatizer
-Version: 0.10
+Version: 0.13
 Maintainer: Mateus de Lima Oliveira
 Architecture: amd64
 Description: A XML/HTML templating programming language.
