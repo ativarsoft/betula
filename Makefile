@@ -32,7 +32,7 @@ install: templatizer
 	make -C plugins install
 
 templatizer-$(VERSION).deb: templatizer include/templatizer.h conf/templatizer.conf.original
-	./gen_control.sh
+	./gen-control.sh
 	mkdir -p templatizer-$(VERSION)
 	mkdir -p templatizer-$(VERSION)/DEBIAN
 	cp debian/control debian/postinst templatizer-$(VERSION)/DEBIAN/
