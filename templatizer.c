@@ -17,6 +17,9 @@
 #include <apr-1.0/apr_pools.h>
 #include <apr-1.0/apr_strings.h>
 #include <time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #define BUFFER_SIZE 4096
 #define MAX_LABELS 128
@@ -150,7 +153,9 @@ struct context {
 	} pools;
 };
 
+/* Function prototypes */
 static struct node *add_node(struct context *data);
+static FILE *open_path_translated(tmpl_ctx_t data, const char *pathtranslated);
 
 static struct context *get_tmpl_context(tmpl_ctx_t ctx)
 {
@@ -171,6 +176,11 @@ static void templatizer_free(struct context *data, void *ptr)
 	(void) data;
 	(void) ptr;
 	//free(ptr);
+}
+
+static char *templatizer_strdup(tmpl_ctx_t data, const char *s)
+{
+	return apr_pstrdup(data->pools.process, s);
 }
 
 void set_compression(struct context *data, enum templatizer_compression opt)
@@ -965,9 +975,14 @@ static int parse_xml_file(struct context *data, const char *tmpl)
 		(XML_StartElementHandler) start,
 		(XML_EndElementHandler) end);
 	XML_SetCharacterDataHandler(parser, (XML_CharacterDataHandler) character_data);
-	file = fopen(tmpl, "rt");
+	//file = fopen(tmpl, "rt");
+	file = open_path_translated(data, tmpl);
 	if (file == NULL) {
 		fprintf(stderr, "%s: unable to open file '%s'.\n", __FUNCTION__, tmpl);
+		fputs("Status: 404 File not found\r\n", stdout);
+		fputs("Content-Type: text/plain\r\n", stdout);
+		fputs("\r\n", stdout);
+		puts("File not found.");
 		return 1;
 	}
 	do {
@@ -989,6 +1004,49 @@ static int parse_xml_file(struct context *data, const char *tmpl)
 out:
 	fclose(file);
 	return r;
+}
+
+static FILE *open_path_translated(tmpl_ctx_t data, const char *pathtranslated)
+{
+	char *token, *string, *tofree;
+	int fd = 0;
+	FILE *file = NULL;
+#ifdef _WIN32
+	const char separators[] = "/\\";
+#else
+	const char separators[] = "/";
+#endif
+	const char *documentroot = getenv("DOCUMENT_ROOT");
+	tofree = string = templatizer_strdup(data, pathtranslated);
+	if (string == NULL)
+		return NULL;
+	if (strcspn(string, separators) == 0) {
+		fd = open("/", O_RDONLY);
+		string++;
+	} else if (documentroot != NULL) {
+		fd = open(documentroot, O_RDONLY);
+	} else {
+		fd = open(".", O_RDONLY);
+	}
+	if (fd < 0) {
+		fputs("Unable to open root directory as read-only.\n", stderr);
+		goto out1;
+	}
+	while ((token = strsep(&string, separators)) != NULL) {
+		fd = openat(fd, token, O_RDONLY);
+		if (fd < 0) {
+			fprintf(stderr, "Unable to open node '%s'\n", token);
+			goto out1;
+		}
+	}
+	file = fdopen(fd, "rt");
+	if (file == NULL) {
+		fprintf(stderr, "fdopen failed for file '%s' in '%s'\n", token, pathtranslated);
+		goto out1;
+	}
+out1:
+	templatizer_free(data, tofree);
+	return file;
 }
 
 int main(int argc, char **argv)

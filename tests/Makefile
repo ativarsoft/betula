@@ -15,7 +15,7 @@ kv.xhtml: kv.tmpl ../templatizer
 	./run-templatizer.sh $< $@
 
 clean:
-	rm -f $(EXEC) *.o
+	rm -f $(EXEC) *.o *.md5
 	rm -f simple.xhtml
 	rm -f library.xhtml
 	rm -f placeholder.xhtml
