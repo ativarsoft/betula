@@ -1033,6 +1033,10 @@ static FILE *open_path_translated(tmpl_ctx_t data, const char *pathtranslated)
 		goto out1;
 	}
 	while ((token = strsep(&string, separators)) != NULL) {
+		if (token[0] == '.') {
+			close(fd);
+			goto out1;
+		}
 		fd = openat(fd, token, O_RDONLY);
 		if (fd < 0) {
 			fprintf(stderr, "Unable to open node '%s'\n", token);
