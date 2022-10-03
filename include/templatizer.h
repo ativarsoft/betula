@@ -15,9 +15,12 @@
 
 #define tmpl_assert(err) \
 	if (!(err)) { \
-		fprintf(stderr, "assertion failed in file %s, function %s, line %d\n", __FILE__, __FUNCTION__, __LINE__); \
-		printf("Status: 500\r\n\r\n"); \
-		exit(1); \
+		fputs("Status: 500 Internal Server Error\r\n", stdout); \
+		fputs("Content-Type: text/plain\r\n", stdout); \
+		fputs("\r\n", stdout); \
+		fputs("Internal Server Error\n", stdout); \
+		fprintf(stdout, "assertion failed in file %s, function %s, line %d\n", __FILE__, __FUNCTION__, __LINE__); \
+		exit(0); \
 	}
 
 #define TMPL_ASSERT(err) tmpl_assert(err)
@@ -26,11 +29,11 @@
 { \
     if (__builtin_add_overflow(a, b, &c)) { \
         fprintf(stderr, "%s:%d: integer overflow.\n", __FILE__, __LINE__); \
-        printf("Status: 500\r\n"); \
+        printf("Status: 500 Internal Server Error\r\n"); \
         printf("Content-Type: text/plain\r\n"); \
         printf("\r\n"); \
         printf("Integer overflow.\n"); \
-        exit(1); \
+        exit(0); \
     } \
 }
 
@@ -40,24 +43,24 @@
         *lhs = rhs; \
     } else { \
         fprintf(stderr, "%s:%d: null pointer exception.\n", __FILE__, __LINE__); \
-        printf("Status: 500\r\n"); \
+        printf("Status: 500 Internal Server Error\r\n"); \
         printf("Content-Type: text/plain\r\n"); \
         printf("\r\n"); \
         printf("Null pointer exception.\n"); \
-        exit(1); \
+        exit(0); \
     } \
 }
 
 #define TMPL_ASSIGN(lhs, rhs) \
 { \
-    lhs = rhs; \
-    if (lhs != rhs) { \
+    (lhs) = (rhs); \
+    if ((lhs) != (rhs)) { \
         fprintf(stderr, "%s:%d: assignment error.\n", __FILE__, __LINE__); \
-        printf("Status: 500\r\n"); \
+        printf("Status: 500 Internal Server Error\r\n"); \
         printf("Content-Type: text/plain\r\n"); \
         printf("\r\n"); \
         printf("Assignment error.\n"); \
-        exit(1); \
+        exit(0); \
     } \
 }
 

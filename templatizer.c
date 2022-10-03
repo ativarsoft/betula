@@ -20,6 +20,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/mman.h>
 
 #define BUFFER_SIZE 4096
 #define MAX_LABELS 128
@@ -142,6 +143,7 @@ struct context {
 	declare_variable_t declare_variable;
 	struct prototype *current_prototype;
 
+	int bytecode_file;
 	void *plugin_handle;
 	struct templatizer_plugin *plugin_data;
 	enum templatizer_format output_format;
@@ -156,6 +158,64 @@ struct context {
 /* Function prototypes */
 static struct node *add_node(struct context *data);
 static FILE *open_path_translated(tmpl_ctx_t data, const char *pathtranslated);
+static int serialize_node(tmpl_ctx_t ctx, struct node *n);
+
+#define TMPL_MASK_BITS(bits) (~0L << (bits))
+#define TMPL_MASK(type) TMPL_MASK_BITS(sizeof(type) * 8)
+
+#ifndef TMPL_CAST
+#define TMPL_CAST(value, type) ((value | TMPL_MASK(type)) == value)? (type) value : abort())
+#endif
+
+static int serialize_node(tmpl_ctx_t ctx, struct node *n)
+{
+	int fd = ctx->bytecode_file;
+	uint8_t type = {n->type};
+	write(fd, type, sizeof(type));
+	return 0;
+}
+
+static int serialize_all_nodes(tmpl_ctx_t ctx)
+{
+	struct node *n = NULL;
+	int result = -1;
+	int ret = -1;
+
+	TAILQ_FOREACH(n, ctx->nodes, entries) {
+		result = serialize_node(ctx, n);
+		if (result != 0) {
+			TMPL_ASSIGN(ret, 1);
+			goto out1;
+		}
+	}
+	TMPL_ASSIGN(ret, 0);
+out1:
+	return ret;
+}
+
+static int serialize_template_file(tmpl_ctx_t ctx)
+{
+	int fd = -1;
+	int ret = -1;
+	int result = -1;
+	fd = memfd_create("bytecode", O_RDWR);
+	if (fd == -1) {
+		goto error1;
+	}
+	ctx->bytecode_file = fd;
+	result = serialize_all_nodes(ctx);
+	if (result != 0) {
+		goto error2;
+	}
+	close(fd);
+	ret = 0;
+	goto ok;
+error2:
+	close(fd);
+error1:
+ok:
+	return ret;
+}
 
 static struct context *get_tmpl_context(tmpl_ctx_t ctx)
 {
@@ -1111,6 +1171,7 @@ int main(int argc, char **argv)
 	data.output_compression = TMPL_Z_PLAIN; /* NOTE: remember CRIME and BREACH exploits. */
 	data.keep_alive = false;
 	parse_xml_file(&data, tmpl);
+	serialize_template_file(&data);
 	print_list(&data);
 
 #if 1
