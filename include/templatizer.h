@@ -90,7 +90,20 @@ enum templatizer_format {
 	TMPL_FMT_XHTML
 };
 
-typedef int (*on_element_callback_t)(tmpl_ctx_t ctx);
+typedef int (*on_element_callback_t)
+    (tmpl_ctx_t ctx);
+typedef int (*tmpl_codegen_tag_start_t)
+    (tmpl_ctx_t ctx,
+     const char *el,
+     const char **attr);
+typedef int (*tmpl_codegen_tag_end_t)
+    (tmpl_ctx_t ctx,
+     const char *el);
+typedef int (*tmpl_codegen_control_flow_start_t)
+    (tmpl_ctx_t ctx);
+typedef int (*tmpl_codegen_control_flow_end_t)
+    (tmpl_ctx_t ctx,
+     const char *label);
 
 struct templatizer_callbacks {
 	/* Templatizer will manage the memory for the plugin. */
@@ -109,6 +122,8 @@ struct templatizer_callbacks {
 	int (*add_control_flow)(struct context *data, int b); /* for conditionals */
 
 	int (*register_element_tag)(tmpl_ctx_t ctx, char *s, on_element_callback_t cb);
+	int (*register_codegen_tag_start)(tmpl_ctx_t ctx, tmpl_codegen_tag_start_t cb);
+	int (*register_codegen_tag_end)(tmpl_ctx_t ctx, tmpl_codegen_tag_end_t cb);
 
 	void (*exit)(tmpl_ctx_t ctx, int status);
 };
