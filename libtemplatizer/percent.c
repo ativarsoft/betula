@@ -1,3 +1,4 @@
+/* Copyright (C) 2022 Mateus de Lima Oliveira */
 #include <templatizer/percent.h>
 #include <stdio.h>
 #include <stddef.h>

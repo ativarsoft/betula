@@ -1,3 +1,4 @@
+/* Copyright (C) 2022 Mateus de Lima Oliveira */
 #include <templatizer/cookie.h>
 #include <stdio.h>
 #include <string.h> /* strchr() */
