@@ -4,7 +4,10 @@
 
 static const char mime[] = "application/x-www-form-urlencoded";
 
-int query_callback(char *s, size_t len)
+int query_callback
+    (void *data,
+     void *key, size_t keylen,
+     void *value, size_t valuelen)
 {
 	return 0;
 }

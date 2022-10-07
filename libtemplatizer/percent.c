@@ -1,3 +1,4 @@
+#include <templatizer/percent.h>
 #include <stdio.h>
 #include <stddef.h>
 #include <ctype.h>

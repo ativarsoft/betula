@@ -1,6 +1,6 @@
 CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb -I../../include
 PLUGINS=in_helloworld.so in_query.so
-CFLAGS=-L"../../libtemplatizer"
+CFLAGS+=-L"../../libtemplatizer"
 
 all: $(PLUGINS)
 

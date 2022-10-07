@@ -1,7 +1,9 @@
-#ifndef HTTP_QUERY_H
-#define HTTP_QUERY_H
+#ifndef TMPL_QUERY_H
+#define TMPL_QUERY_H
 
-typedef void (*http_query_callback_t)
+#include <stddef.h>
+
+typedef int (*http_query_callback_t)
     (void *data,
      void *key, size_t key_len,
      void *value, size_t value_len);

@@ -1,7 +1,7 @@
+#include <templatizer/query.h>
 #include <stdio.h>
 #include <string.h> /* strchr() */
 #include <stdlib.h> /* getenv() */
-#include "query.h"
 
 void tmpl_parse_query_string(char *query, void *data, http_query_callback_t cb)
 {

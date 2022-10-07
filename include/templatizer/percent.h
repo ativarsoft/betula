@@ -1,14 +1,5 @@
-#ifndef PERCENT_H
-#define PERCENT_H
-
-#include <stdio.h>
-
-size_t tmpl_percent_decode_file(FILE *fin, FILE *fout);
-size_t tmpl_percent_decode_array(char *in, size_t inputlen, char *out, size_t outputlen);
-
-#endif
-#ifndef HTTP_COOKIE_H
-#define HTTP_COOKIE_H
+#ifndef TMPL_PERCENT_H
+#define TMPL_PERCENT_H
 
 #include <stdio.h>
 

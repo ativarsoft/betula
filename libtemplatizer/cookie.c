@@ -1,7 +1,7 @@
+#include <templatizer/cookie.h>
 #include <stdio.h>
 #include <string.h> /* strchr() */
 #include <stdlib.h> /* getenv() */
-#include "cookie.h"
 
 /* based on rfc6265 */
 /*
