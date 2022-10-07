@@ -1,3 +1,5 @@
+/* Copyright (C) 2022 Mateus de Lima Oliveira */
+
 #ifndef TMPL_QUERY_H
 #define TMPL_QUERY_H
 

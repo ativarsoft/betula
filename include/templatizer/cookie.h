@@ -1,3 +1,5 @@
+/* Copyright (C) 2022 Mateus de Lima Oliveira */
+
 #ifndef HTTP_COOKIE_H
 #define HTTP_COOKIE_H
 
