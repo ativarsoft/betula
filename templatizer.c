@@ -143,7 +143,6 @@ struct context {
 	declare_variable_t declare_variable;
 	struct prototype *current_prototype;
 
-	int bytecode_file;
 	void *plugin_handle;
 	struct templatizer_plugin *plugin_data;
 	enum templatizer_format output_format;
@@ -158,7 +157,7 @@ struct context {
 /* Function prototypes */
 static struct node *add_node(struct context *data);
 static FILE *open_path_translated(tmpl_ctx_t data, const char *pathtranslated);
-static int serialize_node(tmpl_ctx_t ctx, struct node *n);
+static int serialize_node(tmpl_ctx_t ctx, struct node *n, FILE *file);
 
 #define TMPL_MASK_BITS(bits) (~0L << (bits))
 #define TMPL_MASK(type) TMPL_MASK_BITS(sizeof(type) * 8)
@@ -167,28 +166,27 @@ static int serialize_node(tmpl_ctx_t ctx, struct node *n);
 #define TMPL_CAST(value, type) ((value | TMPL_MASK(type)) == value)? (type) value : abort())
 #endif
 
-static int serialize_node(tmpl_ctx_t ctx, struct node *n)
+static int serialize_node(tmpl_ctx_t ctx, struct node *n, FILE *file)
 {
-	int fd = ctx->bytecode_file;
 	uint8_t type = {n->type};
-	write(fd, type, sizeof(type));
+	fwrite(&type, sizeof(type), 1, file);
 	return 0;
 }
 
-static int serialize_all_nodes(tmpl_ctx_t ctx)
+static int serialize_all_nodes(tmpl_ctx_t ctx, FILE *file)
 {
 	struct node *n = NULL;
 	int result = -1;
 	int ret = -1;
 
 	TAILQ_FOREACH(n, ctx->nodes, entries) {
-		result = serialize_node(ctx, n);
+		result = serialize_node(ctx, n, file);
 		if (result != 0) {
-			TMPL_ASSIGN(ret, 1);
+			ret = 1;
 			goto out1;
 		}
 	}
-	TMPL_ASSIGN(ret, 0);
+	ret = 0;
 out1:
 	return ret;
 }
@@ -198,16 +196,18 @@ static int serialize_template_file(tmpl_ctx_t ctx)
 	int fd = -1;
 	int ret = -1;
 	int result = -1;
-	fd = memfd_create("bytecode", O_RDWR);
-	if (fd == -1) {
+	FILE *file;
+	char *ptr;
+	size_t sizeloc;
+	file = open_memstream(&ptr, &sizeloc);
+	if (file == NULL) {
 		goto error1;
 	}
-	ctx->bytecode_file = fd;
-	result = serialize_all_nodes(ctx);
+	result = serialize_all_nodes(ctx, file);
 	if (result != 0) {
 		goto error2;
 	}
-	close(fd);
+	fclose(file);
 	ret = 0;
 	goto ok;
 error2:

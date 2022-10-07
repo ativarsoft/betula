@@ -2,13 +2,16 @@ CFLAGS=-fPIC -Wall -O0 -ggdb -Iinclude
 EXEC=templatizer
 VERSION=$(shell ./version.sh)
 
-all: $(EXEC) plugins templatizer-$(VERSION).deb
+all: $(EXEC) libtemplatizer plugins templatizer-$(VERSION).deb
 
 dependencies:
 	apt-get install $(shell cat dependencies.list)
 
 plugins:
 	make -C plugins
+
+libtemplatizer:
+	make -C libtemplatizer
 
 y.tab.c y.tab.y: calc.yacc
 	yacc -d $<
@@ -23,7 +26,7 @@ templatizer.o: templatizer.c
 templatizer: y.tab.o lex.yy.o templatizer.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lexpat -ldl -lapr-1
 
-test: templatizer plugins
+test: templatizer plugins libtemplatizer
 	$(MAKE) -C tests test
 
 install: templatizer
@@ -51,6 +54,7 @@ clean:
 	rm -fr templatizer-$(VERSION)
 	rm -f templatizer-$(VERSION).deb
 	make -C plugins clean
+	make -C libtemplatizer clean
 	make -C tests clean
 
-.PHONY: dependencies plugins test install clean
+.PHONY: dependencies plugins libtemplatizer test install clean

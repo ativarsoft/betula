@@ -32,6 +32,10 @@ flags and use setuid to drop privileges to the specified user.
 This can be used to restrict filesystem access without using
 fakechroot. fakechroot provides wrappers for common system calls.
 
+libtemplatizer provides common functions which are independent
+from the templatizer runtime executable. Plugins use libtemplatizer
+for code reuse.
+
 ## Plugins
 
 Input plugins read url-encoded and JSON
