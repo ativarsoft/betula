@@ -574,11 +574,11 @@ static void print_html_escaped(const char *s, size_t len)
     for (i = 0; i < len; i++) {
         c = s[i];
         switch (c) {
-            case '\"': puts("&quot");   //quotation mark
-            case '\'': puts("&apos");    //apostrophe 
-            case '&':  puts("&amp");    //ampersand
-            case '<':  puts("&lt");     //less-than
-            case '>':  puts("&gt");      //greater-than
+            case '\"': puts("&quot;"); break;   //quotation mark
+            case '\'': puts("&apos;"); break;   //apostrophe 
+            case '&':  puts("&amp;");  break;   //ampersand
+            case '<':  puts("&lt;");   break;   //less-than
+            case '>':  puts("&gt;");   break;   //greater-than
             default:
             putchar(c);
         }
