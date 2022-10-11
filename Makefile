@@ -32,6 +32,8 @@ test: templatizer plugins libtemplatizer
 install: templatizer
 	install templatizer /usr/lib/cgi-bin/
 	cp include/templatizer.h /usr/include
+	mkdir -p /usr/include/templatizer
+	cp include/templatizer/* /usr/include/templatizer
 	make -C plugins install
 
 templatizer-$(VERSION).deb: templatizer include/templatizer.h conf/templatizer.conf.original
