@@ -13,6 +13,9 @@ plugins:
 libtemplatizer:
 	make -C libtemplatizer
 
+templatizer-d:
+	make -C templatizer-d
+
 y.tab.c y.tab.y: calc.yacc
 	yacc -d $<
 
@@ -58,6 +61,7 @@ clean:
 	rm -f templatizer-$(VERSION).deb
 	make -C plugins clean
 	make -C libtemplatizer clean
+	make -C templatizer-d clean
 	make -C tests clean
 
-.PHONY: dependencies plugins libtemplatizer test install clean
+.PHONY: dependencies plugins libtemplatizer templatizer-d test install clean
