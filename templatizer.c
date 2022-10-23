@@ -31,6 +31,11 @@ static int parse_xml_file(struct context *data, const char *tmpl);
 const char version[] = VERSION;
 const char copyright[] = COPYRIGHT;
 
+enum {
+    ELEMENT_HANDLED = 0,
+    ELEMENT_NOT_HANDLED = 1
+};
+
 /* Function prototypes */
 static struct node *add_node(struct context *data);
 static FILE *open_path_translated(tmpl_ctx_t data, const char *pathtranslated);
@@ -215,17 +220,17 @@ static void tmpl_exit(tmpl_ctx_t ctx, int status)
 }
 
 static struct templatizer_callbacks callbacks = {
-	&templatizer_malloc,
-	&templatizer_free,
-	&set_compression,
-	&set_keep_alive,
-	&send_header,
-	&send_default_headers,
-	&set_output_format,
-	&add_filler_text,
-	&add_control_flow,
-	&register_element_tag,
-	&tmpl_exit
+	.malloc = &templatizer_malloc,
+	.free = &templatizer_free,
+	.set_compression = &set_compression,
+	.set_keep_alive = &set_keep_alive,
+	.send_header = &send_header,
+	.send_default_headers = &send_default_headers,
+	.set_output_format = &set_output_format,
+	.add_filler_text = &add_filler_text,
+	.add_control_flow = &add_control_flow,
+	.register_element_tag = &register_element_tag,
+	.exit = &tmpl_exit
 };
 
 #ifdef _WIN32
@@ -246,8 +251,7 @@ static void *load_library(struct context *data, const char *path)
 		templatizer_free(data, path_translated);
 		return NULL;
 	}
-	sprintf(full_path, "%s/%s", dir, path);
-	templatizer_free(data, path_translated);
+	sprintf(full_path, "%s/%s", dir, path);	templatizer_free(data, path_translated);
 	handle = dlopen(full_path, RTLD_LAZY);
 	if (handle == NULL) {
 		fprintf(stderr, "%s\n", dlerror());
@@ -302,23 +306,23 @@ static int parse_include_tag(struct context *data, const XML_Char **attr)
 	for (i = 0; attr[i]; i += 2) {
 		if (strcmp("file", attr[i]) == 0) {
 			path_translated = getenv("PATH_TRANSLATED");
-			if (path_translated == NULL) return 1;
+			if (path_translated == NULL) return ELEMENT_NOT_HANDLED;
 			path_translated = apr_pstrdup(data->pools.process, path_translated);
-			if (path_translated == NULL) return 1;
+			if (path_translated == NULL) return ELEMENT_NOT_HANDLED;
 			dir = dirname(path_translated);
 			full_path = templatizer_malloc(data, strlen(dir) + 1 + strlen(attr[i + 1]) + 1);
 			if (full_path == NULL) {
 				templatizer_free(data, path_translated);
-				return 1;
+				return ELEMENT_NOT_HANDLED;
 			}
 			sprintf(full_path, "%s/%s", dir, attr[i + 1]);
 			templatizer_free(data, path_translated);
 			if (parse_xml_file(data, full_path))
-				return 1;
+				return ELEMENT_NOT_HANDLED;
 			templatizer_free(data, full_path);
 		}
 	}
-	return 0;
+	return ELEMENT_HANDLED;
 }
 
 static struct variable *add_variable
@@ -718,50 +722,23 @@ static int parse_registered_tags(struct context *data, const XML_Char *el, const
 		if (strcmp(p->name, el) == 0)
 			return add_callspecial_node(data, p, attr);
 	}
-	return 1;
+	return ELEMENT_HANDLED;
 }
 
-static void start(struct context *data, const XML_Char *el, const XML_Char **attr)
+static int parse_unregistered_node(struct context *data, const XML_Char *el, const XML_Char **attr)
 {
 	int i;
 	void *p;
 	struct node *n;
-
-	/* keywords */
-	if (strcmp("templatizer", el) == 0) {
-		parse_templatizer_tag(data, attr);
-		return;
-	}
-	if (strcmp("include", el) == 0) {
-		parse_include_tag(data, attr);
-		return;
-	}
-	if (strcmp("extern", el) == 0) {
-		parse_extern_tag(data, attr);
-		return;
-	}
-	if (strcmp("prototype", el) == 0) {
-		parse_prototype_tag(data, attr);
-		return;
-	}
-	if (strcmp("string", el) == 0) {
-		parse_string_tag(data, attr);
-		return;
-	}
-
-	/* registered tags */
-	/*r = parse_registered_tags(data, el, attr);
-	if (r == 0)
-		return;*/
-
 	/* unregistered and unknown tags */
 	n = add_node(data);
-	if (n == NULL) return;
+	if (n == NULL) return 1;
 	n->type = NODE_START;
 	if ((n->data.start.el = tag_pool_lookup(data, el)) == NULL) {
 		fputs("no memory for element tag\n", stderr);
 		XML_StopParser(data->parser, 0);
-		return;
+		data->error = 1;
+		return ELEMENT_NOT_HANDLED;
 	}
 	for (i = 0; attr[i]; i++);
 	if (i > 0) {
@@ -769,7 +746,8 @@ static void start(struct context *data, const XML_Char *el, const XML_Char **att
 			templatizer_free(data, n->data.start.el);
 			fputs("no memory for new attribute\n", stderr);
 			XML_StopParser(data->parser, 0);
-			return;
+			data->error = 1;
+			return ELEMENT_NOT_HANDLED;
 		}
 	} else {
 		p = NULL;
@@ -781,7 +759,8 @@ static void start(struct context *data, const XML_Char *el, const XML_Char **att
 		if ((n->data.start.attr[i] = apr_pstrdup(data->pools.process, attr[i])) == NULL) {
 			templatizer_free(data, n->data.start.el);
 			free_attr_array(data, n->data.start.attr, i);
-			return;
+			data->error = 1;
+			return ELEMENT_NOT_HANDLED;
 		}
 	}
 	if (is_control_flow_keyword(el)) {
@@ -790,9 +769,67 @@ static void start(struct context *data, const XML_Char *el, const XML_Char **att
 			free_attr_array(data, n->data.start.attr, n->data.start.num_attributes);
 			fputs("control flow stack overflow\n", stderr);
 			XML_StopParser(data->parser, 0);
-			return;
+			data->error = 1;
+			return ELEMENT_NOT_HANDLED;
 		}
 		data->labels[data->num_labels++] = n;
+	}
+	data->error = 0;
+	return ELEMENT_HANDLED;
+}
+
+static int parse_keyword_tags(struct context *data, const XML_Char *el, const XML_Char **attr)
+{
+	int rc = ELEMENT_NOT_HANDLED;
+	if (strcmp("templatizer", el) == 0) {
+		rc = parse_templatizer_tag(data, attr);
+	} else if (strcmp("include", el) == 0) {
+		rc = parse_include_tag(data, attr);
+	} else if (strcmp("extern", el) == 0) {
+		parse_extern_tag(data, attr);
+		rc = ELEMENT_HANDLED;
+	} else if (strcmp("prototype", el) == 0) {
+		parse_prototype_tag(data, attr);
+		rc = ELEMENT_HANDLED;
+	} else if (strcmp("string", el) == 0) {
+		parse_string_tag(data, attr);
+		rc = ELEMENT_HANDLED;
+	}
+	return rc;
+}
+
+static bool parse_element_start(struct context *data, const XML_Char *el, const XML_Char **attr)
+{
+    bool rc = -1;
+
+    rc = parse_keyword_tags(data, el, attr);
+    if (rc == ELEMENT_HANDLED) {
+        return true;
+    } else {
+        if (data->error != 0)
+            return false;
+    }
+    /*rc = parse_registered_tags(data, el, attr);
+    if (rc == ELEMENT_HANDLED) {
+        return true;
+    } else {
+        if (data->error != 0)
+            return false;
+    }*/
+    rc = parse_unregistered_node(data, el, attr);
+    if (rc == ELEMENT_HANDLED) {
+        return true;
+    } else {
+        if (data->error != 0)
+            return false;
+    }
+    return true;
+}
+
+static void start(struct context *data, const XML_Char *el, const XML_Char **attr)
+{
+	if (parse_element_start(data, el, attr)) {
+		XML_StopParser(data->parser, 0);
 	}
 }
 

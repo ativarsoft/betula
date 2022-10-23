@@ -122,7 +122,12 @@ struct context {
 	struct prototype *current_prototype;
 
 	void *plugin_handle;
+	void *codegen_plugin_handle;
 	struct templatizer_plugin *plugin_data;
+	struct templatizer_plugin *codegen_plugin_data;
+	int error;
+
+	/* interpreter data */
 	enum templatizer_format output_format;
 	enum templatizer_compression output_compression;
 	bool keep_alive;
