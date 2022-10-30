@@ -68,6 +68,7 @@
 #define ADD(a, b, c) TMPL_ADD(a, b, c)
 #endif
 
+#if 0
 #ifndef ASSIGN_PTR
 #define ASSIGN_PTR(lhs, rhs) TMPL_ASSIGN_PTR(lhs, rhs)
 #endif
@@ -75,6 +76,11 @@
 #ifndef ASSIGN
 #define ASSIGN(lhs, rhs) TMPL_ASSIGN(lhs, rhs)
 #endif
+#endif
+
+/* Safe pointer dereference that checks for null pointers.
+ * TMPL_DEREF also works as a l-value. */
+#define TMPL_DEREF(x) (*((x) ? (x) : (exit(1),(x)))
 
 struct context;
 typedef struct context *tmpl_ctx_t;
