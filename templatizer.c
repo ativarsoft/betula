@@ -906,15 +906,16 @@ int main(int argc, char **argv)
 	memset(&data, 0, sizeof(data));
 
 	gateway_interface = getenv("GATEWAY_INTERFACE");
+	tmpl = getenv("PATH_TRANSLATED");
+
 	if (gateway_interface == NULL) {
 		/* parse arguments with getopt */
 		parse_command_line();
-	} else {
-		tmpl = getenv("PATH_TRANSLATED");
-		if (tmpl == NULL) {
-			fprintf(stderr, "%s: missing template file\n", argv[0]);
-			return 1;
-		}
+	}
+
+	if (tmpl == NULL) {
+		fprintf(stderr, "%s: missing template file\n", argv[0]);
+		return 1;
 	}
 
 	apr_initialize();
