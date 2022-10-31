@@ -128,6 +128,8 @@ struct context {
 	int error;
 
 	/* interpreter data */
+	const char *script_path;
+	const char *path_info;
 	enum templatizer_format output_format;
 	enum templatizer_compression output_compression;
 	bool keep_alive;

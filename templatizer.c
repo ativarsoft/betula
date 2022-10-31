@@ -192,7 +192,7 @@ static void *load_library(struct context *data, const char *path)
 	void *handle;
 	char *path_translated, *dir, *full_path;
 
-	path_translated = getenv("PATH_TRANSLATED");
+	path_translated = data->script_path;
 	if (path_translated == NULL) return NULL;
 	path_translated = apr_pstrdup(data->pools.process, path_translated);
 	if (path_translated == NULL) return NULL;
@@ -773,6 +773,7 @@ out:
 static FILE *open_path_translated(tmpl_ctx_t data, const char *pathtranslated)
 {
 	char *token, *string, *tofree;
+	struct stat statbuf;
 	int fd = 0;
 	FILE *file = NULL;
 #ifdef _WIN32
@@ -806,6 +807,17 @@ static FILE *open_path_translated(tmpl_ctx_t data, const char *pathtranslated)
 			fprintf(stderr, "Unable to open node '%s'\n", token);
 			goto out1;
 		}
+		memset(&statbuf, 0, sizeof(statbuf));
+		fstat(fd, &statbuf);
+		if ((statbuf.st_mode & S_IFMT) == S_IFREG)
+			break;
+	}
+	if (string) {
+		data->script_path = strndup(pathtranslated, string - tofree);
+		data->path_info = templatizer_strdup(data, string);
+	} else {
+		data->script_path = pathtranslated;
+		data->path_info = "";
 	}
 	file = fdopen(fd, "rt");
 	if (file == NULL) {
