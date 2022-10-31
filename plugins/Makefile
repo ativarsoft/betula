@@ -4,15 +4,18 @@ all:
 	make -C input
 	make -C database
 	make -C codegen
+	make -C linker
 
 install:
 	make -C input install
 	make -C database install
 	make -C codegen install
+	make -C linker install
 
 clean:
 	make -C input clean
 	make -C database clean
 	make -C codegen clean
+	make -C linker clean
 
 .PHONY: all install clean
