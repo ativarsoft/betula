@@ -1,4 +1,4 @@
-CFLAGS=-Wall -Wextra -fpic
+CFLAGS=-Wall -Wextra -fPIC -I../../include
 
 all: ld-ada.so
 
