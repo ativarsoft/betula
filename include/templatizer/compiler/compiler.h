@@ -7,6 +7,7 @@
 #include <expat.h>
 #include <apr-1.0/apr_pools.h>
 #include <apr-1.0/apr_strings.h>
+#include <stdbool.h>
 
 #define BUFFER_SIZE 4096
 #define MAX_LABELS 128
