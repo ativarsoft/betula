@@ -7,7 +7,7 @@ kv.so: kv.o
 	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 install: $(PLUGINS)
-	cp -f $(PLUGINS) /usr/lib
+	cp -f $(PLUGINS) $(PREFIX)/lib
 
 clean:
 	rm -f $(PLUGINS) *.o
