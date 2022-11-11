@@ -3,7 +3,9 @@ EXEC=templatizer
 VERSION=$(shell ./version.sh)
 PREFIX?=/usr
 
-all: $(EXEC) libtemplatizer plugins templatizer-$(VERSION).deb
+all: $(EXEC) libtemplatizer plugins
+
+deb: templatizer-$(VERSION).deb
 
 dependencies:
 	apt-get install $(shell cat dependencies.list)
@@ -64,4 +66,4 @@ clean:
 	make -C templatizer-d clean
 	make -C tests clean
 
-.PHONY: dependencies plugins libtemplatizer templatizer-d test install clean
+.PHONY: dependencies plugins libtemplatizer templatizer-d test install clean deb
