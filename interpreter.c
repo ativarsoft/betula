@@ -104,9 +104,17 @@ static void print_character_data_node(struct context *data, struct node_characte
 {
 	char *s;
 	char c;
+	bool just_print = false;
 
 	for (s = n->data; (c = *s) != '\0'; s++) {
-		if (c == '@')
+		if (just_print) {
+			putchar(c);
+			continue;
+		}
+
+		if (c == '\\')
+			just_print = true;
+		else if (c == '@')
 			dump_string(data);
 		else
 			putchar(c);
