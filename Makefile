@@ -1,6 +1,7 @@
 CFLAGS=-fPIC -Wall -O0 -ggdb -Iinclude
 EXEC=templatizer
 VERSION=$(shell ./version.sh)
+PREFIX?=/usr
 
 all: $(EXEC) libtemplatizer plugins templatizer-$(VERSION).deb
 
@@ -33,10 +34,10 @@ test: templatizer plugins libtemplatizer
 	$(MAKE) -C tests test
 
 install: templatizer
-	install templatizer /usr/lib/cgi-bin/
-	install libtemplatizer/libtemplatizer.a /usr/lib/
-	cp include/templatizer.h /usr/include
-	cp -r include/templatizer/ /usr/include/
+	install templatizer $(PREFIX)/lib/cgi-bin/
+	install libtemplatizer/libtemplatizer.a $(PREFIX)/lib/
+	cp include/templatizer.h $(PREFIX)/include
+	cp -r include/templatizer/ $(PREFIX)/include/
 	make -C plugins install
 
 templatizer-$(VERSION).deb: templatizer include/templatizer.h conf/templatizer.conf.original
