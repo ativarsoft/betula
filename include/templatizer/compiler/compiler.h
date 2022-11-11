@@ -5,8 +5,8 @@
 
 #include <sys/queue.h>
 #include <expat.h>
-#include <apr-1.0/apr_pools.h>
-#include <apr-1.0/apr_strings.h>
+#include <apr_pools.h>
+#include <apr_strings.h>
 #include <stdbool.h>
 
 #define BUFFER_SIZE 4096

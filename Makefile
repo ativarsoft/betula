@@ -1,4 +1,4 @@
-CFLAGS=-fPIC -Wall -O0 -ggdb -Iinclude
+CFLAGS=-fPIC -Wall -O0 -ggdb -Iinclude $(shell pkg-config --cflags apr-1)
 EXEC=templatizer
 VERSION=$(shell ./version.sh)
 PREFIX?=/usr

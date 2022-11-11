@@ -14,8 +14,8 @@
 #include <expat.h>
 #include <templatizer.h>
 #include <ctype.h>
-#include <apr-1.0/apr_pools.h>
-#include <apr-1.0/apr_strings.h>
+#include <apr_pools.h>
+#include <apr_strings.h>
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
