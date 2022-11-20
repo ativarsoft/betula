@@ -44,10 +44,10 @@ size_t tmpl_percent_decoded_len(const char *in, size_t inputlen)
 			hi = tmpl_fgetc(f);
 			lo = tmpl_fgetc(f);
 			if (hex(hi, lo) < 0) {
-				return 0;
 				tmpl_fclose(f);
+				return 0;
 			}
-			len += 2;
+			//len += 2;
 		}
 		len++;
 	}
@@ -71,8 +71,11 @@ static int tmpl_percent_decode_byte(tmpl_stream_t fin)
 	} else if (c == '+') {
 		ret = ' ';
 	} else {
+#if 0
+		/* Allow alphanumeric characters only. */
 		if (isalnum(c) == 0)
 			return EOF;
+#endif
 		ret = c;
 	}
 	return ret;
