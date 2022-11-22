@@ -101,10 +101,10 @@ void send_default_headers(struct context *data)
 
 	switch (data->output_format) {
 		case TMPL_FMT_HTML:
-		content_type = "text/html";
+		content_type = "text/html; charset=utf-8";
 		break;
 		case TMPL_FMT_XHTML:
-		content_type = "application/xhtml+xml";
+		content_type = "application/xhtml+xml; charset=utf-8";
 		break;
 	}
 	send_header(data, "Content-Type", content_type);
