@@ -17,4 +17,7 @@ runs:
     - name: Install
       run: sudo make install
       shell: bash
+    - name: Create debian package
+      run: make deb
+      shell: bash
 
