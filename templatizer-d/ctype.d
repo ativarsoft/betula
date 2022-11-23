@@ -1,3 +1,5 @@
+/* Copyright (C) 2022 Mateus de Lima Oliveira */
+
 int isalnum(int c)
 {
     if (c >= '0' && c <= '9') {

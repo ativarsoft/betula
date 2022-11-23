@@ -1,0 +1,77 @@
+/* Copyright (C) 2022 Mateus de Lima Oliveira */
+
+module templatizer;
+
+public import query;
+public import stream;
+public import percent;
+
+extern(C) {
+struct context;
+alias tmpl_ctx_t = context *;
+alias tmpl_cb_t = templatizer_callbacks *;
+
+enum templatizer_compression {
+	TMPL_Z_PLAIN,
+	TMPL_Z_GZIP,
+	TMPL_Z_DEFLATE
+};
+
+enum templatizer_format {
+	TMPL_FMT_HTML,
+	TMPL_FMT_XHTML
+};
+
+alias on_element_callback_t =
+int function
+    (tmpl_ctx_t ctx);
+
+alias tmpl_codegen_tag_start_t =
+int function
+    (tmpl_ctx_t ctx,
+     const char *el,
+     const char **attr);
+
+alias tmpl_codegen_tag_end_t =
+int function
+    (tmpl_ctx_t ctx,
+     const char *el);
+
+alias tmpl_codegen_control_flow_start_t =
+int function
+    (tmpl_ctx_t ctx);
+
+alias tmpl_codegen_control_flow_end_t =
+int function
+    (tmpl_ctx_t ctx,
+     const char *label);
+
+struct templatizer_callbacks {
+	/* Templatizer will manage the memory for the plugin. */
+	/* This avoids memory leaks. */
+	/* This is useful especially if Templatizer is run as a web server module. */
+	void *function(tmpl_ctx_t data, size_t size) malloc;
+	void function(tmpl_ctx_t data, void *ptr) free;
+
+	void function(tmpl_ctx_t data, templatizer_compression opt) set_compression;
+	void function(tmpl_ctx_t data) set_keep_alive;
+	void function(tmpl_ctx_t data, const char *key, const char *value) send_header;
+	void function(tmpl_ctx_t data) send_default_headers;
+	void function(tmpl_ctx_t data, templatizer_format fmt) set_output_format;
+
+	int function(tmpl_ctx_t data, const char *text) add_filler_text;
+	int function(tmpl_ctx_t data, int b) add_control_flow; /* for conditionals */
+
+	int function(tmpl_ctx_t ctx, char *s, on_element_callback_t cb) register_element_tag;
+	int function(tmpl_ctx_t ctx, tmpl_codegen_tag_start_t cb) register_element_tag_start;
+	int function(tmpl_ctx_t ctx, tmpl_codegen_tag_end_t cb) register_element_tag_end;
+
+	void function(tmpl_ctx_t ctx, int status) exit;
+};
+
+struct templatizer_plugin {
+	int function(tmpl_ctx_t data, tmpl_cb_t cb) init;
+	void function() quit;
+};
+
+} /* extern(C) */

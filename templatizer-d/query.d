@@ -1,5 +1,7 @@
 /* Copyright (C) 2022 Mateus de Lima Oliveira */
 
+module query;
+
 import core.stdc.string : strchr;
 import platform;
 import stream;
@@ -16,11 +18,11 @@ static string tmpl_getenv(string key)
 {
     import core.stdc.stdlib : getenv;
     if (key is null) {
-        throw new Exception("Invalid environment variable name.");
+        return null;
     }
     char *value = getenv(key.ptr);
     if (value is null) {
-        throw new Exception("Environment variable does not exist.");
+        return null;
     }
     return cast(string) value[0..strlen(value)];
 }
@@ -66,13 +68,28 @@ int tmpl_parse_query_string_get(void *data, http_query_callback_t cb)
     string query;
     int rc = 0;
 
-    try {
-        query = tmpl_getenv("QUERY_STRING");
-        tmpl_parse_query_string(query.ptr, data, cb);
-    } catch (Exception e) {
+    query = tmpl_getenv("QUERY_STRING");
+    if (query is null) {
         rc = 1;
+        goto _out;
     }
+    tmpl_parse_query_string(query.ptr, data, cb);
+_out:
     return rc;
+}
+
+static char[] create_query_buffer(size_t len) @trusted
+{
+    import core.stdc.stdlib : calloc;
+    char *buffer = cast(char *) calloc(char.sizeof, len);
+    return buffer[0..char.sizeof * len];
+}
+
+static void free_query_buffer(char[] buffer) @trusted
+{
+    import core.stdc.stdlib : free;
+    free(buffer.ptr);
+    buffer.destroy();
 }
 
 int tmpl_parse_query_string_post(void *data, http_query_callback_t cb)
@@ -80,20 +97,15 @@ int tmpl_parse_query_string_post(void *data, http_query_callback_t cb)
     string content_length;
     char[] query;
     int len;
-    auto freeQuery = () @trusted {
-        import core.memory : GC;
-        GC.free(cast(void *) query);
-    };
 
     content_length = tmpl_getenv("CONTENT_LENGTH");
     len = tmpl_atoi(content_length);
-    query = new char[len + 1];
+    query = create_query_buffer(len + 1);
+    scope(exit) free_query_buffer(query);
     query[len] = '\0';
     if (tmpl_fread_stdin(cast(void *) query.ptr, len, 1) != 1) {
-        freeQuery();
         return 1;
     }
     tmpl_parse_query_string(query.ptr, data, cb);
-    freeQuery();
     return 0;
 }

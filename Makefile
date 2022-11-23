@@ -3,7 +3,7 @@ EXEC=templatizer
 VERSION=$(shell ./version.sh)
 PREFIX?=/usr
 
-all: $(EXEC) libtemplatizer plugins
+all: $(EXEC) libtemplatizer plugins templatizer-d
 
 deb: templatizer-$(VERSION).deb
 
@@ -32,7 +32,7 @@ templatizer.o: templatizer.c
 templatizer: y.tab.o lex.yy.o templatizer.o interpreter.o opcode.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lexpat -ldl -lapr-1
 
-test: templatizer plugins libtemplatizer
+test: templatizer plugins libtemplatizer templatizer-d
 	$(MAKE) -C tests test
 
 install: templatizer
@@ -41,6 +41,7 @@ install: templatizer
 	cp include/templatizer.h $(PREFIX)/include
 	cp -r include/templatizer/ $(PREFIX)/include/
 	make -C plugins install
+	make -C templatizer-d install
 
 templatizer-$(VERSION).deb: templatizer include/templatizer.h conf/templatizer.conf.original
 	./gen-control.sh

@@ -1,3 +1,5 @@
+/* Copyright (C) 2022 Mateus de Lima Oliveira */
+
 module stream;
 
 import platform;
@@ -20,11 +22,18 @@ private struct tmpl_stream {
 
 public alias tmpl_stream_t = tmpl_stream *;
 
+static tmpl_stream_t create_stream() @trusted
+{
+    import core.stdc.stdlib : calloc;
+    tmpl_stream *s = cast(tmpl_stream *) calloc(tmpl_stream.sizeof, 1);
+    return s;
+}
+
 extern(C)
 tmpl_stream_t tmpl_fmemopen
     (void *buf, size_t size, const char *mode)
 {
-    tmpl_stream_t stream = new tmpl_stream();
+    tmpl_stream_t stream = create_stream();
     stream.data = null;
     stream.position = 0;
     stream.read = false;
