@@ -1,7 +1,7 @@
 CFLAGS=-Wall -Wextra -fPIC -I../include
 DMD=dmd
 DFLAGS=-fPIC -betterC
-SOURCES=ctype.d  percent.d  platform.d  query.d  stream.d
+SOURCES=ctype.d  percent.d  platform.d  query.d  stream.d templatizer.d
 
 PREFIX?=/usr
 
