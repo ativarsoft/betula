@@ -3,6 +3,12 @@
 
 #include <stdlib.h>
 
+#define STORAGE_LMDB
+
+#ifdef STORAGE_LMDB
+#include <lmdb.h>
+#endif
+
 #define TMPL_NOT_JMP 0
 #define TMPL_JMP 1
 #define IF_TRUE TMPL_NOT_JMP
@@ -85,6 +91,11 @@
 struct context;
 typedef struct context *tmpl_ctx_t;
 
+#ifdef STORAGE_LMDB
+typedef MDB_txn *tmpl_txn_t;
+typedef MDB_dbi tmpl_dbi_t;
+#endif
+
 enum templatizer_compression {
 	TMPL_Z_PLAIN,
 	TMPL_Z_GZIP,
@@ -132,6 +143,35 @@ struct templatizer_callbacks {
 	int (*register_codegen_tag_end)(tmpl_ctx_t ctx, tmpl_codegen_tag_end_t cb);
 
 	void (*exit)(tmpl_ctx_t ctx, int status);
+
+	/* Library agnostic API for accessing
+	 * a key-value data store.
+	 * This API can be used to make plugin
+	 * code portable among different
+	 * operatimg systems and plugin
+	 * languages. The only system dependent
+	 * code being the Templatizer plugin host
+	 * executable and the language runtime
+	 * of the plugin, if any. */
+	int (*storage_open)(const char *path);
+	int (*storage_begin_transaction)
+	  (tmpl_txn_t *txn);
+	int (*storage_commit_transaction)
+	  (tmpl_txn_t txn);
+	int (*storage_open_database)
+	  (tmpl_txn_t txn, tmpl_dbi_t *dbi);
+	int (*storage_close_database)
+	  (tmpl_dbi_t dbi);
+	int (*storage_get_string)
+	  (tmpl_txn_t txn,
+	   tmpl_dbi_t dbi,
+	   int key_id,
+	   char **value);
+	int (*storage_get_integer)
+	  (tmpl_txn_t txn,
+	   tmpl_dbi_t dbi,
+	   int key_id,
+	   int *value);
 };
 
 struct templatizer_plugin {

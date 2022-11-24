@@ -25,6 +25,7 @@
 #include "memory.h"
 #include "interpreter.h"
 #include "opcode.h"
+#include "storage.h"
 
 #define VERSION "0.1"
 #define COPYRIGHT "Copyright (C) 2017-2022 Mateus de Lima Oliveira"
@@ -181,7 +182,13 @@ static struct templatizer_callbacks callbacks = {
 	.add_filler_text = &add_filler_text,
 	.add_control_flow = &add_control_flow,
 	.register_element_tag = &register_element_tag,
-	.exit = &tmpl_exit
+	.exit = &tmpl_exit,
+	.storage_open = &storage_open,
+        .storage_begin_transaction = &storage_begin_transaction,
+        .storage_commit_transaction = &storage_commit_transaction,
+        .storage_open_database = &storage_open_database,
+        .storage_get_string = &storage_get_string,
+	.storage_get_integer = &storage_get_integer
 };
 
 #ifdef _WIN32

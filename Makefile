@@ -29,8 +29,8 @@ lex.yy.o: lex.yy.c
 y.tab.o: y.tab.c
 templatizer.o: templatizer.c
 
-templatizer: y.tab.o lex.yy.o templatizer.o interpreter.o opcode.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lexpat -ldl -lapr-1
+templatizer: y.tab.o lex.yy.o templatizer.o interpreter.o opcode.o storage.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lexpat -ldl -lapr-1 -llmdb
 
 test: templatizer plugins libtemplatizer templatizer-d
 	$(MAKE) -C tests test
