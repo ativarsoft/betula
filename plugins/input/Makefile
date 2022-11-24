@@ -15,7 +15,7 @@ all: $(PLUGINS)
 in_helloworld.so: helloworld.o
 	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^
 
-helloworld_d.so: helloworld_d.o
+helloworld_d.so: helloworld_d.o ../../templatizer-d/libtemplatizer.a
 	$(D) -shared $(DFLAGS) -of=$@ $^
 
 in_query.so: in_query.o

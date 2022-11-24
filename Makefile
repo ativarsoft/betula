@@ -3,7 +3,7 @@ EXEC=templatizer
 VERSION=$(shell ./version.sh)
 PREFIX?=/usr
 
-all: $(EXEC) libtemplatizer plugins templatizer-d
+all: $(EXEC) libtemplatizer templatizer-d plugins
 
 deb: templatizer-$(VERSION).deb
 

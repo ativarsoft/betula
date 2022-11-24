@@ -2,6 +2,7 @@
 
 module templatizer;
 
+public import runtime;
 public import query;
 public import stream;
 public import percent;

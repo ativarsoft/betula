@@ -1,7 +1,7 @@
 CFLAGS=-Wall -Wextra -fPIC -I../include
 DMD=dmd
 DFLAGS=-fPIC -betterC
-SOURCES=ctype.d  percent.d  platform.d  query.d  stream.d templatizer.d
+SOURCES=ctype.d  percent.d  platform.d  query.d  stream.d templatizer.d runtime.d
 
 PREFIX?=/usr
 
@@ -10,7 +10,7 @@ all: libtemplatizer.a
 %.o: %.d
 	$(DMD) -c $(DFLAGS) -of="$@" $<
 
-libtemplatizer.a: templatizer.o ctype.o percent.o platform.o query.o stream.o
+libtemplatizer.a: cookie.o safeint.o ctype.o percent.o platform.o query.o stream.o templatizer.o runtime.o
 	ar rcs $@ $^
 
 clean:
