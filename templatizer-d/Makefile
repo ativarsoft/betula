@@ -1,6 +1,10 @@
 CFLAGS=-Wall -Wextra -fPIC -I../include
-DMD=dmd
+DMD=ldc2
+ifeq ($(DMD),dmd)
 DFLAGS=-fPIC -betterC
+else
+DFLAGS=-relocation-model=pic -betterC
+endif
 SOURCES=ctype.d  percent.d  platform.d  query.d  stream.d templatizer.d runtime.d
 
 PREFIX?=/usr

@@ -2,8 +2,12 @@ CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb -I../../include
 PLUGINS=in_helloworld.so in_query.so helloworld_d.so
 CFLAGS+=-L"../../libtemplatizer"
 
-D=dmd
+D=ldc2
+ifeq ($(D),dmd)
 DFLAGS=-fPIC -I../../templatizer-d/
+else
+DFLAGS=-relocation-model=pic -I../../templatizer-d/
+endif
 
 PREFIX?=/usr
 
