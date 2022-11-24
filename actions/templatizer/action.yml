@@ -6,7 +6,7 @@ runs:
       run: sudo apt-get update
       shell: bash
     - name: Install dependencies
-      run: sudo apt-get install libexpat1-dev flex bison build-essential libapr1-dev ldc
+      run: sudo apt-get install libexpat1-dev flex bison build-essential libapr1-dev ldc liblmdb-dev
       shell: bash
     - name: Build
       run: make
