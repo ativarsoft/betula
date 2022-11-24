@@ -8,6 +8,14 @@ public import stream;
 public import percent;
 
 extern(C) {
+
+enum TMPL_NOT_JMP = 0;
+enum TMPL_JMP = 1;
+enum IF_TRUE = TMPL_NOT_JMP;
+enum IF_FALSE = TMPL_JMP;
+enum SWHILE_TRUE = TMPL_NOT_JMP;
+enum SWHILE_FALSE = TMPL_JMP;
+
 struct context;
 alias tmpl_ctx_t = context *;
 alias tmpl_cb_t = templatizer_callbacks *;
