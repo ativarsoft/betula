@@ -17,6 +17,8 @@ clean:
 	rm -f *.o *.a
 
 install: $(SOURCES)
+	mkdir -p $(PREFIX)/lib/
+	install libtemplatizer.a $(PREFIX)/lib/
 	mkdir -p $(PREFIX)/include/templatizer-d/
 	install $(SOURCES) $(PREFIX)/include/templatizer-d/
 
