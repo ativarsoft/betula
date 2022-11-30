@@ -1,5 +1,12 @@
 *.o
 *.so
+*.a
 /templatizer
 kv
 rest
+*.yy.c
+*.tab.c
+*.tab.h
+tests/*.xhtml
+tests/*.xhtml.md5
+*.log
