@@ -1,6 +1,8 @@
 #ifndef TMPL_STORAGE
 #define TMPL_STORAGE
 
+int storage_initialize();
+int storage_finalize();
 int storage_open(const char *path);
 int storage_begin_transaction
   (tmpl_txn_t *txn);

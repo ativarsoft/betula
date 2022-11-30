@@ -6,6 +6,7 @@ public import runtime;
 public import query;
 public import stream;
 public import percent;
+public import storage;
 
 extern(C) {
 
@@ -19,6 +20,12 @@ enum SWHILE_FALSE = TMPL_JMP;
 struct context;
 alias tmpl_ctx_t = context *;
 alias tmpl_cb_t = templatizer_callbacks *;
+
+struct MDB_txn {};
+alias MDB_dbi = int;
+
+alias tmpl_txn_t = MDB_txn *;
+alias tmpl_dbi_t = MDB_dbi;
 
 enum templatizer_compression {
 	TMPL_Z_PLAIN,
@@ -76,6 +83,24 @@ struct templatizer_callbacks {
 	int function(tmpl_ctx_t ctx, tmpl_codegen_tag_end_t cb) register_element_tag_end;
 
 	void function(tmpl_ctx_t ctx, int status) exit;
+
+	int function(const char *path) storage_open;
+        int function(tmpl_txn_t *txn) storage_begin_transaction;
+        int function(tmpl_txn_t txn) storage_commit_transaction;
+        int function(tmpl_txn_t txn, tmpl_dbi_t *dbi) storage_open_database;
+        int function(tmpl_dbi_t dbi) storage_close_database;
+        int function
+          (tmpl_txn_t txn,
+           tmpl_dbi_t dbi,
+           int key_id,
+           char **value)
+           storage_get_string;
+        int function
+          (tmpl_txn_t txn,
+           tmpl_dbi_t dbi,
+           int key_id,
+           int *value)
+           storage_get_integer;
 };
 
 struct templatizer_plugin {

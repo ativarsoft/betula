@@ -3,6 +3,8 @@
 import stream;
 import ctype;
 
+extern(C) {
+
 /* Convert an hexadecimal nibble into an integer. */
 static int nibble(int c)
 {
@@ -179,3 +181,5 @@ int tmpl_percent_encode(tmpl_stream_t fin, tmpl_stream_t fout)
 _out:
 	return ret;
 }
+
+} /* extern(C) */

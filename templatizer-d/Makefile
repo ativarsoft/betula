@@ -3,9 +3,9 @@ DMD=ldc2
 ifeq ($(DMD),dmd)
 DFLAGS=-fPIC -betterC
 else
-DFLAGS=-relocation-model=pic -betterC
+DFLAGS=-relocation-model=pic --betterC -nodefaultlib
 endif
-SOURCES=ctype.d  percent.d  platform.d  query.d  stream.d templatizer.d runtime.d
+SOURCES=ctype.d  percent.d  platform.d  query.d  stream.d templatizer.d runtime.d storage.d
 
 PREFIX?=/usr
 
@@ -14,7 +14,7 @@ all: libtemplatizer.a
 %.o: %.d
 	$(DMD) -c $(DFLAGS) -of="$@" $<
 
-libtemplatizer.a: cookie.o safeint.o ctype.o percent.o platform.o query.o stream.o templatizer.o runtime.o
+libtemplatizer.a: cookie.o safeint.o ctype.o percent.o platform.o query.o stream.o templatizer.o runtime.o storage.o
 	ar rcs $@ $^
 
 clean:

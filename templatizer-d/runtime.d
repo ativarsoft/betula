@@ -1,3 +1,7 @@
+module runtime;
+
+import templatizer;
+
 alias tmpl_safeint_t = int;
 
 extern(C) {

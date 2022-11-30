@@ -6,6 +6,8 @@ import core.stdc.string : strchr;
 import platform;
 import stream;
 
+extern(C) {
+
 alias http_query_callback_t = int function
     (void *data,
      void *key, size_t key_len,
@@ -109,3 +111,5 @@ int tmpl_parse_query_string_post(void *data, http_query_callback_t cb)
     tmpl_parse_query_string(query.ptr, data, cb);
     return 0;
 }
+
+} /* extern(C) */

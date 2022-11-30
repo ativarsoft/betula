@@ -22,6 +22,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <templatizer/compiler/compiler.h>
+#include <assert.h>
 #include "memory.h"
 #include "interpreter.h"
 #include "opcode.h"
@@ -857,6 +858,7 @@ int main(int argc, char **argv)
 	double time_spent;
 	FILE *log;
 	const char *gateway_interface;
+	int rc = -1;
 
 	(void) argc;
 
@@ -893,6 +895,9 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
+	rc = storage_initialize();
+	assert(rc == 0);
+
 	/*data.parser = parser;*/
 	if ((data.nodes = calloc(1, sizeof(struct node_list_head))) == NULL)
 		return 1;
@@ -927,6 +932,10 @@ int main(int argc, char **argv)
 	if (data.plugin_handle)
 		unload_library(&data);
 #endif
+
+	rc = storage_finalize();
+	assert(rc == 0);
+
 	apr_terminate();
 
 	end = clock();
