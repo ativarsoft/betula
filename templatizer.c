@@ -188,6 +188,7 @@ static struct templatizer_callbacks callbacks = {
         .storage_begin_transaction = &storage_begin_transaction,
         .storage_commit_transaction = &storage_commit_transaction,
         .storage_open_database = &storage_open_database,
+	.storage_close_database = &storage_close_database,
         .storage_get_string = &storage_get_string,
 	.storage_get_integer = &storage_get_integer
 };
