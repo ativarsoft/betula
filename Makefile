@@ -27,10 +27,14 @@ lex.yy.c: calc.lex y.tab.h
 
 lex.yy.o: lex.yy.c
 y.tab.o: y.tab.c
+sql.o: sql.c sql.h
+interpreter.o: interpreter.c interpreter.h
+opcode.o: opcode.c opcode.h
+storage.o: storage.c storage.h
 templatizer.o: templatizer.c
 
-templatizer: y.tab.o lex.yy.o templatizer.o interpreter.o opcode.o storage.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lexpat -ldl -lapr-1 -llmdb
+templatizer: y.tab.o lex.yy.o templatizer.o interpreter.o opcode.o storage.o sql.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lexpat -ldl -lapr-1 -llmdb -lsqlite3
 
 test: templatizer plugins libtemplatizer templatizer-d
 	$(MAKE) -C tests test

@@ -96,6 +96,8 @@ typedef MDB_txn *tmpl_txn_t;
 typedef MDB_dbi tmpl_dbi_t;
 #endif
 
+typedef void *tmpl_sql_t;
+
 enum templatizer_compression {
 	TMPL_Z_PLAIN,
 	TMPL_Z_GZIP,
@@ -172,6 +174,10 @@ struct templatizer_callbacks {
 	   tmpl_dbi_t dbi,
 	   int key_id,
 	   int *value);
+	int (*sql_connect)(tmpl_sql_t *connection, const char *s);
+	int (*sql_disconnect)(tmpl_sql_t *connection);
+	int (*sql_execute)(tmpl_sql_t *connection);
+	int (*sql_prepare)();
 };
 
 struct templatizer_plugin {
