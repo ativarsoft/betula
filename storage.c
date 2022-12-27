@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <stdbool.h>
+#include "storage.h"
 
 static thread_local tmpl_ctx_t dav_ctx;
 static thread_local struct templatizer_callbacks *dav_cb;
@@ -139,4 +140,54 @@ int storage_put_string(tmpl_txn_t txn, tmpl_dbi_t dbi, int key_id, const char *v
     rc = mdb_put(txn, dbi, &key, &data, 0);
     rc = 0; /* FIXME: delete */
     return rc;
+}
+
+int storage_create_directory(tmpl_dir_t **dir)
+{
+    tmpl_dir_t *p = calloc(sizeof(tmpl_dir_t), 1);
+    if (p == NULL)
+        return 1;
+    *dir = p;
+    return 0;
+}
+
+int storage_destroy_directory(tmpl_dir_t *dir)
+{
+    free(dir);
+    return 0;
+}
+
+char *storage_dir_get_name(tmpl_dir_t *dir)
+{
+    assert(dir);
+    return dir->name;
+}
+
+int storage_get_directory
+  (tmpl_txn_t txn,
+   tmpl_dbi_t dbi,
+   int key_id,
+   tmpl_dir_t *dir)
+{
+  FILE *file;
+  int rc;
+  int next_id;
+  int name_length;
+  char *name;
+  MDB_val key, data;
+  memset(&key, 0, sizeof(key));
+  memset(&data, 0, sizeof(data));
+  key.mv_size = sizeof(key_id);
+  key.mv_data = &key_id;
+  rc = mdb_get(txn, dbi, &key, &data);
+  file = fmemopen(data.mv_data, data.mv_size, "rb");
+  fread(&next_id, sizeof(next_id), 1, file);
+  fread(&name_length, sizeof(name_length), 1, file);
+  name = calloc(sizeof(*name), name_length + 1);
+  fread(name, 1, name_length, file);
+  fclose(file);
+  memset(dir, 0, sizeof(*dir));
+  dir->next_id = next_id;
+  dir->name = name;
+  return rc;
 }

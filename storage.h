@@ -1,6 +1,18 @@
 #ifndef TMPL_STORAGE
 #define TMPL_STORAGE
 
+typedef enum {
+    TMPL_INODE_DIR,
+    TMPL_INODE_STRING,
+    TMPL_INODE_INTEGER
+} inode_type_t;
+
+typedef struct {
+    int next_id;
+    char *name;
+    inode_type_t type;
+} tmpl_dir_t;
+
 int storage_initialize();
 int storage_finalize();
 int storage_open(const char *path);
