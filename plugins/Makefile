@@ -6,6 +6,7 @@ all:
 	make -C codegen
 	make -C linker
 	make -C app
+	make -C tests
 
 install:
 	make -C input install
@@ -13,6 +14,7 @@ install:
 	make -C codegen install
 	make -C linker install
 	make -C app install
+	make -C tests install
 
 clean:
 	make -C input clean
@@ -20,5 +22,6 @@ clean:
 	make -C codegen clean
 	make -C linker clean
 	make -C app clean
+	make -C tests clean
 
 .PHONY: all install clean
