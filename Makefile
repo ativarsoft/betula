@@ -33,8 +33,8 @@ opcode.o: opcode.c opcode.h
 storage.o: storage.c storage.h
 templatizer.o: templatizer.c
 
-templatizer: y.tab.o lex.yy.o templatizer.o interpreter.o opcode.o storage.o sql.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lexpat -ldl -lapr-1 -llmdb -lsqlite3
+templatizer: y.tab.o lex.yy.o templatizer.o interpreter.o opcode.o storage.o sql.o virt.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lexpat -ldl -lapr-1 -llmdb -lsqlite3 -lvirt
 
 test: templatizer plugins libtemplatizer templatizer-d
 	$(MAKE) -C tests test

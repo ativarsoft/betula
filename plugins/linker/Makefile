@@ -1,13 +1,18 @@
 CFLAGS=-Wall -Wextra -fPIC -I../../include
+PLUGINS=ld-ada.so ld-exec.so
 
-all: ld-ada.so
+all: $(PLUGINS)
 
 ld-ada.so: ld-ada.o
 	$(CC) $(CFLAGS) -shared -o$@ $^ -ldl
 
-install:
+ld-exec.so: ld-exec.o
+	$(CC) $(CFLAGS) -shared -o$@ $^
+
+install: $(PLUGINS)
 
 clean:
-	rm -f *.so *.o
+	rm -f $(PLUGINS)
+	rm -f *.o
 
 .PHONY: install clean

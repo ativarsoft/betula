@@ -101,6 +101,14 @@ struct element_callback {
 
 TAILQ_HEAD(element_callback_head, element_callback);
 
+struct plugin_parameters {
+	TAILQ_ENTRY(plugin_parameters) entries;
+	const char *param_ptr;
+	size_t param_length; /* max space allocated for param */
+};
+
+TAILQ_HEAD(plugin_parameters_head, plugin_parameters);
+
 struct tag {
 	struct tag *next;
 	XML_Char *s;
@@ -126,6 +134,7 @@ struct context {
 	void *codegen_plugin_handle;
 	struct templatizer_plugin *plugin_data;
 	struct templatizer_plugin *codegen_plugin_data;
+	struct plugin_parameters_head plugin_parameters;
 	int error;
 
 	/* interpreter data */

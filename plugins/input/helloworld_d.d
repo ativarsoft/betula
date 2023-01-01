@@ -15,13 +15,14 @@ static int init(tmpl_ctx_t data, tmpl_cb_t cb)
 	SafeInt value;
 
 	cb.send_default_headers(data);
-	cb.add_filler_text(data, "Hello world from D!");
+	string hellomsg = "Hello world from D!";
+	cb.add_filler_text(data, hellomsg.ptr, hellomsg.length);
 
 	memset(buffer.ptr, 0, BUFFER_SIZE);
 	value = SafeInt.createSafeInt();
 	value = value + 1 + 1;
 	snprintf(buffer.ptr, BUFFER_SIZE, "%d", cast(int) value.get());
-	cb.add_filler_text(data, buffer.ptr);
+	cb.add_filler_text(data, buffer.ptr, buffer.length);
         free(cast(void *) value);
 
 	memset(buffer.ptr, 0, BUFFER_SIZE);
@@ -29,7 +30,7 @@ static int init(tmpl_ctx_t data, tmpl_cb_t cb)
         value = 32;
         value = value + 8;
 	snprintf(buffer.ptr, BUFFER_SIZE, "%d", cast(int) value.get());
-	cb.add_filler_text(data, buffer.ptr);
+	cb.add_filler_text(data, buffer.ptr, buffer.length);
         free(cast(void *) value);
 
         memset(buffer.ptr, 0, BUFFER_SIZE);
@@ -37,7 +38,7 @@ static int init(tmpl_ctx_t data, tmpl_cb_t cb)
         value = 5;
         value = value - 2;
 	snprintf(buffer.ptr, BUFFER_SIZE, "%d", cast(int) value.get());
-	cb.add_filler_text(data, buffer.ptr);
+	cb.add_filler_text(data, buffer.ptr, buffer.length);
         free(cast(void *) value);
 
         memset(buffer.ptr, 0, BUFFER_SIZE);
@@ -45,7 +46,7 @@ static int init(tmpl_ctx_t data, tmpl_cb_t cb)
         value = 5;
         value = value * 2;
 	snprintf(buffer.ptr, BUFFER_SIZE, "%d", cast(int) value.get());
-	cb.add_filler_text(data, buffer.ptr);
+	cb.add_filler_text(data, buffer.ptr, buffer.length);
         free(cast(void *) value);
 
 	return 0;

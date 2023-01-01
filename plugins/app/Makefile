@@ -1,5 +1,5 @@
 CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb -I../../include
-PLUGINS=dating.so
+PLUGINS=dating.so nslookup.so
 CFLAGS+=-L"../../libtemplatizer"
 
 D=ldc2
@@ -17,6 +17,9 @@ PREFIX?=/usr
 all: $(PLUGINS)
 
 dating.so: dating.o
+	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^
+
+nslookup.so: nslookup.o inetaddr.o
 	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 install:

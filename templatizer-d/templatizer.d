@@ -75,7 +75,7 @@ struct templatizer_callbacks {
 	void function(tmpl_ctx_t data) send_default_headers;
 	void function(tmpl_ctx_t data, templatizer_format fmt) set_output_format;
 
-	int function(tmpl_ctx_t data, const char *text) add_filler_text;
+	int function(tmpl_ctx_t data, const char *text, size_t max_length) add_filler_text;
 	int function(tmpl_ctx_t data, int b) add_control_flow; /* for conditionals */
 
 	int function(tmpl_ctx_t ctx, char *s, on_element_callback_t cb) register_element_tag;
@@ -109,3 +109,22 @@ struct templatizer_plugin {
 };
 
 } /* extern(C) */
+
+tmpl_ctx_t ctx;
+tmpl_cb_t cb;
+
+@trusted
+void tmpl_send_default_headers()
+{
+	assert(ctx != null);
+	assert(cb != null);
+	cb.send_default_headers(ctx);
+}
+
+@trusted
+void tmpl_add_filler_text(string s)
+{
+	assert(ctx != null);
+	assert(cb != null);
+	cb.add_filler_text(ctx, s.ptr, s.length);
+}

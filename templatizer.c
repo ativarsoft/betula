@@ -27,6 +27,7 @@
 #include "interpreter.h"
 #include "opcode.h"
 #include "storage.h"
+#include "virt.h"
 
 #define VERSION "0.1"
 #define COPYRIGHT "Copyright (C) 2017-2022 Mateus de Lima Oliveira"
@@ -172,6 +173,35 @@ static void tmpl_exit(tmpl_ctx_t ctx, int status)
 	data->status = status;
 }
 
+int tmpl_get_num_plugin_parameters(tmpl_ctx_t ctx)
+{
+	struct plugin_parameters_head *head = &ctx->plugin_parameters;
+	struct plugin_parameters *np;
+	int i = 0;
+	TAILQ_FOREACH(np, head, entries)
+		i++;
+	return i++;
+}
+
+/* Get plugin parameter supplied on the teplatizer tag. */
+int tmpl_get_plugin_parameter(tmpl_ctx_t ctx, int index, const char **param_ptr, size_t *param_length)
+{
+	struct plugin_parameters_head *head = &ctx->plugin_parameters;
+	struct plugin_parameters *np;
+	int i = 0;
+	int rc = 1;
+	TAILQ_FOREACH(np, head, entries) {
+		if (i == index) {
+			*param_ptr = np->param_ptr;
+			*param_length = np->param_length;
+			rc = 0;
+			break;
+		}
+		i++;
+	}
+	return rc;
+}
+
 static struct templatizer_callbacks callbacks = {
 	.malloc = &templatizer_malloc,
 	.free = &templatizer_free,
@@ -184,13 +214,18 @@ static struct templatizer_callbacks callbacks = {
 	.add_control_flow = &add_control_flow,
 	.register_element_tag = &register_element_tag,
 	.exit = &tmpl_exit,
+	.get_num_plugin_parameters = &tmpl_get_num_plugin_parameters,
+	.get_plugin_parameter = &tmpl_get_plugin_parameter,
 	.storage_open = &storage_open,
         .storage_begin_transaction = &storage_begin_transaction,
         .storage_commit_transaction = &storage_commit_transaction,
         .storage_open_database = &storage_open_database,
 	.storage_close_database = &storage_close_database,
         .storage_get_string = &storage_get_string,
-	.storage_get_integer = &storage_get_integer
+	.storage_get_integer = &storage_get_integer,
+	.vm_define = &vmDefine,
+	.vm_start = &vmStart,
+	.vm_destroy = &vmDestroy
 };
 
 #ifdef _WIN32

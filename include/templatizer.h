@@ -145,6 +145,8 @@ struct templatizer_callbacks {
 	int (*register_codegen_tag_end)(tmpl_ctx_t ctx, tmpl_codegen_tag_end_t cb);
 
 	void (*exit)(tmpl_ctx_t ctx, int status);
+	int (*get_num_plugin_parameters)(tmpl_ctx_t ctx);
+	int (*get_plugin_parameter)(tmpl_ctx_t ctx, int index, const char **param_ptr, size_t *param_length);
 
 	/* Library agnostic API for accessing
 	 * a key-value data store.
@@ -178,6 +180,9 @@ struct templatizer_callbacks {
 	int (*sql_disconnect)(tmpl_sql_t *connection);
 	int (*sql_execute)(tmpl_sql_t *connection);
 	int (*sql_prepare)();
+	int (*vm_define)();
+	int (*vm_start)(const char *name);
+	int (*vm_destroy)(const char *name);
 };
 
 struct templatizer_plugin {

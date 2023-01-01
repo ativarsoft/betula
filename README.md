@@ -43,6 +43,22 @@ input from the client. Those values are then used in a
 script using the '@' symbol. Input plugins can be selected
 using the 'templatizer' tag.
 
+Linker plugins can be used to load programs written in
+specific programming languages. The plugin is specified
+using the 'lib' attribute on the 'templatizer' element.
+The template can set plugin arguments using the 'args'
+XML attribute.
+
+A linker called ld-exec.so can be used to run binary
+programs or text scripts that begin with a shebang on
+Linux.
+
+Some plugins are full web apps. Text placeholder variables
+are set using variable names and those variables can be used
+on XHTML template placeholders. Different websites can have
+different user interfaces while using the same Templatier
+app plugin.
+
 ## Compiling from source
 
 Templatizer was only tested on Linux.
