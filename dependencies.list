@@ -6,5 +6,5 @@ libexpat1-dev
 liblmdb-dev
 libvirt-dev
 ldc
-
-libexpat1-dev flex bison build-essential libapr1-dev ldc liblmdb-dev libvirt-dev
+cargo
+rustc
