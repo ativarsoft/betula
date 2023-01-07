@@ -71,4 +71,9 @@ clean:
 	make -C templatizer-d clean
 	make -C tests clean
 
+# MISRA-C standard compliance check for
+# failproof software
+misra: templatizer.c
+	cppcheck --addon=misra.py $^
+
 .PHONY: dependencies plugins libtemplatizer templatizer-d test install clean deb
