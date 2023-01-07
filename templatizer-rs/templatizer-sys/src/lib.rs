@@ -1,28 +1,37 @@
-mod templatizer {
-    struct Templatizer {
-        struct templatizer_callbacks {
+pub mod templatizer {
+    type OnElementCallback = fn();
+    type CodegenTagStart = fn();
+    type CodegenTagEnd = fn();
+
+    pub struct Context {}
+
+    pub struct Txn {}
+
+    pub struct Sql {}
+
+    pub struct TemplatizerCallbacks {
 	/* Templatizer will manage the memory for the plugin. */
 	/* This avoids memory leaks. */
 	/* This is useful especially if Templatizer is run as a web server module. */
-	malloc: fn(struct context *data, size_t size),
-	free: fn(struct context *data, void *ptr),
+	malloc: fn(data: *mut Context, size: usize) -> *mut u8,
+	free: fn(data: *mut Context, ptr: *mut u8),
 
-	set_compression: fn(struct context *data, enum templatizer_compression opt);
-	set_keep_alive: fn(struct context *data);
-	send_header: fn(struct context *data, const char *key, const char *value);
-	send_default_headers: fn(struct context *data);
-	set_output_format: fn(struct context *data, enum templatizer_format fmt);
+	set_compression: fn(data: *mut Context, opt: isize),
+	set_keep_alive: fn(data: *mut Context),
+	send_header: fn(data: *mut Context, key: *const u8, value: *const u8),
+	send_default_headers: fn(data: *mut Context),
+	set_output_format: fn(data: *mut Context, fmt: isize),
 
-	add_filler_text: fn(struct context *data, const char *text) -> isize,
-	add_control_flow: fn(struct context *data, int b) -> isize, /* for conditionals */
+	add_filler_text: fn(data: *mut Context, text: *const u8) -> isize,
+	add_control_flow: fn(data: *mut Context, b: isize) -> isize, /* for conditionals */
 
-	int (*register_element_tag)(tmpl_ctx_t ctx, char *s, on_element_callback_t cb);
-	int (*register_codegen_tag_start)(tmpl_ctx_t ctx, tmpl_codegen_tag_start_t cb);
-	int (*register_codegen_tag_end)(tmpl_ctx_t ctx, tmpl_codegen_tag_end_t cb);
+	register_element_tag: fn(ctx: *mut Context, s: *const u8, cb: OnElementCallback),
+	register_codegen_tag_start: fn(ctx: *mut Context, cb: CodegenTagStart),
+	register_codegen_tag_end: fn(ctx: *mut Context, cb: CodegenTagEnd),
 
-	exit: fn(tmpl_ctx_t ctx, int status),
-	get_num_plugin_parameters: fn(tmpl_ctx_t ctx) -> isize,
-	get_plugin_parameter: fn(tmpl_ctx_t ctx, int index, const char **param_ptr, size_t *param_length) -> isize,
+	exit: fn(ctx: *mut Context, status: isize),
+	get_num_plugin_parameters: fn(ctx: *mut Context) -> isize,
+	get_plugin_parameter: fn(ctx: *mut Context, index: isize, param_ptr: *mut *const u8, param_length: *mut usize) -> isize,
 
 	/* Library agnostic API for accessing
 	 * a key-value data store.
@@ -33,32 +42,32 @@ mod templatizer {
 	 * code being the Templatizer plugin host
 	 * executable and the language runtime
 	 * of the plugin, if any. */
-	int (*storage_open)(const char *path),
-	int (*storage_begin_transaction)
-	  (tmpl_txn_t *txn),
-	int (*storage_commit_transaction)
-	  (tmpl_txn_t txn),
-	int (*storage_open_database)
-	  (tmpl_txn_t txn, tmpl_dbi_t *dbi),
-	int (*storage_close_database)
-	  (tmpl_dbi_t dbi) -> isize,
-	int (*storage_get_string)
-	  (tmpl_txn_t txn,
-	   tmpl_dbi_t dbi,
-	   int key_id,
-	   char **value) -> isize,
-	storage_get_integer
-	  (tmpl_txn_t txn,
-	   tmpl_dbi_t dbi,
-	   int key_id,
-	   int *value) -> isize,
-        sql_connect: fn(tmpl_sql_t *connection, const char *s) -> isize,
-        sql_disconnect: fn(tmpl_sql_t *connection) -> isize,
-        sql_execute: fn(tmpl_sql_t *connection) -> isize,
+	storage_open: fn(path: *const u8),
+	storage_begin_transaction:
+	  fn(txn: *mut *mut Txn),
+	storage_commit_transaction:
+	  fn(txn: *mut Txn),
+	storage_open_database:
+	  fn(txn: *mut Txn, dbi: *const isize),
+	storage_close_database:
+	  fn(dbi: isize) -> isize,
+	storage_get_string:
+	  fn(txn: *mut Txn,
+	   dbi: isize,
+	   key_id: isize,
+	   value: *mut *mut u8) -> isize,
+	storage_get_integer:
+	  fn(txn: *mut Txn,
+	   dbi: isize,
+	   key_id: isize,
+	   value: *mut isize) -> isize,
+        sql_connect: fn(connection: *mut Sql, s: *const u8) -> isize,
+        sql_disconnect: fn(connection: *mut Sql) -> isize,
+        sql_execute: fn(connection: *mut Sql) -> isize,
         sql_prepare: fn() -> isize,
         vm_define: fn() -> isize,
-        vm_start: fn(const char *name) -> isize,
-        vm_destroy: fn(const char *name) -> isize,
+        vm_start: fn(name: *const u8) -> isize,
+        vm_destroy: fn(name: *const u8) -> isize,
     }
 }
 
