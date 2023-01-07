@@ -3,7 +3,7 @@ EXEC=templatizer
 VERSION=$(shell ./version.sh)
 PREFIX?=/usr
 
-all: $(EXEC) libtemplatizer templatizer-d plugins
+all: $(EXEC) libtemplatizer templatizer-d templatizer-rs plugins
 
 deb: templatizer-$(VERSION).deb
 
@@ -18,6 +18,9 @@ libtemplatizer:
 
 templatizer-d:
 	make -C templatizer-d
+
+templatizer-rs:
+	make -C templatizer-rs
 
 y.tab.c y.tab.y: calc.yacc
 	yacc -d $<
@@ -69,6 +72,7 @@ clean:
 	make -C plugins clean
 	make -C libtemplatizer clean
 	make -C templatizer-d clean
+	make -C templatizer-rs clean
 	make -C tests clean
 
 # MISRA-C standard compliance check for
@@ -76,4 +80,4 @@ clean:
 misra: templatizer.c
 	cppcheck --addon=misra.py $^
 
-.PHONY: dependencies plugins libtemplatizer templatizer-d test install clean deb
+.PHONY: dependencies plugins libtemplatizer templatizer-d templatizer-rs test install clean deb
