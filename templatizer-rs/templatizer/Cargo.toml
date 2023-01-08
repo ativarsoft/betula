@@ -1,0 +1,12 @@
+[package]
+name = "templatizer"
+version = "0.1.0"
+authors = ["Mateus de Lima Oliveira <mateus@ativarsoft.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# Uses `path` when used locally, and uses
+# version "*" from crates.io when published.
+templatizer-sys = { path="../templatizer-sys", version="*" }
