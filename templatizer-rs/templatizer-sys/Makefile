@@ -1,7 +1,7 @@
 all: templatizer-sys
 
 templatizer-sys:
-	cargo build
+	cargo build --release --offline
 
 clean:
 	cargo clean

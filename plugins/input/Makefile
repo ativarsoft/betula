@@ -11,16 +11,21 @@ endif
 
 PREFIX?=/usr
 
+BUILD_PROFILE?=release
+
 %.o: %.d
 	$(D) -c $(DFLAGS) -of="$@" $<
 
-all: $(PLUGINS)
+all: $(PLUGINS) helloworld-rs
 
 in_helloworld.so: helloworld.o
 	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 helloworld_d.so: helloworld_d.o ../../templatizer-d/libtemplatizer.a
 	$(D) -shared $(DFLAGS) -of=$@ $^
+
+helloworld-rs:
+	make -C helloworld-rs
 
 in_query.so: in_query.o
 	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^ -ltemplatizer
@@ -32,5 +37,6 @@ install:
 
 clean:
 	rm -f $(PLUGINS) *.o
+	make -C helloworld-rs clean
 
-.PHONY: install clean
+.PHONY: helloworld-rs install clean

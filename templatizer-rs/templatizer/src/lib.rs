@@ -1,5 +1,3 @@
-#![no_std]
-
 extern crate templatizer_sys;
 
 pub mod templatizer {

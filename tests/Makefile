@@ -1,4 +1,4 @@
-TESTS=simple.xhtml library.xhtml placeholder.xhtml placeholder-d.xhtml kv.xhtml
+TESTS=simple.xhtml library.xhtml placeholder.xhtml placeholder-d.xhtml placeholder-rs.xhtml kv.xhtml
 CFLAGS=-O0 -ggdb -I../include
 LDFLAGS=-ltemplatizer
 EXEC= #cookie percent json
@@ -15,6 +15,8 @@ library.xhtml: library.tmpl ../templatizer
 placeholder.xhtml: placeholder.tmpl ../templatizer
 	./run-templatizer.sh $< $@
 placeholder-d.xhtml: placeholder-d.tmpl ../templatizer
+	./run-templatizer.sh $< $@
+placeholder-rs.xhtml: placeholder-rs.tmpl ../templatizer
 	./run-templatizer.sh $< $@
 kv.xhtml: kv.tmpl ../templatizer
 	./run-templatizer.sh $< $@

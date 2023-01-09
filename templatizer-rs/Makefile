@@ -1,8 +1,6 @@
-all: templatizer-sys
-
-templatizer-sys:
-	make -C templatizer-sys
+all:
 	make -C templatizer
+	make -C templatizer-sys
 
 clean:
 	make -C templatizer-sys clean
