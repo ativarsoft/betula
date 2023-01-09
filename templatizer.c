@@ -283,7 +283,7 @@ static bool parse_templatizer_tag(struct context *data, const XML_Char **attr)
 	for (i = 0; attr[i]; i += 2) {
 		if (strcmp("lib", attr[i]) == 0) {
 			if ((data->plugin_handle = load_library(data, attr[i + 1])) == NULL) {
-				fprintf(stderr, "unable to load library '%s'", attr[i + 1]);
+				fprintf(stderr, "unable to load library '%s'\n", attr[i + 1]);
 				return false;
 			}
 			if (data->plugin_data->init(data, &callbacks) != 0)
