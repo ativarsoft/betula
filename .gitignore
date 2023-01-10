@@ -10,3 +10,6 @@ rest
 tests/*.xhtml
 tests/*.xhtml.md5
 *.log
+
+# rust builds
+target
