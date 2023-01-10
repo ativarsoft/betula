@@ -10,6 +10,7 @@ fn init(data: *mut Context, cb: *const TemplatizerCallbacks) -> isize
 {
     let tmpl = Templatizer::new(data, cb);
     tmpl.send_default_headers();
+    tmpl.add_filler_text("Hello world from Rust!");
     return 0;
 }
 
