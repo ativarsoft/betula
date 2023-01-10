@@ -1,3 +1,5 @@
+# Copyright (C) 2023 Mateus de Lima Oliveira
+
 all:
 	make -C templatizer
 	make -C templatizer-sys

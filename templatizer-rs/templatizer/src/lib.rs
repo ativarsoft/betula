@@ -1,3 +1,5 @@
+/* Copyright (C) 2023 Mateus de Lima Oliveira */
+
 extern crate templatizer_sys;
 
 pub mod templatizer {

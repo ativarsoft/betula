@@ -1,3 +1,5 @@
+# Copyright (C) 2023 Mateus de Lima Oliveira
+
 all: templatizer
 
 templatizer:

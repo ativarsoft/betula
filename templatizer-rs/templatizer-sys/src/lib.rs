@@ -1,3 +1,5 @@
+/* Copyright (C) 2023 Mateus de Lima Oliveira */
+
 pub mod templatizer {
     type OnElementCallback = fn();
     type CodegenTagStart = fn();
