@@ -3,8 +3,11 @@
 extern crate templatizer_sys;
 
 pub mod templatizer {
-    use templatizer_sys::templatizer::Context;
-    use templatizer_sys::templatizer::TemplatizerCallbacks;
+    pub type Context = templatizer_sys::templatizer::Context;
+    pub type TemplatizerCallbacks =
+        templatizer_sys::templatizer::TemplatizerCallbacks;
+    pub type TemplatizerPlugin =
+        templatizer_sys::templatizer::TemplatizerPlugin;
 
     pub struct Templatizer {
         ctx: *mut Context,

@@ -120,6 +120,16 @@ pub mod templatizer {
         pub vm_destroy:
             extern "C" fn(name: *const u8) -> isize,
     }
+
+    #[repr(C)]
+    pub struct TemplatizerPlugin {
+        pub init:
+            extern "C"
+            fn(data: *mut Context, cb: *const TemplatizerCallbacks) -> isize,
+        pub quit:
+            extern "C"
+            fn(),
+    }
 }
 
 #[cfg(test)]

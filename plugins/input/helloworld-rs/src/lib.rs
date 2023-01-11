@@ -2,8 +2,16 @@
 
 extern crate templatizer_sys;
 extern crate templatizer;
-use templatizer_sys::templatizer::{Context,TemplatizerCallbacks};
-use templatizer::templatizer::Templatizer;
+use templatizer::
+{
+    templatizer::
+    {
+        Context,
+        TemplatizerCallbacks,
+        TemplatizerPlugin,
+        Templatizer
+    }
+};
 
 extern "C"
 fn init(data: *mut Context, cb: *const TemplatizerCallbacks) -> isize
@@ -16,12 +24,6 @@ fn init(data: *mut Context, cb: *const TemplatizerCallbacks) -> isize
 
 extern "C"
 fn quit() {}
-
-#[repr(C)]
-pub struct TemplatizerPlugin {
-    init: extern "C" fn(data: *mut Context, cb: *const TemplatizerCallbacks) -> isize,
-    quit: extern "C" fn(),
-}
 
 #[allow(non_upper_case_globals)]
 #[no_mangle]
