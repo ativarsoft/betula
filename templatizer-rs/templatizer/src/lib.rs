@@ -22,22 +22,44 @@ pub mod templatizer {
             }
         }
 
+        pub fn exit(&self) {
+            unsafe {
+                let f = (*self.cb).exit;
+                if (f as usize) == 0 {
+                   loop {}
+                }
+                f(self.ctx, 1);
+            }
+        }
+
         pub fn send_default_headers(&self) {
             unsafe {
-                ((*self.cb).send_default_headers)(self.ctx);
+                let f = (*self.cb).send_default_headers;
+		if (f as usize) == 0 {
+                    self.exit();
+		}
+                f(self.ctx);
             };
         }
 
         pub fn add_filler_text(&self, s: &str) -> isize {
             let rc = unsafe {
-                ((*self.cb).add_filler_text)(self.ctx, s.as_ptr())
+                let f = (*self.cb).add_filler_text;
+                if (f as usize) == 0 {
+                    self.exit();
+                }
+                f(self.ctx, s.as_ptr())
             };
             return rc;
         }
 
         pub fn add_control_flow(&self, b: isize) -> isize {
             let rc = unsafe {
-                ((*self.cb).add_control_flow)(self.ctx, b)
+                let f = (*self.cb).add_control_flow;
+                if (f as usize) == 0 {
+                    self.exit();
+                }
+                f(self.ctx, b)
             };
             return rc;
         }
