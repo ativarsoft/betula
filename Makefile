@@ -43,6 +43,8 @@ test: templatizer plugins libtemplatizer templatizer-d
 	$(MAKE) -C tests test
 
 install: templatizer
+	mkdir -p $(PREFIX)/lib/cgi-bin/
+	mkdir -p $(PREFIX)/include
 	install templatizer $(PREFIX)/lib/cgi-bin/
 	#install libtemplatizer/libtemplatizer.a $(PREFIX)/lib/
 	cp include/templatizer.h $(PREFIX)/include
@@ -51,8 +53,10 @@ install: templatizer
 	make -C templatizer-d install
 	make -C apps install
 
-templatizer-$(VERSION).deb: templatizer include/templatizer.h conf/templatizer.conf.original
+debian/control: VERSION
 	./gen-control.sh
+
+templatizer-$(VERSION).deb: debian/control templatizer include/templatizer.h conf/templatizer.conf.original
 	mkdir -p templatizer-$(VERSION)
 	mkdir -p templatizer-$(VERSION)/DEBIAN
 	cp debian/control debian/postinst templatizer-$(VERSION)/DEBIAN/
@@ -63,12 +67,12 @@ templatizer-$(VERSION).deb: templatizer include/templatizer.h conf/templatizer.c
 	cp include/templatizer.h templatizer-$(VERSION)/usr/include
 	mkdir -p templatizer-$(VERSION)/etc/apache2/conf-available/
 	cp conf/templatizer.conf.original templatizer-$(VERSION)/etc/apache2/conf-available/templatizer.conf
+	PREFIX="$(shell pwd)/templatizer-$(VERSION)"/usr make install
 	dpkg-deb --build templatizer-$(VERSION)
-	rm -r templatizer-$(VERSION)/
 
 clean:
 	rm -f $(EXEC) *.o lex.yy.c y.tab.c y.tab.h
-	rm -fr templatizer-$(VERSION)
+	rm -fr templatizer-$(VERSION)/
 	rm -f templatizer-$(VERSION).deb
 	make -C plugins clean
 	make -C libtemplatizer clean
