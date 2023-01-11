@@ -15,6 +15,8 @@
 typedef int (*declare_variable_t)(struct context *data, char *name, char *type);
 typedef apr_pool_t *tmpl_pool_t;
 
+struct plugin_variable;
+
 struct variable {
 	TAILQ_ENTRY(variable) entries;
 	char *name;
@@ -135,6 +137,7 @@ struct context {
 	struct templatizer_plugin *plugin_data;
 	struct templatizer_plugin *codegen_plugin_data;
 	struct plugin_parameters_head plugin_parameters;
+	struct plugin_variable_list_head *plugin_variables;
 	int error;
 
 	/* interpreter data */
@@ -146,6 +149,7 @@ struct context {
 
 	struct {
 		tmpl_pool_t process;
+		tmpl_pool_t connection;
 	} pools;
 };
 

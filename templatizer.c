@@ -80,6 +80,24 @@ static char *templatizer_strdup(tmpl_ctx_t data, const char *s)
 	return apr_pstrdup(data->pools.process, s);
 }
 
+static void *tmpl_process_malloc(ctx, size)
+tmpl_ctx_t ctx;
+size_t size;
+{
+	return templatizer_malloc(ctx, size);
+}
+
+/* Data allocated by this function is freed when
+ * connection is closed. */
+static void *tmpl_connection_malloc(tmpl_ctx_t ctx, size_t size)
+{
+#if 1
+	return apr_pcalloc(ctx->pools.connection, size);
+#else
+	return malloc(size);
+#endif
+}
+
 void set_compression(struct context *data, enum templatizer_compression opt)
 {
 	data->output_compression = opt;
@@ -203,13 +221,86 @@ int tmpl_get_plugin_parameter(tmpl_ctx_t ctx, int index, const char **param_ptr,
 	return rc;
 }
 
+enum plugin_variable_type {
+	PLUGIN_VAR_TYPE_INT
+};
+
+struct plugin_variable {
+	TAILQ_ENTRY(plugin_variable) entries;
+	char *name;
+	enum plugin_variable_type type_id;
+	union {
+		int l;
+		char *s;
+	} value;
+};
+
+TAILQ_HEAD(plugin_variable_list_head, plugin_variable);
+
+static int tmpl_try_get_int_variable(ctx, name, value)
+tmpl_ctx_t ctx;
+const char *name;
+int *value;
+{
+	struct plugin_variable *np = NULL;
+	struct plugin_variable_list_head *head =
+		ctx->plugin_variables;
+	int l;
+
+	*value = 0;
+
+	TAILQ_FOREACH(np, head, entries) {
+		if (strcmp(name, np->name) == 0 &&
+		    np->type_id == PLUGIN_VAR_TYPE_INT) {
+			l = np->value.l;
+			*value = l;
+			return 0;
+		}
+	}
+	return 1;
+}
+
+/* This function returns zero if the variable value
+ * is undefined. */
 static int tmpl_get_int_variable(ctx, name)
 tmpl_ctx_t ctx;
 const char *name;
 {
-	/* TODO: return actual variable values.
-         * This function returns a dummy value for now. */
-	return TMPL_FMT_HTML;
+	int l;
+	int rc;
+
+	rc = tmpl_try_get_int_variable(ctx, name, &l);
+	if (rc != 0) {
+		return 0;
+	}
+	return l;
+}
+
+static int tmpl_set_int_variable(ctx, name, value)
+tmpl_ctx_t ctx;
+const char *name;
+int value;
+{
+	struct plugin_variable *np = NULL;
+	struct plugin_variable_list_head *head =
+		ctx->plugin_variables;
+	int rc = -1;
+	int tmp;
+
+	rc = tmpl_try_get_int_variable(ctx, name, &tmp);
+	if (rc == 0) {
+		/* Variable already exists */
+		return 1;
+	}
+	np = tmpl_connection_malloc(ctx, sizeof(*np));
+	if (np == NULL) {
+		return 2;
+	}
+	np->name = name;
+	np->type_id = PLUGIN_VAR_TYPE_INT;
+	np->value.l = value;
+	TAILQ_INSERT_TAIL(head, np, entries);
+	return 0;
 }
 
 static const char *tmpl_get_version_string()
@@ -257,7 +348,7 @@ static struct templatizer_callbacks callbacks = {
 static void *load_library(struct context *data, const char *path)
 {
 	void *handle;
-	char *path_translated, *dir, *full_path;
+	const char *path_translated, *dir, *full_path;
 
 	path_translated = data->script_path;
 	if (path_translated == NULL) return NULL;
@@ -949,6 +1040,7 @@ int main(int argc, char **argv)
 
 	apr_initialize();
 	status = apr_pool_create(&data.pools.process, NULL);
+	status = apr_pool_create(&data.pools.connection, NULL);
 	if (status != 0) {
 		fputs("Failed to create process pool.\n", stderr);
 		return 1;
@@ -966,6 +1058,8 @@ int main(int argc, char **argv)
 	data.on_element_callbacks = calloc(1, sizeof(struct element_callback_head));
 	if (data.on_element_callbacks == NULL)
 		return 1;
+	data.plugin_variables =
+		tmpl_process_malloc(&data, sizeof(*data.plugin_variables));
 	data.num_labels = 0;
 	data.declare_variable = NULL;
 	TAILQ_INIT(data.input);
@@ -979,6 +1073,7 @@ int main(int argc, char **argv)
 	parse_xml_file(&data, tmpl);
 	serialize_template_file(&data);
 	print_list(&data);
+	apr_pool_destroy(data.pools.connection);
 
 #if 1
 	if (0) {
