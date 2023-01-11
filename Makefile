@@ -49,6 +49,7 @@ install: templatizer
 	cp -r include/templatizer/ $(PREFIX)/include/
 	make -C plugins install
 	make -C templatizer-d install
+	make -C apps install
 
 templatizer-$(VERSION).deb: templatizer include/templatizer.h conf/templatizer.conf.original
 	./gen-control.sh
@@ -73,6 +74,7 @@ clean:
 	make -C libtemplatizer clean
 	make -C templatizer-d clean
 	make -C templatizer-rs clean
+	make -C apps clean
 	make -C tests clean
 
 # MISRA-C standard compliance check for

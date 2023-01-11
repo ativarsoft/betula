@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>cloud-c</title>
+  <link rel="stylesheet" href="layout.css?v=1.0.6">
+ </head>
+ <body>
+  <div id="menu" class="layout-bar">
+   <a href="/">
+    <img src="/ativarsoft.png" style="height: 2em;" />
+   </a>
+   <br/>
+   <ul class="menu-list">
+    <li><a id="menuitemoverview">Overview</a></li>
+   </ul>
+  </div>
+  <div class="content">
+   <h2>Lista de Máquinas Virtuais</h2>
+   <form>
+    <div><p>Nenhuma máquina virtual encontrada.</p></div>
+    <input id="btnvmlistrefresh" type="button" value="Recarregar"/>
+   </form>
+   <h2>Criar Máquina Virtual</h2>
+   <form>
+    <h3>Name</h3>
+    <p>
+     Select a unique name for the virtual machine.
+     Names may contain only alphanumeric characters.
+    </p>
+    <p>
+     <input id="createvmname" name"vmname" type="text"/>
+    </p>
+    <h3>Operating system</h3>
+    <p>
+     Select an operating system to be installed on the virtual machine.
+    </p>
+    <p>
+     <select>
+      <option>Debian 11 (Bullseye)</option>
+     </select>
+    </p>
+    <hr/>
+    <p>
+     <input id="btncreatevm" type="button" value="Create"/>
+    </p>
+   </form>
+   <h2>Delete Virtual Machine</h2>
+   <form>
+    <p>Type the name of the virtual machine to be deleted.</p>
+    <p>
+     <input id="deletevmname" name="vmname" type="text"/>
+    </p>
+    <p>
+     <input id="btndeletevm" type="button" value="Delete"/>
+    </p>
+   </form>
+   <script>
+var bt;
+bt = document.getElementById('btncreatevm');
+bt.addEventListener('click', clickCreateVM, false);
+bt = document.getElementById('btnvmlistrefresh');
+bt.addEventListener('click', clickVMListRefresh, false);
+
+function getAPIURL(endpoint)
+{
+    return 'https://api.ativarsoft.com/cgi-bin/cloud/' + endpoint;
+}
+
+function clickCreateVM()
+{
+    var vmname = "testvm";
+    var osname = "debian";
+    var osversion = "11.0.0";
+
+    var xhr = new XMLHttpRequest();
+    var url = getAPIURL('definevm');
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var json = JSON.parse(xhr.responseText);
+            if (!("message" in json)) {
+                alert("Invalid server response.");
+                return;
+            }
+            console.log(json.message);
+        }
+    };
+    var data = JSON.stringify({
+        "name": vmname,
+        "osname": osname,
+        "osversion": osversion
+    });
+    xhr.send(data);
+}
+
+function clickVMListRefresh()
+{
+    var xhr = new XMLHttpRequest();
+    var url = getAPIURL('listvms');
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var json = JSON.parse(xhr.responseText);
+            if (!("message" in json)) {
+                alert("Invalid server response.");
+                return;
+            }
+            console.log(json.message);
+        }
+    };
+    var data = JSON.stringify({});
+    xhr.send(data);
+}
+
+function clickDeleteVM()
+{
+    var xhr = new XMLHttpRequest();
+    var url = getAPIURL('undefinevm');
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var json = JSON.parse(xhr.responseText);
+            if (!("message" in json)) {
+                alert("Invalid server response.");
+                return;
+            }
+            console.log(json.message);
+        }
+    };
+    var data = JSON.stringify({});
+    xhr.send(data);
+}
+   </script>
+ </body>
+</html>
