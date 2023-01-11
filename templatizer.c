@@ -1,4 +1,4 @@
-/* Copyright (C) 2017-2022 Mateus de Lima Oliveira */
+/* Copyright (C) 2017-2023 Mateus de Lima Oliveira */
 
 #include <unistd.h>
 #include <libgen.h>
@@ -30,12 +30,12 @@
 #include "virt.h"
 
 #define VERSION "0.1"
-#define COPYRIGHT "Copyright (C) 2017-2022 Mateus de Lima Oliveira"
+#define COPYRIGHT "Copyright (C) 2017-2023 Mateus de Lima Oliveira"
 
 static int parse_xml_file(struct context *data, const char *tmpl);
 
-const char version[] = VERSION;
-const char copyright[] = COPYRIGHT;
+static const char tmpl_version[] = VERSION;
+static const char tmpl_copyright[] = COPYRIGHT;
 
 enum {
     ELEMENT_HANDLED = 0,
@@ -45,6 +45,7 @@ enum {
 /* Function prototypes */
 static struct node *add_node(struct context *data);
 static FILE *open_path_translated(tmpl_ctx_t data, const char *pathtranslated);
+static const char *tmpl_get_version_string();
 
 #define TMPL_MASK_BITS(bits) (~0L << (bits))
 #define TMPL_MASK(type) TMPL_MASK_BITS(sizeof(type) * 8)
@@ -111,7 +112,7 @@ void send_default_headers(struct context *data)
 		break;
 	}
 	send_header(data, "Content-Type", content_type);
-	send_header(data, "X-Powered-By", "Templatizer " VERSION);
+	send_header(data, "X-Powered-By", tmpl_get_version_string());
 	send_header(data, NULL, NULL);
 }
 
@@ -202,6 +203,25 @@ int tmpl_get_plugin_parameter(tmpl_ctx_t ctx, int index, const char **param_ptr,
 	return rc;
 }
 
+static int tmpl_get_int_variable(ctx, name)
+tmpl_ctx_t ctx;
+const char *name;
+{
+	/* TODO: return actual variable values.
+         * This function returns a dummy value for now. */
+	return TMPL_FMT_HTML;
+}
+
+static const char *tmpl_get_version_string()
+{
+	return tmpl_version;
+}
+
+static const char *tmpl_get_copyright_string()
+{
+	return tmpl_copyright;
+}
+
 static struct templatizer_callbacks callbacks = {
 	.malloc = &templatizer_malloc,
 	.free = &templatizer_free,
@@ -216,6 +236,9 @@ static struct templatizer_callbacks callbacks = {
 	.exit = &tmpl_exit,
 	.get_num_plugin_parameters = &tmpl_get_num_plugin_parameters,
 	.get_plugin_parameter = &tmpl_get_plugin_parameter,
+	.get_version_string = &tmpl_get_version_string,
+	.get_copyright_string = &tmpl_get_copyright_string,
+	.get_int_variable = &tmpl_get_int_variable,
 	.storage_open = &storage_open,
         .storage_begin_transaction = &storage_begin_transaction,
         .storage_commit_transaction = &storage_commit_transaction,

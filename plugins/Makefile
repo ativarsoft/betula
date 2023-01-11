@@ -2,6 +2,7 @@
 
 all:
 	make -C input
+	make -C net
 	make -C database
 	make -C codegen
 	make -C linker
@@ -10,6 +11,7 @@ all:
 
 install:
 	make -C input install
+	make -C net install
 	make -C database install
 	make -C codegen install
 	make -C linker install
@@ -18,6 +20,7 @@ install:
 
 clean:
 	make -C input clean
+	make -C net clean
 	make -C database clean
 	make -C codegen clean
 	make -C linker clean

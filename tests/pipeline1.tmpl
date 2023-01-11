@@ -1,6 +1,7 @@
 <!-- Copyright (C) 2023 Mateus de Lima Oliveira -->
 <templatizer lib="../plugins/input/in_helloworld.so">
 <templatizer lib="../plugins/input/helloworld-rs/target/release/libhelloworld_rs.so">
+<templatizer lib="../plugins/net/headers.so">
 <html>
   <head>
     <meta charset="UTF-8"/>
@@ -14,7 +15,11 @@
       <li>Rust: <span>@</span></li>
     </ul>
     Have a nice day!
+    <templatizer lib="../plugins/net/copyright.so">
+    <p>@</p>
+    </templatizer>
   </body>
 </html>
+</templatizer>
 </templatizer>
 </templatizer>

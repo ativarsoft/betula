@@ -90,6 +90,7 @@
 
 struct context;
 typedef struct context *tmpl_ctx_t;
+typedef struct templatizer_callbacks *tmpl_cb_t;
 
 #ifdef STORAGE_LMDB
 typedef MDB_txn *tmpl_txn_t;
@@ -147,6 +148,10 @@ struct templatizer_callbacks {
 	void (*exit)(tmpl_ctx_t ctx, int status);
 	int (*get_num_plugin_parameters)(tmpl_ctx_t ctx);
 	int (*get_plugin_parameter)(tmpl_ctx_t ctx, int index, const char **param_ptr, size_t *param_length);
+
+	const char *(*get_version_string)();
+	const char *(*get_copyright_string)();
+	int (*get_int_variable)(tmpl_ctx_t ctx, const char *name);
 
 	/* Library agnostic API for accessing
 	 * a key-value data store.
