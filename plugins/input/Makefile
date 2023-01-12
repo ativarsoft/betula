@@ -25,7 +25,9 @@ helloworld_d.so: helloworld_d.o ../../templatizer-d/libtemplatizer.a
 	$(D) -shared $(DFLAGS) -of=$@ $^
 
 helloworld-rs:
+ifneq ($(shell which cargo),)
 	make -C helloworld-rs
+endif
 
 in_query.so: in_query.o
 	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^ -ltemplatizer
@@ -37,6 +39,8 @@ install:
 
 clean:
 	rm -f $(PLUGINS) *.o
+ifneq ($(shell which cargo),)
 	make -C helloworld-rs clean
+endif
 
 .PHONY: helloworld-rs install clean

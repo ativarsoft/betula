@@ -1,5 +1,7 @@
 /* Copyright (C) 2022 Mateus de Lima Oliveira */
 
+#ifdef USE_VIRTUALIZATION
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -123,3 +125,5 @@ disconnect:
 	}
 	return 0;
 }
+
+#endif /* USE_VIRTUALIZATION */

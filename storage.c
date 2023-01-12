@@ -1,5 +1,7 @@
 /* Copyright (C) 2022 Mateus de Lima Oliveira */
 
+#ifdef USE_STORAGE
+
 #include <templatizer.h>
 #include <templatizer/compiler/compiler.h>
 #include <threads.h>
@@ -191,3 +193,5 @@ int storage_get_directory
   dir->name = name;
   return rc;
 }
+
+#endif /* USE_STORAGE */

@@ -1,7 +1,13 @@
 CFLAGS=-fPIC -Wall -O0 -ggdb -Iinclude $(shell pkg-config --cflags apr-1)
+LIBS?=-lexpat -ldl -lapr-1 -llmdb -lsqlite3 -lvirt
 EXEC=templatizer
 VERSION=$(shell ./version.sh)
 PREFIX?=/usr
+
+ifeq ($(TERMUX),y)
+CFLAGS+=-DTERMUX
+LIBS=-lexpat -ldl -lapr-1 -lsqlite3
+endif
 
 all: $(EXEC) libtemplatizer templatizer-d templatizer-rs plugins
 
@@ -20,7 +26,9 @@ templatizer-d:
 	make -C templatizer-d
 
 templatizer-rs:
+ifneq ($(shell which cargo),)
 	make -C templatizer-rs
+endif
 
 y.tab.c y.tab.y: calc.yacc
 	yacc -d $<
@@ -37,7 +45,7 @@ storage.o: storage.c storage.h
 templatizer.o: templatizer.c
 
 templatizer: y.tab.o lex.yy.o templatizer.o interpreter.o opcode.o storage.o sql.o virt.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lexpat -ldl -lapr-1 -llmdb -lsqlite3 -lvirt
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 test: templatizer plugins libtemplatizer templatizer-d
 	$(MAKE) -C tests test
@@ -77,7 +85,9 @@ clean:
 	make -C plugins clean
 	make -C libtemplatizer clean
 	make -C templatizer-d clean
+ifneq ($(shell which cargo),)
 	make -C templatizer-rs clean
+endif
 	make -C apps clean
 	make -C tests clean
 
@@ -86,4 +96,7 @@ clean:
 misra: templatizer.c
 	cppcheck --addon=misra.py $^
 
-.PHONY: dependencies plugins libtemplatizer templatizer-d templatizer-rs test install clean deb
+termux:
+	TERMUX="y" make
+
+.PHONY: dependencies plugins libtemplatizer templatizer-d templatizer-rs test install clean deb termux

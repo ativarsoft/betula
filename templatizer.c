@@ -28,6 +28,7 @@
 #include "opcode.h"
 #include "storage.h"
 #include "virt.h"
+#include "config.h"
 
 #define VERSION "0.1"
 #define COPYRIGHT "Copyright (C) 2017-2023 Mateus de Lima Oliveira"
@@ -330,6 +331,7 @@ static struct templatizer_callbacks callbacks = {
 	.get_version_string = &tmpl_get_version_string,
 	.get_copyright_string = &tmpl_get_copyright_string,
 	.get_int_variable = &tmpl_get_int_variable,
+#ifdef USE_STORAGE
 	.storage_open = &storage_open,
         .storage_begin_transaction = &storage_begin_transaction,
         .storage_commit_transaction = &storage_commit_transaction,
@@ -337,9 +339,12 @@ static struct templatizer_callbacks callbacks = {
 	.storage_close_database = &storage_close_database,
         .storage_get_string = &storage_get_string,
 	.storage_get_integer = &storage_get_integer,
+#endif
+#ifdef USE_VIRTUALIZATION
 	.vm_define = &vmDefine,
 	.vm_start = &vmStart,
 	.vm_destroy = &vmDestroy
+#endif
 };
 
 #ifdef _WIN32
@@ -944,8 +949,13 @@ static FILE *open_path_translated(tmpl_ctx_t data, const char *pathtranslated)
 	if (string == NULL)
 		return NULL;
 	if (strcspn(string, separators) == 0) {
+#ifdef TERMUX
+		fd = open(TERMUX_ROOT_DIR, O_RDONLY);
+		string += strlen(TERMUX_ROOT_DIR);
+#else
 		fd = open("/", O_RDONLY);
 		string++;
+#endif
 	} else if (documentroot != NULL) {
 		fd = open(documentroot, O_RDONLY);
 	} else {
@@ -1046,8 +1056,10 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
+#ifdef USE_STORAGE
 	rc = storage_initialize();
 	assert(rc == 0);
+#endif
 
 	/*data.parser = parser;*/
 	if ((data.nodes = calloc(1, sizeof(struct node_list_head))) == NULL)
@@ -1087,8 +1099,10 @@ int main(int argc, char **argv)
 		unload_library(&data);
 #endif
 
+#ifdef USE_STORAGE
 	rc = storage_finalize();
 	assert(rc == 0);
+#endif
 
 	apr_terminate();
 
