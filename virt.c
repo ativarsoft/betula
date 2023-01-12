@@ -1,5 +1,7 @@
 /* Copyright (C) 2022 Mateus de Lima Oliveira */
 
+#include "config.h"
+
 #ifdef USE_VIRTUALIZATION
 
 #include <stdio.h>
