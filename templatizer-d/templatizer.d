@@ -69,6 +69,9 @@ struct templatizer_callbacks {
 	void *function(tmpl_ctx_t data, size_t size) malloc;
 	void function(tmpl_ctx_t data, void *ptr) free;
 
+	/* array functions */
+	const(char) *function(tmpl_ctx_t ctx, const(char) *ptr, size_t length) strndup;
+
 	void function(tmpl_ctx_t data, templatizer_compression opt) set_compression;
 	void function(tmpl_ctx_t data) set_keep_alive;
 	void function(tmpl_ctx_t data, const char *key, const char *value) send_header;
