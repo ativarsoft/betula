@@ -1,5 +1,8 @@
 /* Copyright (C) 2023 Mateus de Lima Oliveira */
 
+/* No standard library */
+#![no_std]
+
 extern crate templatizer_sys;
 
 pub mod templatizer {
