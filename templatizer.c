@@ -81,6 +81,11 @@ static char *templatizer_strdup(tmpl_ctx_t data, const char *s)
 	return apr_pstrdup(data->pools.process, s);
 }
 
+static char *tmpl_connection_strndup(tmpl_ctx_t ctx, const char *ptr, size_t length)
+{
+	return apr_pstrndup(ctx->pools.connection, ptr, length);
+}
+
 static void *tmpl_process_malloc(ctx, size)
 tmpl_ctx_t ctx;
 size_t size;
@@ -317,6 +322,7 @@ static const char *tmpl_get_copyright_string()
 static struct templatizer_callbacks callbacks = {
 	.malloc = &templatizer_malloc,
 	.free = &templatizer_free,
+	.strndup = &tmpl_connection_strndup,
 	.set_compression = &set_compression,
 	.set_keep_alive = &set_keep_alive,
 	.send_header = &send_header,

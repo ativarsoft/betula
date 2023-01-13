@@ -66,6 +66,38 @@ pub mod templatizer {
             };
             return rc;
         }
+
+        unsafe fn strndup(&self, ptr: *const u8, length: usize) -> *mut u8 {
+            let f = (*self.cb).strndup;
+            let ret = f(self.ctx, ptr, length);
+            return ret;
+        }
+    }
+
+    pub struct String {
+        ptr: *mut u8,
+        length: usize,
+    }
+
+    impl String {
+        pub fn new() -> Self {
+            let string = String {
+                ptr: 0 as *mut u8,
+                length: 0,
+            };
+            return string;
+        }
+
+        pub fn new_from_str(tmpl: &Templatizer, slice: &str) -> Self {
+            let ptr = unsafe {
+                tmpl.strndup(slice.as_ptr(), slice.len())
+            };
+            let string = String {
+                ptr: ptr,
+                length: 0,
+            };
+            return string;
+        }
     }
 }
 
@@ -76,3 +108,4 @@ mod tests {
         assert_eq!(2 + 2, 4);
     }
 }
+

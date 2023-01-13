@@ -28,6 +28,11 @@ pub mod templatizer {
             extern "C"
             fn(data: *mut Context, ptr: *mut u8),
 
+        /* array functions */
+        pub strndup:
+            extern "C"
+            fn(data: *mut Context, ptr: *const u8, length: usize) -> *mut u8,
+
         pub set_compression:
             extern "C"
             fn(data: *mut Context, opt: isize),

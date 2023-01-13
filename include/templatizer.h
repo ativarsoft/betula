@@ -132,6 +132,8 @@ struct templatizer_callbacks {
 	void *(*malloc)(struct context *data, size_t size);
 	void (*free)(struct context *data, void *ptr);
 
+	void (*strndup)(tmpl_ctx_t ctx, const char *ptr, size_t length);
+
 	void (*set_compression)(struct context *data, enum templatizer_compression opt);
 	void (*set_keep_alive)(struct context *data);
 	void (*send_header)(struct context *data, const char *key, const char *value);
