@@ -47,6 +47,10 @@ enum {
 static struct node *add_node(struct context *data);
 static FILE *open_path_translated(tmpl_ctx_t data, const char *pathtranslated);
 static const char *tmpl_get_version_string();
+static int tmpl_try_get_int_variable
+  (tmpl_ctx_t ctx,
+   const char *name,
+   int *value);
 
 #define TMPL_MASK_BITS(bits) (~0L << (bits))
 #define TMPL_MASK(type) TMPL_MASK_BITS(sizeof(type) * 8)
@@ -77,6 +81,11 @@ void templatizer_free(tmpl_ctx_t data, void *ptr)
 }
 
 static char *templatizer_strdup(tmpl_ctx_t data, const char *s)
+{
+	return apr_pstrdup(data->pools.process, s);
+}
+
+static char *tmpl_process_strdup(tmpl_ctx_t data, const char *s)
 {
 	return apr_pstrdup(data->pools.process, s);
 }
@@ -181,14 +190,25 @@ static int add_control_flow(struct context *data, int b)
 	return 0;
 }
 
-static int register_element_tag(tmpl_ctx_t ctx, char *s, on_element_callback_t cb)
+static int register_element_start_tag(tmpl_ctx_t ctx, const char *s, on_element_start_callback_t cb)
 {
 	struct context *data = get_tmpl_context(ctx);
 	struct element_callback *p;
 	p = calloc(1, sizeof(struct element_callback));
 	if (p == NULL)
 		return 1;
-	TAILQ_INSERT_TAIL(data->on_element_callbacks, p, entries);
+	TAILQ_INSERT_TAIL(data->on_element_start_callbacks, p, entries);
+	return 0;
+}
+
+static int register_element_end_tag(tmpl_ctx_t ctx, const char *s, on_element_end_callback_t cb)
+{
+	struct context *data = get_tmpl_context(ctx);
+	struct element_callback *p;
+	p = calloc(1, sizeof(struct element_callback));
+	if (p == NULL)
+		return 1;
+	TAILQ_INSERT_TAIL(data->on_element_end_callbacks, p, entries);
 	return 0;
 }
 
@@ -302,7 +322,7 @@ int value;
 	if (np == NULL) {
 		return 2;
 	}
-	np->name = name;
+	np->name = tmpl_process_strdup(ctx, name);
 	np->type_id = PLUGIN_VAR_TYPE_INT;
 	np->value.l = value;
 	TAILQ_INSERT_TAIL(head, np, entries);
@@ -330,13 +350,15 @@ static struct templatizer_callbacks callbacks = {
 	.set_output_format = &set_output_format,
 	.add_filler_text = &add_filler_text,
 	.add_control_flow = &add_control_flow,
-	.register_element_tag = &register_element_tag,
+	.register_element_start_tag = &register_element_start_tag,
+	.register_element_end_tag = &register_element_end_tag,
 	.exit = &tmpl_exit,
 	.get_num_plugin_parameters = &tmpl_get_num_plugin_parameters,
 	.get_plugin_parameter = &tmpl_get_plugin_parameter,
 	.get_version_string = &tmpl_get_version_string,
 	.get_copyright_string = &tmpl_get_copyright_string,
 	.get_int_variable = &tmpl_get_int_variable,
+	.set_int_variable = &tmpl_set_int_variable,
 #ifdef USE_STORAGE
 	.storage_open = &storage_open,
         .storage_begin_transaction = &storage_begin_transaction,
@@ -368,24 +390,25 @@ static void *load_library(struct context *data, const char *path)
 	dir = dirname(path_translated);
 	full_path = templatizer_malloc(data, strlen(dir) + 1 + strlen(path) + 1);
 	if (full_path == NULL) {
-		templatizer_free(data, path_translated);
+		templatizer_free(data, (void *) path_translated);
 		return NULL;
 	}
-	sprintf(full_path, "%s/%s", dir, path);	templatizer_free(data, path_translated);
+	sprintf((char *) full_path, "%s/%s", dir, path);
+	templatizer_free(data, (void *) path_translated);
 	handle = dlopen(full_path, RTLD_LAZY);
 	if (handle == NULL) {
 		fprintf(stderr, "%s\n", dlerror());
-		templatizer_free(data, full_path);
+		templatizer_free(data, (void *) full_path);
 		return NULL;
 	}
 	data->plugin_data = dlsym(handle, "templatizer_plugin_v1");
 	if (data->plugin_data == NULL) {
 		dlclose(handle);
 		fprintf(stderr, "%s\n", dlerror());
-		templatizer_free(data, full_path);
+		templatizer_free(data, (void *) full_path);
 		return NULL;
 	}
-	templatizer_free(data, full_path);
+	templatizer_free(data, (void *) full_path);
 	data->plugin_handle = handle;
 	return handle;
 }
@@ -674,14 +697,41 @@ static int add_callspecial_node(struct context *data, struct prototype *proto, c
 	return 0;
 }
 
+struct node *lookup_node_tag(tmpl_ctx_t ctx, const char *el)
+{
+	return NULL;
+}
+
+static int add_jump_node(tmpl_ctx_t data, const char *el)
+{
+	struct node *n = NULL;
+	struct node *dest = NULL;
+	n = add_node(data);
+	if (n == NULL)
+		return 1;
+	dest = lookup_node_tag(data, el);
+	if (dest == NULL)
+		return 2;
+	n->data.start.el = "jmp";
+	n->data.start.num_attributes = 0;
+	n->data.start.attr = NULL;
+	n->data.start.jmp = dest;
+	return 0;
+}
+
 static int parse_registered_tags(struct context *data, const XML_Char *el, const XML_Char **attr)
 {
 	struct prototype *p;
+	int rc = -1;
 	TAILQ_FOREACH(p, &data->prototypes, entries) {
-		if (strcmp(p->name, el) == 0)
-			return add_callspecial_node(data, p, attr);
+		if (strcmp(p->name, el) == 0) {
+			rc = add_jump_node(data, p->name);
+			if (rc != 0)
+				return ELEMENT_NOT_HANDLED;
+			return ELEMENT_HANDLED;
+		}
 	}
-	return ELEMENT_HANDLED;
+	return ELEMENT_NOT_HANDLED;
 }
 
 static int parse_unregistered_node(struct context *data, const XML_Char *el, const XML_Char **attr)
@@ -768,13 +818,13 @@ static bool parse_element_start(struct context *data, const XML_Char *el, const 
         if (data->error != 0)
             return false;
     }
-    /*rc = parse_registered_tags(data, el, attr);
+    rc = parse_registered_tags(data, el, attr);
     if (rc == ELEMENT_HANDLED) {
         return true;
     } else {
         if (data->error != 0)
             return false;
-    }*/
+    }
     rc = parse_unregistered_node(data, el, attr);
     if (rc == ELEMENT_HANDLED) {
         return true;
@@ -1073,8 +1123,11 @@ int main(int argc, char **argv)
 	TAILQ_INIT(data.nodes);
 	if ((data.input = calloc(1, sizeof(struct input))) == NULL)
 		return 1;
-	data.on_element_callbacks = calloc(1, sizeof(struct element_callback_head));
-	if (data.on_element_callbacks == NULL)
+	data.on_element_start_callbacks = tmpl_process_malloc(&data, sizeof(struct element_callback_head));
+	if (data.on_element_start_callbacks == NULL)
+		return 1;
+	data.on_element_end_callbacks = tmpl_process_malloc(&data, sizeof(struct element_callback_head));
+	if (data.on_element_end_callbacks == NULL)
 		return 1;
 	data.plugin_variables =
 		tmpl_process_malloc(&data, sizeof(*data.plugin_variables));

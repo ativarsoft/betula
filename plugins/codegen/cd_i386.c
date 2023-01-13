@@ -6,7 +6,7 @@ static char *get_string_constant_label(tmpl_ctx_t ctx, const char *el)
     return "strffff1234"; /* str + addr_in_the_tag_pool */
 }
 
-static int on_text_tag_start(tmpl_ctx_t ctx, const char *el, const char **attr)
+static int on_text_tag_start(tmpl_ctx_t ctx, const char *el, const char **attr, int jmp)
 {
     char *el_label = get_string_constant_label(ctx, el);
     //tmpl_string_t attr_const = cb->get_string_constant(ctx, el);
@@ -16,7 +16,7 @@ static int on_text_tag_start(tmpl_ctx_t ctx, const char *el, const char **attr)
     return 0;
 }
 
-static int on_text_tag_end(tmpl_ctx_t ctx, const char *el)
+static int on_text_tag_end(tmpl_ctx_t ctx, const char *el, int jmp)
 {
     printf("call tmpl_print_tag_end");
     return 0;
@@ -24,10 +24,14 @@ static int on_text_tag_end(tmpl_ctx_t ctx, const char *el)
 
 static int init(tmpl_ctx_t ctx, struct templatizer_callbacks *cb)
 {
-    cb->register_codegen_tag_start
+#if 0
+    cb->register_codegen_start_tag
         (ctx, &on_text_tag_start);
-    cb->register_codegen_tag_end
+#endif
+#if 0
+    cb->register_codegen_end_tag
         (ctx, &on_text_tag_end);
+#endif
     return 0;
 }
 

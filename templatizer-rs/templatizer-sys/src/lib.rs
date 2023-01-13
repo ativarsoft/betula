@@ -59,12 +59,25 @@ pub mod templatizer {
         pub register_element_tag:
             extern "C"
             fn(ctx: *mut Context, s: *const u8, cb: OnElementCallback),
-        pub register_codegen_tag_start:
+        /*pub register_codegen_start_tag:
             extern "C"
             fn(ctx: *mut Context, cb: CodegenTagStart),
-        pub register_codegen_tag_end:
+        pub register_codegen_end_tag:
             extern "C"
-            fn(ctx: *mut Context, cb: CodegenTagEnd),
+            fn(ctx: *mut Context, cb: CodegenTagEnd),*/
+
+	pub new_if_node:
+            extern "C"
+            fn(ctx: *mut Context) -> isize,
+        pub new_swhile_node:
+            extern "C"
+            fn(ctx: *mut Context) -> isize,
+        pub new_ewhile_node:
+            extern "C"
+            fn(ctx: *mut Context) -> isize,
+        pub new_call_special_node:
+            extern "C"
+            fn(ctx: *mut Context, symbol: *const u8) -> isize,
 
         pub exit:
             extern "C"

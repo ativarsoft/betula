@@ -7,7 +7,7 @@ int create_kv_object(tmpl_ctx_t ctx)
 	return 0;
 }
 
-int on_kv_tag(tmpl_ctx_t ctx)
+int on_kv_start_tag(tmpl_ctx_t ctx, const char *el, const char **attr)
 {
 	int handle;
 	handle = create_kv_object(ctx);
@@ -20,7 +20,7 @@ static int init(tmpl_ctx_t ctx, struct templatizer_callbacks *cb)
 	TMPL_INIT_CALLBACKS(tmpl, cb);
 	tmpl->send_default_headers(ctx);
 	tmpl->add_filler_text(ctx, "Hello world!");
-	tmpl->register_element_tag(ctx, "kv", &on_kv_tag);
+	tmpl->register_element_start_tag(ctx, "kv", &on_kv_start_tag);
 	return 0;
 }
 

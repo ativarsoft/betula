@@ -110,8 +110,10 @@ enum templatizer_format {
 	TMPL_FMT_XHTML
 };
 
-typedef int (*on_element_callback_t)
-    (tmpl_ctx_t ctx);
+typedef int (*on_element_start_callback_t)
+    (tmpl_ctx_t ctx, const char *el, const char **attr);
+typedef int (*on_element_end_callback_t)
+    (tmpl_ctx_t ctx, const char *el);
 typedef int (*tmpl_codegen_tag_start_t)
     (tmpl_ctx_t ctx,
      const char *el,
@@ -125,6 +127,7 @@ typedef int (*tmpl_codegen_control_flow_end_t)
     (tmpl_ctx_t ctx,
      const char *label);
 
+/* Templatizer callbacks emulate system calls. */
 struct templatizer_callbacks {
 	/* Templatizer will manage the memory for the plugin. */
 	/* This avoids memory leaks. */
@@ -132,8 +135,17 @@ struct templatizer_callbacks {
 	void *(*malloc)(struct context *data, size_t size);
 	void (*free)(struct context *data, void *ptr);
 
-	void (*strndup)(tmpl_ctx_t ctx, const char *ptr, size_t length);
+	char *(*strndup)(tmpl_ctx_t ctx, const char *ptr, size_t length);
 
+	/*
+	 * Link-time functions
+	 */
+
+	/*
+	 * Runtime functions:
+	 * These are used by the callbacks inside the nodes.
+	 * They are specific to the standard I/O streams.
+	 */
 	void (*set_compression)(struct context *data, enum templatizer_compression opt);
 	void (*set_keep_alive)(struct context *data);
 	void (*send_header)(struct context *data, const char *key, const char *value);
@@ -143,9 +155,20 @@ struct templatizer_callbacks {
 	int (*add_filler_text)(struct context *data, const char *text);
 	int (*add_control_flow)(struct context *data, int b); /* for conditionals */
 
-	int (*register_element_tag)(tmpl_ctx_t ctx, char *s, on_element_callback_t cb);
-	int (*register_codegen_tag_start)(tmpl_ctx_t ctx, tmpl_codegen_tag_start_t cb);
-	int (*register_codegen_tag_end)(tmpl_ctx_t ctx, tmpl_codegen_tag_end_t cb);
+	/*
+	 * Compile-time functions:
+	 * These can be used to generate a parse tree.
+	 */
+
+	/* These are called during parse time. */
+	/* They should be used to generate nodes. */
+	int (*register_element_start_tag)(tmpl_ctx_t ctx, const char *s, on_element_start_callback_t cb);
+	int (*register_element_end_tag)(tmpl_ctx_t ctx, const char *s, on_element_end_callback_t cb);
+
+	int (*new_if_node)(tmpl_ctx_t ctx);
+	int (*new_swhile_node)(tmpl_ctx_t ctx);
+	int (*new_ewhile_node)(tmpl_ctx_t ctx);
+	int (*new_call_special_node)(tmpl_ctx_t ctx, void (*f)());
 
 	void (*exit)(tmpl_ctx_t ctx, int status);
 	int (*get_num_plugin_parameters)(tmpl_ctx_t ctx);
@@ -154,9 +177,12 @@ struct templatizer_callbacks {
 	const char *(*get_version_string)();
 	const char *(*get_copyright_string)();
 	int (*get_int_variable)(tmpl_ctx_t ctx, const char *name);
+	int (*set_int_variable)(tmpl_ctx_t ctx, const char *name, int value);
 
-	/* Library agnostic API for accessing
-	 * a key-value data store.
+	/*
+	 * I/O functions:
+	 *
+	 * Library agnostic API.
 	 * This API can be used to make plugin
 	 * code portable among different
 	 * operatimg systems and plugin
@@ -164,6 +190,9 @@ struct templatizer_callbacks {
 	 * code being the Templatizer plugin host
 	 * executable and the language runtime
 	 * of the plugin, if any. */
+
+	/* Storage functions are key-value database functions
+	 * for emulating disk storage. */
 	int (*storage_open)(const char *path);
 	int (*storage_begin_transaction)
 	  (tmpl_txn_t *txn);
@@ -183,7 +212,7 @@ struct templatizer_callbacks {
 	   tmpl_dbi_t dbi,
 	   int key_id,
 	   int *value);
-	int (*sql_connect)(tmpl_sql_t *connection, const char *s);
+	int (*sql_connect)(const char *s, tmpl_sql_t **connection);
 	int (*sql_disconnect)(tmpl_sql_t *connection);
 	int (*sql_execute)(tmpl_sql_t *connection);
 	int (*sql_prepare)();

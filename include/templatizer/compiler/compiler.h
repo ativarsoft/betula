@@ -124,7 +124,8 @@ struct context {
 	struct tag *tag_head;
 	struct node *labels[MAX_LABELS];
 	struct program *bin;
-	struct element_callback_head *on_element_callbacks;
+	struct element_callback_head *on_element_start_callbacks;
+	struct element_callback_head *on_element_end_callbacks;
 	struct prototype_list_head prototypes;
 	int num_labels;
 	int status; /* value returned by the last call */
