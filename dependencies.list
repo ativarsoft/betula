@@ -8,3 +8,4 @@ libvirt-dev
 ldc
 cargo
 rustc
+valgrind
