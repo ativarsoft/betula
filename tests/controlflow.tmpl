@@ -1,0 +1,54 @@
+<templatizer>
+<html>
+  <head>
+  </head>
+  <body>
+    <templatizer lib="../plugins/input/true.so">
+    <if>
+      <p>if keyword test 1: OK</p>
+    </if>
+    </templatizer>
+    <templatizer lib="../plugins/input/false.so">
+    <if>
+      <p>if keyword test 2: fail</p>
+    </if>
+    </templatizer>
+
+    <templatizer lib="../plugins/input/true.so">
+    <templatizer lib="../plugins/input/true.so">
+    <templatizer lib="../plugins/input/true.so">
+    <templatizer lib="../plugins/input/true.so">
+    <templatizer lib="../plugins/input/true.so">
+    <templatizer lib="../plugins/input/false.so">
+    <p>
+      Five dots (swhile):
+      <swhile>
+      <span>.</span>
+      </swhile>
+    </p>
+    </templatizer>
+    </templatizer>
+    </templatizer>
+    </templatizer>
+    </templatizer>
+    </templatizer>
+
+    <templatizer lib="../plugins/input/true.so">
+    <templatizer lib="../plugins/input/true.so">
+    <templatizer lib="../plugins/input/true.so">
+    <templatizer lib="../plugins/input/true.so">
+    <templatizer lib="../plugins/input/false.so">
+    <p>
+      Five dots (ewhile):
+      <ewhile>
+      <span>.</span>
+      </ewhile>
+    </p>
+    </templatizer>
+    </templatizer>
+    </templatizer>
+    </templatizer>
+    </templatizer>
+  </body>
+</html>
+</templatizer>

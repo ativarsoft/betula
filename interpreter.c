@@ -58,7 +58,7 @@ static void dump_string(struct context *data)
 }
 
 /* NOTE: not all keywords here are related to control flow anymore. */
-bool is_control_flow_keyword(const XML_Char *el)
+static bool is_control_flow_keyword(const XML_Char *el)
 {
 	if (strcmp("if", el) == 0
 		|| strcmp("swhile", el) == 0
@@ -140,10 +140,10 @@ static enum control_flow print_node(struct context *data, struct node *n)
 				exit(1);
 			}
 			p = TAILQ_FIRST(data->input);
-			if (p->data.control_flow)
-				r = JMP_FOWARD;
-			else
+			if (p->data.control_flow == TMPL_TRUE)
 				r = NEXT_INSTRUCTION;
+			else
+				r = JMP_FOWARD;
 			TAILQ_REMOVE(data->input, p, entries);
 			templatizer_free(data, p);
 			return r;
@@ -152,14 +152,20 @@ static enum control_flow print_node(struct context *data, struct node *n)
 		break;
 	case NODE_END:
 		if (n->data.end.jmp) {
-			if (n->data.end.conditional_jmp) {
-				if (0) /* TODO */
-					return JMP_BACKWARD;
-				else
-					return NEXT_INSTRUCTION;
-			} else {
+			if (n->data.end.conditional_jmp == false)
 				return JMP_BACKWARD;
+			if (TAILQ_EMPTY(data->input)) {
+				fprintf(stderr, "missing input for tag that requires input\n");
+				exit(1);
 			}
+			p = TAILQ_FIRST(data->input);
+			if (p->data.control_flow == TMPL_TRUE)
+				r = JMP_BACKWARD;
+			else
+				r = NEXT_INSTRUCTION;
+			TAILQ_REMOVE(data->input, p, entries);
+			templatizer_free(data, p);
+			return r;
 		}
 		print_end_node(&n->data.end);
 		break;

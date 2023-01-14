@@ -1,6 +1,16 @@
 #!/bin/bash -e
 
-VALGRIND=$(which valgrind)
+get_valgrind()
+{
+  if [ "$TERMUX" == "y" ]
+  then
+    echo ""
+    return
+  fi
+  echo $(which valgrind)
+}
+
+get_valgrind | read VALGRIND
 
 verify_checksum()
 {

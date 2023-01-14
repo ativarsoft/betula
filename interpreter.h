@@ -7,6 +7,5 @@
 #include <stdbool.h>
 
 void print_list(tmpl_ctx_t data);
-bool is_control_flow_keyword(const XML_Char *el);
 
 #endif

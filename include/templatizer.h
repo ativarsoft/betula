@@ -11,10 +11,12 @@
 
 #define TMPL_NOT_JMP 0
 #define TMPL_JMP 1
-#define IF_TRUE TMPL_NOT_JMP
-#define IF_FALSE TMPL_JMP
-#define SWHILE_TRUE TMPL_NOT_JMP
-#define SWHILE_FALSE TMPL_JMP
+#define IF_TRUE TMPL_TRUE
+#define IF_FALSE TMPL_FALSE
+#define SWHILE_TRUE TMPL_TRUE
+#define SWHILE_FALSE TMPL_FALSE
+#define TMPL_TRUE 1
+#define TMPL_FALSE 0
 
 #define TMPL_CALLBACKS(var) struct templatizer_callbacks *var
 #define TMPL_INIT_CALLBACKS(var, cb) var = cb

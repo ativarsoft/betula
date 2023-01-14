@@ -191,6 +191,15 @@ static int add_control_flow(struct context *data, int b)
 	return 0;
 }
 
+static bool is_control_flow_keyword(const XML_Char *el)
+{
+        if (strcmp("if", el) == 0
+                || strcmp("swhile", el) == 0
+                || strcmp("ewhile", el) == 0)
+                return true;
+        return false;
+}
+
 static int tmpl_register_element_start_tag(tmpl_ctx_t ctx, const char *s, on_element_start_callback_t cb)
 {
 	struct context *data = get_tmpl_context(ctx);
@@ -815,9 +824,13 @@ static int tmpl_add_start_node(tmpl_ctx_t data, const char *el, const char **att
 	return ELEMENT_HANDLED;
 }
 
-static int parse_unregistered_node(struct context *data, const XML_Char *el, const XML_Char **attr)
+static int parse_unregistered_start_tag(struct context *data, const XML_Char *el, const XML_Char **attr)
 {
-	return tmpl_add_start_node(data, el, attr);
+	int rc = ELEMENT_NOT_HANDLED;
+	rc = tmpl_add_start_node(data, el, attr);
+	if (rc == ELEMENT_HANDLED)
+		return 0;
+	return 1;
 }
 
 static int parse_keyword_tags(struct context *data, const XML_Char *el, const XML_Char **attr)
@@ -858,7 +871,7 @@ static bool parse_element_start(struct context *data, const XML_Char *el, const 
         if (data->error != 0)
             return false;
     }
-    rc = parse_unregistered_node(data, el, attr);
+    rc = parse_unregistered_start_tag(data, el, attr);
     if (rc == ELEMENT_HANDLED) {
         return true;
     } else {
@@ -902,7 +915,8 @@ static bool tmpl_add_if_end_node(tmpl_ctx_t data)
 		return false;
 	if_start_node->data.start.jmp = n;
 	n->data.end.jmp = NULL; /* This node does not jump. */
-	return false;
+	n->data.end.conditional_jmp = false;
+	return true;
 }
 
 static bool tmpl_add_swhile_end_node(tmpl_ctx_t data)
@@ -933,6 +947,8 @@ static bool tmpl_add_ewhile_end_node(tmpl_ctx_t ctx)
 	if (ewhile_start_node == NULL)
 		return false;
 	if (strcmp(ewhile_start_node->data.end.el, ewhile) != 0)
+		return false;
+	ewhile_start_node->data.start.jmp = NULL;
 	/* This node will jump to the previous label (start tag). */
 	n->data.end.jmp = ewhile_start_node;
 	n->data.end.conditional_jmp = true;

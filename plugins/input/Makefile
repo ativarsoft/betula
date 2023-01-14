@@ -1,5 +1,5 @@
 CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb -I../../include
-PLUGINS=in_helloworld.so in_query.so helloworld_d.so
+PLUGINS=in_helloworld.so in_query.so helloworld_d.so true.so false.so
 CFLAGS+=-L"../../libtemplatizer"
 
 D=ldc2
@@ -19,6 +19,12 @@ BUILD_PROFILE?=release
 all: $(PLUGINS) helloworld-rs
 
 in_helloworld.so: helloworld.o
+	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^
+
+true.so: true.o
+	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^
+
+false.so: false.o
 	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 helloworld_d.so: helloworld_d.o ../../templatizer-d/libtemplatizer.a
