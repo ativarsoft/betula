@@ -98,11 +98,20 @@ struct input {
 
 TAILQ_HEAD(input_list_head, input);
 
-struct element_callback {
+struct element_start_callback {
 	TAILQ_ENTRY(element_callback) entries;
+	const char *el;
+	on_element_start_callback_t cb;
 };
 
-TAILQ_HEAD(element_callback_head, element_callback);
+struct element_end_callback {
+	TAILQ_ENTRY(element_callback) entries;
+	const char *el;
+	on_element_end_callback_t f;
+};
+
+TAILQ_HEAD(element_start_callback_head, element_start_callback);
+TAILQ_HEAD(element_end_callback_head, element_end_callback);
 
 struct plugin_parameters {
 	TAILQ_ENTRY(plugin_parameters) entries;
@@ -125,8 +134,8 @@ struct context {
 	struct tag *tag_head;
 	struct node *labels[MAX_LABELS];
 	struct program *bin;
-	struct element_callback_head *on_element_start_callbacks;
-	struct element_callback_head *on_element_end_callbacks;
+	struct element_start_callback_head *on_element_start_callbacks;
+	struct element_end_callback_head *on_element_end_callbacks;
 	struct prototype_list_head prototypes;
 	int num_labels;
 	int status; /* value returned by the last call */

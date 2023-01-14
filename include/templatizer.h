@@ -169,13 +169,13 @@ struct templatizer_callbacks {
 	int (*new_attr_object)(int num);
 	int (*set_attr_value)(const char *key, const char *value);
 
-	int (*new_start_node)(tmpl_ctx_t ctx, const char *el, tmpl_attr_t attr);
-	int (*new_end_node)(tmpl_ctx_t ctx, const char *el);
-	int (*new_selfclosing_html_node)(tmpl_ctx_t ctx, const char *el, tmpl_attr_t attr);
-	int (*new_if_node)(tmpl_ctx_t ctx);
-	int (*new_swhile_node)(tmpl_ctx_t ctx);
-	int (*new_ewhile_node)(tmpl_ctx_t ctx);
-	int (*new_call_special_node)(tmpl_ctx_t ctx, void (*f)());
+	int (*add_start_node)(tmpl_ctx_t ctx, const char *el, tmpl_attr_t attr);
+	int (*add_end_node)(tmpl_ctx_t ctx, const char *el);
+	int (*add_selfclosing_html_node)(tmpl_ctx_t ctx, const char *el, tmpl_attr_t attr);
+	int (*add_if_node)(tmpl_ctx_t ctx);
+	int (*add_swhile_node)(tmpl_ctx_t ctx);
+	int (*add_ewhile_node)(tmpl_ctx_t ctx);
+	int (*add_call_special_node)(tmpl_ctx_t ctx, void (*f)());
 
 	void (*exit)(tmpl_ctx_t ctx, int status);
 	int (*get_num_plugin_parameters)(tmpl_ctx_t ctx);

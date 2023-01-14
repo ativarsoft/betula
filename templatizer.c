@@ -51,6 +51,7 @@ static int tmpl_try_get_int_variable
   (tmpl_ctx_t ctx,
    const char *name,
    int *value);
+static int tmpl_add_selfclosing_html_node(tmpl_ctx_t ctx, const char *el, tmpl_attr_t attr);
 
 #define TMPL_MASK_BITS(bits) (~0L << (bits))
 #define TMPL_MASK(type) TMPL_MASK_BITS(sizeof(type) * 8)
@@ -190,24 +191,26 @@ static int add_control_flow(struct context *data, int b)
 	return 0;
 }
 
-static int register_element_start_tag(tmpl_ctx_t ctx, const char *s, on_element_start_callback_t cb)
+static int tmpl_register_element_start_tag(tmpl_ctx_t ctx, const char *s, on_element_start_callback_t cb)
 {
 	struct context *data = get_tmpl_context(ctx);
-	struct element_callback *p;
-	p = calloc(1, sizeof(struct element_callback));
+	struct element_start_callback *p;
+	p = calloc(1, sizeof(struct element_start_callback));
 	if (p == NULL)
 		return 1;
 	TAILQ_INSERT_TAIL(data->on_element_start_callbacks, p, entries);
 	return 0;
 }
 
-static int register_element_end_tag(tmpl_ctx_t ctx, const char *s, on_element_end_callback_t cb)
+static int tmpl_register_element_end_tag(tmpl_ctx_t ctx, const char *s, on_element_end_callback_t cb)
 {
 	struct context *data = get_tmpl_context(ctx);
-	struct element_callback *p;
-	p = calloc(1, sizeof(struct element_callback));
+	struct element_end_callback *p;
+	p = calloc(1, sizeof(struct element_end_callback));
 	if (p == NULL)
 		return 1;
+	p->el = tmpl_process_strdup(ctx, s);
+	p->f = cb;
 	TAILQ_INSERT_TAIL(data->on_element_end_callbacks, p, entries);
 	return 0;
 }
@@ -350,8 +353,9 @@ static struct templatizer_callbacks callbacks = {
 	.set_output_format = &set_output_format,
 	.add_filler_text = &add_filler_text,
 	.add_control_flow = &add_control_flow,
-	.register_element_start_tag = &register_element_start_tag,
-	.register_element_end_tag = &register_element_end_tag,
+	.register_element_start_tag = &tmpl_register_element_start_tag,
+	.register_element_end_tag = &tmpl_register_element_end_tag,
+	.add_selfclosing_html_node = &tmpl_add_selfclosing_html_node,
 	.exit = &tmpl_exit,
 	.get_num_plugin_parameters = &tmpl_get_num_plugin_parameters,
 	.get_plugin_parameter = &tmpl_get_plugin_parameter,
@@ -737,9 +741,21 @@ static int parse_registered_start_tags(struct context *data, const char *el, con
 static int parse_registered_end_tags(struct context *data, const char *el)
 {
 	struct prototype *p;
+	struct element_end_callback *cb;
+	int rc = -1;
 	TAILQ_FOREACH(p, &data->prototypes, entries) {
 		if (strcmp(p->name, el) == 0) {
 			/* Ignore end tags for script functions */
+			return ELEMENT_HANDLED;
+		}
+	}
+	TAILQ_FOREACH(cb, data->on_element_end_callbacks, entries) {
+		if (strcmp(cb->el, el) == 0) {
+			rc = cb->f(data, el);
+			if (rc != 0) {
+				data->error = 1;
+				return ELEMENT_NOT_HANDLED;
+			}
 			return ELEMENT_HANDLED;
 		}
 	}
@@ -1234,10 +1250,10 @@ int main(int argc, char **argv)
 	TAILQ_INIT(data.nodes);
 	if ((data.input = calloc(1, sizeof(struct input))) == NULL)
 		return 1;
-	data.on_element_start_callbacks = tmpl_process_malloc(&data, sizeof(struct element_callback_head));
+	data.on_element_start_callbacks = tmpl_process_malloc(&data, sizeof(struct element_start_callback_head));
 	if (data.on_element_start_callbacks == NULL)
 		return 1;
-	data.on_element_end_callbacks = tmpl_process_malloc(&data, sizeof(struct element_callback_head));
+	data.on_element_end_callbacks = tmpl_process_malloc(&data, sizeof(struct element_end_callback_head));
 	if (data.on_element_end_callbacks == NULL)
 		return 1;
 	data.plugin_variables =
@@ -1247,6 +1263,8 @@ int main(int argc, char **argv)
 	TAILQ_INIT(data.input);
 	TAILQ_INIT(&data.imports);
 	TAILQ_INIT(&data.prototypes);
+	TAILQ_INIT(data.on_element_start_callbacks);
+	TAILQ_INIT(data.on_element_end_callbacks);
 	data.tag_head = NULL;
 	data.plugin_handle = NULL;
 	data.output_format = TMPL_FMT_XHTML;

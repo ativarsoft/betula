@@ -1,6 +1,6 @@
 # Copyright (C) 2023 Mateus de Lima Oliveira
 
-TESTS=simple.xhtml library.xhtml placeholder.xhtml placeholder-d.xhtml placeholder-rs.xhtml kv.xhtml pipeline1.xhtml
+TESTS=simple.xhtml library.xhtml placeholder.xhtml placeholder-d.xhtml placeholder-rs.xhtml kv.xhtml pipeline1.xhtml selfclosing.xhtml
 CFLAGS=-O0 -ggdb -I../include
 LDFLAGS=-ltemplatizer
 EXEC= #cookie percent json
@@ -23,6 +23,8 @@ placeholder-rs.xhtml: placeholder-rs.tmpl ../templatizer
 kv.xhtml: kv.tmpl ../templatizer
 	./run-templatizer.sh $< $@
 pipeline1.xhtml: pipeline1.tmpl ../templatizer
+	./run-templatizer.sh $< $@
+selfclosing.xhtml: selfclosing.tmpl ../templatizer
 	./run-templatizer.sh $< $@
 
 clean:

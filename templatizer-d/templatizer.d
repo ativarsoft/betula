@@ -20,6 +20,7 @@ enum SWHILE_FALSE = TMPL_JMP;
 struct context;
 alias tmpl_ctx_t = context *;
 alias tmpl_cb_t = templatizer_callbacks *;
+alias tmpl_attr_t = const char **;
 
 struct MDB_txn {};
 alias MDB_dbi = int;
@@ -38,9 +39,13 @@ enum templatizer_format {
 	TMPL_FMT_XHTML
 };
 
-alias on_element_callback_t =
+alias on_element_start_callback_t =
 int function
-    (tmpl_ctx_t ctx);
+    (tmpl_ctx_t ctx, const char *el, tmpl_attr_t attr);
+
+alias on_element_end_callback_t =
+int function
+    (tmpl_ctx_t ctx, const char *el);
 
 alias tmpl_codegen_tag_start_t =
 int function
@@ -81,9 +86,21 @@ struct templatizer_callbacks {
 	int function(tmpl_ctx_t data, const char *text, size_t max_length) add_filler_text;
 	int function(tmpl_ctx_t data, int b) add_control_flow; /* for conditionals */
 
-	int function(tmpl_ctx_t ctx, char *s, on_element_callback_t cb) register_element_tag;
-	int function(tmpl_ctx_t ctx, tmpl_codegen_tag_start_t cb) register_element_tag_start;
-	int function(tmpl_ctx_t ctx, tmpl_codegen_tag_end_t cb) register_element_tag_end;
+	/* These are called during parse time. */
+        /* They should be used to generate nodes. */
+        int function(tmpl_ctx_t ctx, const char *s, on_element_start_callback_t f) register_element_start_tag;
+        int function(tmpl_ctx_t ctx, const char *s, on_element_end_callback_t f) register_element_end_tag;
+
+        int function(int num) new_attr_object;
+        int function(const char *key, const char *value) set_attr_value;
+
+        int function(tmpl_ctx_t ctx, const char *el, tmpl_attr_t attr) add_start_node;
+        int function(tmpl_ctx_t ctx, const char *el) add_end_node;
+        int function(tmpl_ctx_t ctx, const char *el, tmpl_attr_t attr) add_selfclosing_html_node;
+        int function(tmpl_ctx_t ctx) add_if_node;
+        int function(tmpl_ctx_t ctx) add_swhile_node;
+        int function(tmpl_ctx_t ctx) add_ewhile_node;
+        int function(tmpl_ctx_t ctx, void *f) add_call_special_node;
 
 	void function(tmpl_ctx_t ctx, int status) exit;
 

@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+VALGRIND=$(which valgrind)
+
 verify_checksum()
 {
   file="$1"
@@ -15,9 +17,9 @@ verify_checksum()
   return $?
 }
 
-PATH_TRANSLATED="$1" ../templatizer > $2
+PATH_TRANSLATED="$1" $VALGRIND ../templatizer > $2
 verify_checksum "$2"
-PATH_TRANSLATED="$(pwd)/$1" ../templatizer > $2
+PATH_TRANSLATED="$(pwd)/$1" $VALGRIND ../templatizer > $2
 verify_checksum "$2"
-PATH_TRANSLATED="$1" DOCUMENT_ROOT="$(pwd)" ../templatizer > $2
+PATH_TRANSLATED="$1" DOCUMENT_ROOT="$(pwd)" $VALGRIND ../templatizer > $2
 verify_checksum "$2"

@@ -1,5 +1,5 @@
 CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb -I../../include
-PLUGINS= headers.so copyright.so #html.so
+PLUGINS= headers.so copyright.so html.so
 
 all: $(PLUGINS)
 

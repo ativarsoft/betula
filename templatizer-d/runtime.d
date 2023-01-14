@@ -19,6 +19,7 @@ final class SafeInt {
     public static SafeInt createSafeInt() {
         import core.stdc.stdlib : calloc;
         SafeInt n = cast(SafeInt) calloc(SafeInt.sizeof, 1);
+	n.value = 0;
         return n;
     }
 
@@ -49,7 +50,7 @@ final class SafeInt {
         return this;
     }
 
-    SafeInt opBinary(string op : "+")(SafeInt rhs) {
+    SafeInt opBinary(string op : "+")(scope SafeInt rhs) {
         tmpl_safeint_t result;
         int rc;
         tmpl_safeint_t value;
@@ -71,7 +72,7 @@ final class SafeInt {
         return this;
     }
 
-    SafeInt opBinary(string op : "-")(SafeInt rhs) {
+    SafeInt opBinary(string op : "-")(scope SafeInt rhs) {
         tmpl_safeint_t result;
         int rc;
         tmpl_safeint_t value;
@@ -93,7 +94,7 @@ final class SafeInt {
         return this;
     }
 
-    SafeInt opBinary(string op : "*")(SafeInt rhs) {
+    SafeInt opBinary(string op : "*")(scope SafeInt rhs) {
         tmpl_safeint_t result;
         int rc;
         tmpl_safeint_t value;
