@@ -719,7 +719,7 @@ static int add_jump_node(tmpl_ctx_t data, const char *el)
 	return 0;
 }
 
-static int parse_registered_tags(struct context *data, const XML_Char *el, const XML_Char **attr)
+static int parse_registered_start_tags(struct context *data, const char *el, const XML_Char **attr)
 {
 	struct prototype *p;
 	int rc = -1;
@@ -734,7 +734,19 @@ static int parse_registered_tags(struct context *data, const XML_Char *el, const
 	return ELEMENT_NOT_HANDLED;
 }
 
-static int parse_unregistered_node(struct context *data, const XML_Char *el, const XML_Char **attr)
+static int parse_registered_end_tags(struct context *data, const char *el)
+{
+	struct prototype *p;
+	TAILQ_FOREACH(p, &data->prototypes, entries) {
+		if (strcmp(p->name, el) == 0) {
+			/* Ignore end tags for script functions */
+			return ELEMENT_HANDLED;
+		}
+	}
+	return ELEMENT_NOT_HANDLED;
+}
+
+static int tmpl_add_start_node(tmpl_ctx_t data, const char *el, const char **attr)
 {
 	int i;
 	void *p;
@@ -787,6 +799,11 @@ static int parse_unregistered_node(struct context *data, const XML_Char *el, con
 	return ELEMENT_HANDLED;
 }
 
+static int parse_unregistered_node(struct context *data, const XML_Char *el, const XML_Char **attr)
+{
+	return tmpl_add_start_node(data, el, attr);
+}
+
 static int parse_keyword_tags(struct context *data, const XML_Char *el, const XML_Char **attr)
 {
 	int rc = ELEMENT_NOT_HANDLED;
@@ -818,7 +835,7 @@ static bool parse_element_start(struct context *data, const XML_Char *el, const 
         if (data->error != 0)
             return false;
     }
-    rc = parse_registered_tags(data, el, attr);
+    rc = parse_registered_start_tags(data, el, attr);
     if (rc == ELEMENT_HANDLED) {
         return true;
     } else {
@@ -835,6 +852,129 @@ static bool parse_element_start(struct context *data, const XML_Char *el, const 
     return true;
 }
 
+static struct node *add_end_node(tmpl_ctx_t data, const char *el, bool selfclosing)
+{
+	struct node *n;
+	n = add_node(data);
+	if (n == NULL) return NULL;
+	n->type = NODE_END;
+	n->data.end.el = tag_pool_lookup(data, el);
+	n->data.end.selfclosing = selfclosing;
+	return n;
+}
+
+static int tmpl_add_end_node(tmpl_ctx_t ctx, const char *el)
+{
+	struct node *n = NULL;
+	n = add_end_node(ctx, el, false);
+	if (n == NULL)
+		return 1;
+	n->data.end.jmp = NULL;
+	return 0;
+}
+
+static bool tmpl_add_if_end_node(tmpl_ctx_t data)
+{
+	const char *eif = "if";
+	struct node *n = add_end_node(data, eif, false);
+	struct node *if_start_node = NULL;
+	/* The previous label (start tag) will jump to this node. */
+	if_start_node = data->labels[--data->num_labels];
+	if (if_start_node == NULL)
+		return false;
+	if (strcmp(if_start_node->data.start.el, eif) != 0)
+		return false;
+	if_start_node->data.start.jmp = n;
+	n->data.end.jmp = NULL; /* This node does not jump. */
+	return false;
+}
+
+static bool tmpl_add_swhile_end_node(tmpl_ctx_t data)
+{
+	const char *swhile = "swhile";
+	struct node *n = add_end_node(data, swhile, false);
+	struct node *swhile_start_node = NULL;
+	data->num_labels--;
+	swhile_start_node = data->labels[data->num_labels];
+	if (swhile_start_node == NULL)
+		return false;
+	if (strcmp(swhile_start_node->data.start.el, swhile) != 0)
+		return false;
+	/* The previous label (start tag) will jump to this node. */
+	swhile_start_node->data.start.jmp = n;
+	/* This node will jump to the previous label (start tag). */
+	n->data.end.jmp = data->labels[data->num_labels];
+	n->data.end.conditional_jmp = false;
+	return true;
+}
+
+static bool tmpl_add_ewhile_end_node(tmpl_ctx_t ctx)
+{
+	const char *ewhile = "ewhile";
+	struct node *n = add_end_node(ctx, ewhile, false);
+	struct node *ewhile_start_node = NULL;
+	ewhile_start_node = ctx->labels[--ctx->num_labels];
+	if (ewhile_start_node == NULL)
+		return false;
+	if (strcmp(ewhile_start_node->data.end.el, ewhile) != 0)
+	/* This node will jump to the previous label (start tag). */
+	n->data.end.jmp = ewhile_start_node;
+	n->data.end.conditional_jmp = true;
+	return true;
+}
+
+static int parse_unregistred_end_tag(tmpl_ctx_t ctx, const char *el)
+{
+	bool rc = false;
+	if (strcmp("ewhile", el) == 0) {
+		rc = tmpl_add_ewhile_end_node(ctx);
+	} else if (strcmp("if", el) == 0) {
+		rc = tmpl_add_if_end_node(ctx);
+	} else if (strcmp("swhile", el) == 0) {
+		rc = tmpl_add_swhile_end_node(ctx);
+	} else {
+		rc = tmpl_add_end_node(ctx, el);
+	}
+	return rc;
+}
+
+int parse_element_end(tmpl_ctx_t ctx, const char *el)
+{
+	int rc = -1;
+
+	if (strcmp("include", el) == 0)
+		return true;
+	if (strcmp("extern", el) == 0)
+		return true;
+	if (strcmp("prototype", el) == 0)
+		return true;
+	if (strcmp("string", el) == 0)
+		return true;
+	rc = parse_registered_end_tags(ctx, el);
+	if (rc == ELEMENT_HANDLED) {
+		return true;
+	} else {
+		if (ctx->error != 0)
+			return false;
+	}
+	rc = parse_unregistred_end_tag(ctx, el);
+	if (rc != 0)
+		return false;
+	return true;
+}
+
+static int tmpl_add_selfclosing_html_node(tmpl_ctx_t ctx, const char *el, tmpl_attr_t attr)
+{
+	bool rc = false;
+	rc = parse_element_start(ctx, el, attr);
+	if (rc == false)
+		return 1;
+	rc = parse_element_end(ctx, el);
+	if (rc == false)
+		return 2;
+	return 0;
+}
+
 static void start(struct context *data, const XML_Char *el, const XML_Char **attr)
 {
 	if (parse_element_start(data, el, attr)) {
@@ -844,37 +984,8 @@ static void start(struct context *data, const XML_Char *el, const XML_Char **att
 
 static void end(struct context *data, const XML_Char *el)
 {
-	struct node *n;
-
-	if (strcmp("include", el) == 0)
-		return;
-	if (strcmp("extern", el) == 0)
-		return;
-	if (strcmp("prototype", el) == 0)
-		return;
-	if (strcmp("string", el) == 0)
-		return;
-	n = add_node(data);
-	if (n == NULL) return;
-	n->type = NODE_END;
-	n->data.end.el = tag_pool_lookup(data, el);
-	if (strcmp("ewhile", el) == 0) {
-		/* This node will jump to the previous label (start tag). */
-		n->data.end.jmp = data->labels[--data->num_labels];
-		n->data.end.conditional_jmp = true;
-	} else if (strcmp("if", el) == 0) {
-		/* The previous label (start tag) will jump to this node. */
-		data->labels[--data->num_labels]->data.start.jmp = n;
-		n->data.end.jmp = NULL; /* This node does not jump. */
-	} else if (strcmp("swhile", el) == 0) {
-		data->num_labels--;
-		/* The previous label (start tag) will jump to this node. */
-		data->labels[data->num_labels]->data.start.jmp = n;
-		/* This node will jump to the previous label (start tag). */
-		n->data.end.jmp = data->labels[data->num_labels];
-		n->data.end.conditional_jmp = false;
-	} else {
-		n->data.end.jmp = NULL;
+	if (parse_element_end(data, el)) {
+		XML_StopParser(data->parser, 0);
 	}
 }
 

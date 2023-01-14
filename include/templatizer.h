@@ -91,6 +91,7 @@
 struct context;
 typedef struct context *tmpl_ctx_t;
 typedef struct templatizer_callbacks *tmpl_cb_t;
+typedef const char **tmpl_attr_t;
 
 #ifdef STORAGE_LMDB
 typedef MDB_txn *tmpl_txn_t;
@@ -165,6 +166,12 @@ struct templatizer_callbacks {
 	int (*register_element_start_tag)(tmpl_ctx_t ctx, const char *s, on_element_start_callback_t cb);
 	int (*register_element_end_tag)(tmpl_ctx_t ctx, const char *s, on_element_end_callback_t cb);
 
+	int (*new_attr_object)(int num);
+	int (*set_attr_value)(const char *key, const char *value);
+
+	int (*new_start_node)(tmpl_ctx_t ctx, const char *el, tmpl_attr_t attr);
+	int (*new_end_node)(tmpl_ctx_t ctx, const char *el);
+	int (*new_selfclosing_html_node)(tmpl_ctx_t ctx, const char *el, tmpl_attr_t attr);
 	int (*new_if_node)(tmpl_ctx_t ctx);
 	int (*new_swhile_node)(tmpl_ctx_t ctx);
 	int (*new_ewhile_node)(tmpl_ctx_t ctx);

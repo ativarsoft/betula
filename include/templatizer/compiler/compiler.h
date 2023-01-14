@@ -53,6 +53,7 @@ struct node_end {
 	char *el;
 	bool conditional_jmp;
 	struct node *jmp; /* node_start */
+	int selfclosing;
 };
 
 struct node_character_data {
