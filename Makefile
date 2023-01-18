@@ -1,3 +1,5 @@
+# Copyright (C) 2017-2023 Mateus de Lima Oliveira
+
 CFLAGS=-fPIC -Wall -O0 -ggdb -Iinclude $(shell pkg-config --cflags apr-1)
 LIBS?=-lexpat -ldl -lapr-1 -llmdb -lsqlite3 -lvirt
 EXEC=templatizer
@@ -44,7 +46,7 @@ opcode.o: opcode.c opcode.h
 storage.o: storage.c storage.h
 templatizer.o: templatizer.c
 
-templatizer: y.tab.o lex.yy.o templatizer.o interpreter.o opcode.o storage.o sql.o virt.o
+templatizer: y.tab.o lex.yy.o templatizer.o interpreter.o opcode.o storage.o sql.o virt.o regex.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 test: templatizer plugins libtemplatizer templatizer-d

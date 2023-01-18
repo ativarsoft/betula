@@ -29,6 +29,7 @@
 #include "storage.h"
 #include "virt.h"
 #include "config.h"
+#include "tmplregex.h"
 
 #define VERSION "0.1"
 #define COPYRIGHT "Copyright (C) 2017-2023 Mateus de Lima Oliveira"
@@ -96,7 +97,7 @@ static char *tmpl_connection_strndup(tmpl_ctx_t ctx, const char *ptr, size_t len
 	return apr_pstrndup(ctx->pools.connection, ptr, length);
 }
 
-static void *tmpl_process_malloc(ctx, size)
+void *tmpl_process_malloc(ctx, size)
 tmpl_ctx_t ctx;
 size_t size;
 {
@@ -105,7 +106,7 @@ size_t size;
 
 /* Data allocated by this function is freed when
  * connection is closed. */
-static void *tmpl_connection_malloc(tmpl_ctx_t ctx, size_t size)
+void *tmpl_connection_malloc(tmpl_ctx_t ctx, size_t size)
 {
 #if 1
 	return apr_pcalloc(ctx->pools.connection, size);
@@ -372,6 +373,7 @@ static struct templatizer_callbacks callbacks = {
 	.get_copyright_string = &tmpl_get_copyright_string,
 	.get_int_variable = &tmpl_get_int_variable,
 	.set_int_variable = &tmpl_set_int_variable,
+	.regex_compile = &tmpl_regex_compile,
 #ifdef USE_STORAGE
 	.storage_open = &storage_open,
         .storage_begin_transaction = &storage_begin_transaction,

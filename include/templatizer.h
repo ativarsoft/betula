@@ -1,3 +1,5 @@
+/* Copyright (C) 2017-2023 Mateus de Lima Oliveira */
+
 #ifndef TMPL_TEMPLATIZER_H
 #define TMPL_TEMPLATIZER_H
 
@@ -187,6 +189,10 @@ struct templatizer_callbacks {
 	const char *(*get_copyright_string)();
 	int (*get_int_variable)(tmpl_ctx_t ctx, const char *name);
 	int (*set_int_variable)(tmpl_ctx_t ctx, const char *name, int value);
+
+	int (*regex_compile)();
+	int (*regex_execute)();
+	int (*regex_cleanup)();
 
 	/*
 	 * I/O functions:
