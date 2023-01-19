@@ -5,10 +5,11 @@ CFLAGS+=-L"../../libtemplatizer"
 PREFIX?=/usr
 
 D=ldc2
-ifeq ($(D),dmd)
-DFLAGS=-fPIC -I../../templatizer-d/
+
+ifeq ($(DMD),dmd)
+DFLAGS=-fPIC -betterC -I../../templatizer-d/
 else
-DFLAGS=-relocation-model=pic -I../../templatizer-d/
+DFLAGS=-relocation-model=pic --betterC -nodefaultlib -I../../templatizer-d/
 endif
 
 PREFIX?=/usr
