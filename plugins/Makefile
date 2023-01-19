@@ -2,6 +2,7 @@
 
 all:
 	make -C input
+	make -C output
 	make -C net
 	make -C database
 	make -C codegen
@@ -11,6 +12,7 @@ all:
 
 install:
 	make -C input install
+	make -C output install
 	make -C net install
 	make -C database install
 	make -C codegen install
@@ -20,6 +22,7 @@ install:
 
 clean:
 	make -C input clean
+	make -C output clean
 	make -C net clean
 	make -C database clean
 	make -C codegen clean

@@ -208,6 +208,8 @@ static int tmpl_register_element_start_tag(tmpl_ctx_t ctx, const char *s, on_ele
 	p = calloc(1, sizeof(struct element_start_callback));
 	if (p == NULL)
 		return 1;
+	p->el = tmpl_process_strdup(ctx, s);
+	p->f = cb;
 	TAILQ_INSERT_TAIL(data->on_element_start_callbacks, p, entries);
 	return 0;
 }
@@ -737,12 +739,23 @@ static int add_jump_node(tmpl_ctx_t data, const char *el)
 static int parse_registered_start_tags(struct context *data, const char *el, const XML_Char **attr)
 {
 	struct prototype *p;
+	struct element_start_callback *cb;
 	int rc = -1;
 	TAILQ_FOREACH(p, &data->prototypes, entries) {
 		if (strcmp(p->name, el) == 0) {
 			rc = add_jump_node(data, p->name);
 			if (rc != 0)
 				return ELEMENT_NOT_HANDLED;
+			return ELEMENT_HANDLED;
+		}
+	}
+	TAILQ_FOREACH(cb, data->on_element_start_callbacks, entries) {
+		if (strcmp(cb->el, el) == 0) {
+			rc = cb->f(data, el, attr);
+			if (rc != 0) {
+				data->error = 1;
+				return ELEMENT_NOT_HANDLED;
+			}
 			return ELEMENT_HANDLED;
 		}
 	}

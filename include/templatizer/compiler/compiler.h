@@ -101,7 +101,7 @@ TAILQ_HEAD(input_list_head, input);
 struct element_start_callback {
 	TAILQ_ENTRY(element_callback) entries;
 	const char *el;
-	on_element_start_callback_t cb;
+	on_element_start_callback_t f;
 };
 
 struct element_end_callback {

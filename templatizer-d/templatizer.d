@@ -20,7 +20,7 @@ enum SWHILE_FALSE = TMPL_JMP;
 struct context;
 alias tmpl_ctx_t = context *;
 alias tmpl_cb_t = templatizer_callbacks *;
-alias tmpl_attr_t = const char **;
+alias tmpl_attr_t = const(char) **;
 
 struct MDB_txn {};
 alias MDB_dbi = int;
@@ -41,32 +41,37 @@ enum templatizer_format {
 
 alias on_element_start_callback_t =
 int function
-    (tmpl_ctx_t ctx, const char *el, tmpl_attr_t attr);
+    (tmpl_ctx_t ctx, const(char) *el, tmpl_attr_t attr);
 
 alias on_element_end_callback_t =
 int function
-    (tmpl_ctx_t ctx, const char *el);
+    (tmpl_ctx_t ctx, const(char) *el);
 
 alias tmpl_codegen_tag_start_t =
+extern(C)
 int function
     (tmpl_ctx_t ctx,
      const char *el,
      const char **attr);
 
 alias tmpl_codegen_tag_end_t =
+extern(C)
 int function
     (tmpl_ctx_t ctx,
      const char *el);
 
 alias tmpl_codegen_control_flow_start_t =
+extern(C)
 int function
     (tmpl_ctx_t ctx);
 
 alias tmpl_codegen_control_flow_end_t =
+extern(C)
 int function
     (tmpl_ctx_t ctx,
      const char *label);
 
+extern(C)
 struct templatizer_callbacks {
 	/* Templatizer will manage the memory for the plugin. */
 	/* This avoids memory leaks. */
@@ -83,13 +88,13 @@ struct templatizer_callbacks {
 	void function(tmpl_ctx_t data) send_default_headers;
 	void function(tmpl_ctx_t data, templatizer_format fmt) set_output_format;
 
-	int function(tmpl_ctx_t data, const char *text, size_t max_length) add_filler_text;
+	int function(tmpl_ctx_t data, const(char) *text, size_t max_length) add_filler_text;
 	int function(tmpl_ctx_t data, int b) add_control_flow; /* for conditionals */
 
 	/* These are called during parse time. */
         /* They should be used to generate nodes. */
-        int function(tmpl_ctx_t ctx, const char *s, on_element_start_callback_t f) register_element_start_tag;
-        int function(tmpl_ctx_t ctx, const char *s, on_element_end_callback_t f) register_element_end_tag;
+        int function(tmpl_ctx_t ctx, const(char) *s, on_element_start_callback_t f) register_element_start_tag;
+        int function(tmpl_ctx_t ctx, const(char) *s, on_element_end_callback_t f) register_element_end_tag;
 
         int function(int num) new_attr_object;
         int function(const char *key, const char *value) set_attr_value;

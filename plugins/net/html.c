@@ -8,9 +8,9 @@ thread_local tmpl_cb_t html_cb = NULL;
 int on_selfclosing_html_start_tag(tmpl_ctx_t ctx, const char *el, tmpl_attr_t attr)
 {
 	int rc = -1;
-	rc = html_cb->add_selfclosing_html_node(ctx, el, attr);
+	/*rc = html_cb->add_selfclosing_html_node(ctx, el, attr);
 	if (rc != 0)
-		return 1;
+		return 1;*/
 	return 0;
 }
 
