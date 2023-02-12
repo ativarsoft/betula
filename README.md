@@ -88,6 +88,8 @@ app plugin.
 ## Example
 
 The following is an example of a program written in Templatizer.
+It prints [hello world](https://en.wikipedia.org/wiki/%22Hello,_World!%22_program)
+comming from two Templatizer plugins written in different languages.
 Note that the Templatizer syntax this example as well as other
 Templatizer programs were intentionaly made to be similar to
 XML syntax.
