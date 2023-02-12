@@ -85,6 +85,44 @@ on XHTML template placeholders. Different websites can have
 different user interfaces while using the same Templatier
 app plugin.
 
+## Example
+
+The following is an example of a program written in Templatizer.
+Note that the Templatizer syntax this example as well as other
+Templatizer programs were intentionaly made to be similar to
+XML syntax.
+
+```xml
+<!-- Copyright (C) 2023 Mateus de Lima Oliveira -->
+<templatizer lib="../plugins/input/in_helloworld.so">
+<templatizer lib="../plugins/input/helloworld-rs/target/release/libhelloworld_rs.so">
+<templatizer lib="../plugins/net/headers.so">
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Hello world pipeline</title>
+  </head>
+  <body>
+    <h1>Hello world pipeline</h1>
+    <p>Hello world Templatizer pipeline in multiple programming languages:</p>
+    <ul>
+      <li>C: <span>@</span></li>
+      <li>Rust: <span>@</span></li>
+    </ul>
+    <p>Have a nice day!</p>
+    <templatizer lib="../plugins/net/copyright.so">
+    <p>@</p>
+    </templatizer>
+  </body>
+</html>
+</templatizer>
+</templatizer>
+</templatizer>
+```
+
+More tests and examples can be found in the tests directory
+of this source tree.
+
 ## Compiling from source
 
 Templatizer was only tested on Linux.
@@ -113,7 +151,7 @@ root@debian:~# make install
 
 ### Termux
 
-Compile Templatizer for termux with
+Compile Templatizer for termux with:
 
 ```console
 mateus@debian:~$ make termux
