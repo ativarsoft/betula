@@ -13,8 +13,8 @@ have some form of programming in them. Templatizer
 also does that but it reuses the XML systax for that,
 without having to create a whole new syntax. Therefore
 new programmers can feel familiarized with the Templatizer
-language right on the beggining of learning how to
-code onit.
+language right on the beggining of learning on how to
+code on it.
 
 Templatizer (previously webutils) was created with the
 intent to stick to the UNIX philosophy of
