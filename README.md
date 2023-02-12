@@ -91,8 +91,36 @@ Templatizer was only tested on Linux.
 
 It requires:
 
-  * sys/queue.h for list macros;
-  * libdl for dynamically loading libraries;
-  * libexpat1-dev;
-  * flex and bison.
-  * libapr1-dev
+  * [sys/queue.h](https://man.freebsd.org/cgi/man.cgi?query=queue&sektion=3) for list macros (installed by default on most Linux distributions);
+  * [libdl](https://refspecs.linuxfoundation.org/LSB_3.0.0/LSB-Core-IA64/LSB-Core-IA64/libdl.html) for dynamically loading libraries (installed by default on most Linux distributions);
+  * [build-essential](https://packages.debian.org/bullseye/build-essential)
+  * [libexpat1-dev](https://packages.debian.org/bullseye/libexpat1-dev);
+  * [flex](https://packages.debian.org/bullseye/flex) and [bison](https://packages.debian.org/bullseye/bison);
+  * [libapr1-dev](https://packages.debian.org/bullseye/libapr1-dev);
+  * [libvirt-dev](https://packages.debian.org/bullseye/libvirt-dev);
+  * [liblmdb-dev](https://packages.debian.org/bullseye/liblmdb-dev);
+  * [ldc](https://packages.debian.org/bullseye/ldc);
+  * [cargo](https://packages.debian.org/bullseye/cargo);
+  * [rustc](https://packages.debian.org/bullseye/rustc);
+  * [valgrind](https://packages.debian.org/bullseye/valgrind).
+
+```console
+root@debian:~# make dependencies
+mateus@debian:~$ make
+mateus@debian:~$ make test
+root@debian:~# make install
+```
+
+### Termux
+
+Compile Templatizer for termux with
+
+```console
+mateus@debian:~$ make termux
+root@debian:~# make install
+```
+
+## Contributing
+
+If you like this project, please consider making
+a donation to help me develop it further. :)
