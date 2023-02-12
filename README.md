@@ -26,8 +26,9 @@ keeping things simple and modular
 while staying fast and keeping the memory consumption
 low.
 
-The original idea was to create a CGI executable
-and an Apache module. Something like PHP. But
+The original idea was to create a
+[Common Gateway Interface (CGI)](https://en.wikipedia.org/wiki/Common_Gateway_Interface)
+executable and an Apache module. Something like PHP. But
 instead of interpreting a script, Templatizer
 would load a compiled dynamic library. It provides
 a simple templating engine while keeping the speed
