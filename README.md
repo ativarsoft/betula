@@ -53,6 +53,13 @@ for code reuse.
 
 ## Plugins
 
+In computing, a
+[plug-in](https://en.wikipedia.org/wiki/Plug-in_(computing))
+(or plugin, add-in, addin, add-on, or addon) is a software
+component that adds a specific feature to an existing
+computer program. When a program supports plug-ins, it
+enables customization.
+
 Input plugins read url-encoded and JSON
 input from the client. Those values are then used in a
 script using the '@' symbol. Input plugins can be selected
