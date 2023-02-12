@@ -60,18 +60,22 @@ component that adds a specific feature to an existing
 computer program. When a program supports plug-ins, it
 enables customization.
 
-Input plugins read url-encoded and JSON
+Input plugins read
+[url-encoded](https://en.wikipedia.org/wiki/URL_encoding)
+and [JSON](https://en.wikipedia.org/wiki/JSON)
 input from the client. Those values are then used in a
 script using the '@' symbol. Input plugins can be selected
 using the 'templatizer' tag.
 
-Linker plugins can be used to load programs written in
+[Dynamic Linker](https://en.wikipedia.org/wiki/Dynamic_linker)
+plugins can be used to load programs written in
 specific programming languages. The plugin is specified
 using the 'lib' attribute on the 'templatizer' element.
 The template can set plugin arguments using the 'args'
 XML attribute.
 
-A linker called ld-exec.so can be used to run binary
+A linker called [ld-exec.so](https://www.wikidata.org/wiki/Q47513204)
+can be used to run binary
 programs or text scripts that begin with a shebang on
 Linux.
 
