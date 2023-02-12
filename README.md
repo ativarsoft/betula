@@ -6,7 +6,8 @@ scripts are a series of complex instructions provided by
 the runtime. New element tags can be added to the
 runtime by using general purpose plugins.
 
-An HTML template is an HTML model. Templates are
+An [HTML template](https://en.wikipedia.org/wiki/Web_template_system)
+is an HTML model. Templates are
 preformatted HTML in which text or image content
 can be inserted into. Most modern template languages
 have some form of programming in them. Templatizer
@@ -15,6 +16,9 @@ without having to create a whole new syntax. Therefore
 new programmers can feel familiarized with the Templatizer
 language right on the beggining of learning on how to
 code on it.
+
+[XML](https://en.wikipedia.org/wiki/XML) tags represent
+the data structure and contain metadata.
 
 Templatizer (previously webutils) was created with the
 intent to stick to the UNIX philosophy of
