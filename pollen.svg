@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="128mm"
+   height="128mm"
+   viewBox="0 0 128 128"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   sodipodi:docname="pollen.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.46769781"
+     inkscape:cx="-19.243195"
+     inkscape:cy="391.27829"
+     inkscape:window-width="1366"
+     inkscape:window-height="705"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Camada 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <ellipse
+       style="fill:#ffff00;stroke:#808000;stroke-width:2.49079;stroke-dasharray:none"
+       id="path217"
+       cx="59.841393"
+       cy="39.10273"
+       rx="12.271206"
+       ry="11.00177" />
+    <ellipse
+       style="fill:#ffff00;stroke:#808000;stroke-width:2.49079;stroke-dasharray:none"
+       id="path219"
+       cx="30.644386"
+       cy="74.646904"
+       rx="12.69435"
+       ry="13.540642" />
+    <ellipse
+       style="fill:#ffff00;stroke:#808000;stroke-width:2.49079;stroke-dasharray:none"
+       id="path225"
+       cx="105.54107"
+       cy="92.842148"
+       rx="8.8860455"
+       ry="8.0397558" />
+  </g>
+</svg>
