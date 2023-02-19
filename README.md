@@ -1,8 +1,7 @@
-# Pollen
+# Pollen programmming language
 
-A XML/HTML templating programming language.
-Pollen is similar to Dartmouth BASIC:
-scripts are a series of complex instructions provided by
+A programming language with XML syntax.
+Scripts are a series of complex instructions provided by
 the runtime. New element tags can be added to the
 runtime by using general purpose plugins.
 
