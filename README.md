@@ -1,7 +1,7 @@
-# Templatizer
+# Pollen
 
 A XML/HTML templating programming language.
-Templatizer is similar to Dartmouth BASIC:
+Pollen is similar to Dartmouth BASIC:
 scripts are a series of complex instructions provided by
 the runtime. New element tags can be added to the
 runtime by using general purpose plugins.
@@ -10,17 +10,17 @@ An [HTML template](https://en.wikipedia.org/wiki/Web_template_system)
 is an HTML model. Templates are
 preformatted HTML in which text or image content
 can be inserted into. Most modern template languages
-have some form of programming in them. Templatizer
+have some form of programming in them. Pollen
 also does that but it reuses the XML systax for that,
 without having to create a whole new syntax. Therefore
-new programmers can feel familiarized with the Templatizer
+new programmers can feel familiarized with the Pollen
 language right on the beggining of learning on how to
 code on it.
 
 [XML](https://en.wikipedia.org/wiki/XML) tags represent
 the data structure and contain metadata.
 
-Templatizer (previously webutils) was created with the
+Pollen (previously webutils) was created with the
 intent to stick to the UNIX philosophy of
 keeping things simple and modular
 while staying fast and keeping the memory consumption
@@ -29,7 +29,7 @@ low.
 The original idea was to create a
 [Common Gateway Interface (CGI)](https://en.wikipedia.org/wiki/Common_Gateway_Interface)
 executable and an Apache module. Something like PHP. But
-instead of interpreting a script, Templatizer
+instead of interpreting a script, Pollen
 would load a compiled dynamic library. It provides
 a simple templating engine while keeping the speed
 of compiled languagues.
@@ -41,8 +41,8 @@ mitigate use-after-free, buffer overflows and buffer underflows.
 A good explanation can be found
 [here](http://www.apachetutor.org/dev/pools).
 
-setuid can be used to make Apache run Templatizer as root.
-Templatizer gets the user and password from the CGI environment
+setuid can be used to make Apache run Pollen as root.
+Pollen gets the user and password from the CGI environment
 flags and use setuid to drop privileges to the specified user.
 This can be used to restrict filesystem access without using
 fakechroot. fakechroot provides wrappers for common system calls.
@@ -87,11 +87,11 @@ app plugin.
 
 ## Example
 
-The following is an example of a program written in Templatizer.
+The following is an example of a program written in Pollen.
 It prints [hello world](https://en.wikipedia.org/wiki/%22Hello,_World!%22_program)
-comming from two Templatizer plugins written in different languages.
-Note that the Templatizer syntax this example as well as other
-Templatizer programs were intentionaly made to be similar to
+comming from two Pollen plugins written in different languages.
+Note that the Pollen syntax this example as well as other
+Pollen programs were intentionaly made to be similar to
 XML syntax.
 
 ```xml
@@ -127,7 +127,7 @@ of this source tree.
 
 ## Compiling from source
 
-Templatizer was only tested on Linux.
+Pollen was only tested on Linux.
 
 It requires:
 
@@ -153,7 +153,7 @@ root@debian:~# make install
 
 ### Termux
 
-Compile Templatizer for termux with:
+Compile Pollen for termux with:
 
 ```console
 mateus@debian:~$ make termux
@@ -166,7 +166,7 @@ The following is my future development:
 
   - Convert Quick to a series daemons
   - Remove autotools from Quick
-  - Merge Quick with Templatizer
+  - Merge Quick with Pollen
   - Fix bugs
 
 ## Contributing
