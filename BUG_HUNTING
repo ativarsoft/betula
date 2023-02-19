@@ -1,3 +1,16 @@
-if a script crashes for unknown reason on the server but it runs
-flawlessly as a standalone cgi, then restart the server.
-the library may not have been unloaded completely.
+KNOW BUGS
+=========
+
+There are some know bugs in Templaizer.
+Bugs are coding errors that I didn't have time to fix yet or
+their complexities don't allow me to fix the so fast.
+
+1. Dangling system handles
+--------------------------
+
+If a script crashes for unknown reason on the server but it runs
+flawlessly as a standalone CGI, then restart the server.
+The library may not have been unloaded completely.
+
+The *.so libraries used as plugins used to stay open when
+the CGI program terminates.
