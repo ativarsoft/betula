@@ -20,31 +20,44 @@
         </div>
 
         <div class="grid-x grid-margin-xy">
-          <h1>Pollen programmming language</h1>
-          <p>
-            A programming language with XML syntax. Scripts are a series of complex instructions provided by the runtime. New element tags can be added to the runtime by using general purpose plugins.
-          </p>
-          <p>
-            An HTML template is an HTML model. Templates are preformatted HTML in which text or image content can be inserted into. Most modern template languages have some form of programming in them. Pollen also does that but it reuses the XML systax for that, without having to create a whole new syntax. Therefore new programmers can feel familiarized with the Pollen language right on the beggining of learning on how to code on it.
-          </p>
-          <p>
-            XML tags represent the data structure and contain metadata.
-          </p>
-          <p>
-            Pollen (previously webutils) was created with the intent to stick to the UNIX philosophy of keeping things simple and modular while staying fast and keeping the memory consumption low.
-          </p>
-          <p>
-            The original idea was to create a Common Gateway Interface (CGI) executable and an Apache module. Something like PHP. But instead of interpreting a script, Pollen would load a compiled dynamic library. It provides a simple templating engine while keeping the speed of compiled languagues.
-          </p>
-          <p>
-            The Apache Runtime Library (APR) is being added to ensure good security. APR provides dynamic arrays and memory pools to mitigate use-after-free, buffer overflows and buffer underflows. A good explanation can be found here.
-          </p>
-          <p>
-            setuid can be used to make Apache run Pollen as root. Pollen gets the user and password from the CGI environment flags and use setuid to drop privileges to the specified user. This can be used to restrict filesystem access without using fakechroot. fakechroot provides wrappers for common system calls.
-          </p>
-          <p>
-            libtemplatizer provides common functions which are independent from the templatizer runtime executable. Plugins use libtemplatizer for code reuse.
-          </p>
+          <div class="large-6 cell">
+            <h1>Pollen programmming language</h1>
+            <p>
+              A programming language with XML syntax. Scripts are a series of complex instructions provided by the runtime. New element tags can be added to the runtime by using general purpose plugins.
+            </p>
+            <p>
+              An HTML template is an HTML model. Templates are preformatted HTML in which text or image content can be inserted into. Most modern template languages have some form of programming in them. Pollen also does that but it reuses the XML systax for that, without having to create a whole new syntax. Therefore new programmers can feel familiarized with the Pollen language right on the beggining of learning on how to code on it.
+            </p>
+            <p>
+              XML tags represent the data structure and contain metadata.
+            </p>
+            <p>
+              Pollen (previously webutils) was created with the intent to stick to the UNIX philosophy of keeping things simple and modular while staying fast and keeping the memory consumption low.
+            </p>
+            <p>
+              The original idea was to create a Common Gateway Interface (CGI) executable and an Apache module. Something like PHP. But instead of interpreting a script, Pollen would load a compiled dynamic library. It provides a simple templating engine while keeping the speed of compiled languagues.
+            </p>
+            <p>
+              The Apache Runtime Library (APR) is being added to ensure good security. APR provides dynamic arrays and memory pools to mitigate use-after-free, buffer overflows and buffer underflows. A good explanation can be found here.
+            </p>
+            <p>
+              setuid can be used to make Apache run Pollen as root. Pollen gets the user and password from the CGI environment flags and use setuid to drop privileges to the specified user. This can be used to restrict filesystem access without using fakechroot. fakechroot provides wrappers for common system calls.
+            </p>
+            <p>
+              libtemplatizer provides common functions which are independent from the templatizer runtime executable. Plugins use libtemplatizer for code reuse.
+            </p>
+          </div>
+          <div class="large-4 cell">
+            <h2>Download</h2>
+            <p>
+              Pollen is free and open source.
+            </p>
+            <p>
+              <a href="https://github.com/ativarsoft/pollen-lang/releases/download/v0.14/templatizer-0.14.deb">
+                <img src="pollen-social-card.svg" alt="Free download">
+              </a>
+            </p>
+          </div>
         </div>
         <div class="grid-x grid-margin-xy">
           <h2>Plugins</h2>
