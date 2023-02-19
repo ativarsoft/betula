@@ -109,6 +109,8 @@ struct templatizer_callbacks {
 
 	int function() codegen_sanity_check;
 
+	void function() noplugin;
+
 	void function(tmpl_ctx_t ctx, int status) exit;
 
 	int function(const char *path) storage_open;

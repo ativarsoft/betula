@@ -183,6 +183,8 @@ struct templatizer_callbacks {
 
 	int (*codegen_sanity_check)();
 
+	void (*noplugin)();
+
 	void (*exit)(tmpl_ctx_t ctx, int status);
 	int (*get_num_plugin_parameters)(tmpl_ctx_t ctx);
 	int (*get_plugin_parameter)(tmpl_ctx_t ctx, int index, const char **param_ptr, size_t *param_length);

@@ -40,6 +40,16 @@ static int parse_xml_file(struct context *data, const char *tmpl);
 static const char tmpl_version[] = VERSION;
 static const char tmpl_copyright[] = COPYRIGHT;
 
+/* This variable works as a kill switch that prevents
+ * plugins from being loaded and executed.
+ * Pollen intentionally does not have many global
+ * variables. But I thinks it is a good idea to make
+ * this important variable as a global, instead of
+ * keeping it on the stack, just to makevit harder
+ * for an attacker to load plugins case the stack gets
+ * corrupted. */
+static bool noplugin = false;
+
 enum {
     ELEMENT_HANDLED = 0,
     ELEMENT_NOT_HANDLED = 1
@@ -355,7 +365,13 @@ static const char *tmpl_get_copyright_string()
 	return tmpl_copyright;
 }
 
+static void tmpl_noplugin()
+{
+	noplugin = true;
+}
+
 static struct templatizer_callbacks callbacks = {
+	.noplugin = &tmpl_noplugin,
 	.malloc = &templatizer_malloc,
 	.free = &templatizer_free,
 	.strndup = &tmpl_connection_strndup,
@@ -401,6 +417,9 @@ static void *load_library(struct context *data, const char *path)
 {
 	void *handle;
 	const char *path_translated, *dir, *full_path;
+
+	if (noplugin != false)
+		return NULL;
 
 	path_translated = data->script_path;
 	if (path_translated == NULL) return NULL;
