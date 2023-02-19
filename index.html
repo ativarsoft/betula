@@ -11,51 +11,59 @@
     <!-- optional CDN for Foundation Icons ^^ -->
   </head>
   <body>
-    <body class="grid-container">
-      <div class="grid-x grid-margin-xy">
-        <h1>Pollen programmming language</h1>
-        <p>
-          A programming language with XML syntax. Scripts are a series of complex instructions provided by the runtime. New element tags can be added to the runtime by using general purpose plugins.
-        </p>
-        <p>
-          An HTML template is an HTML model. Templates are preformatted HTML in which text or image content can be inserted into. Most modern template languages have some form of programming in them. Pollen also does that but it reuses the XML systax for that, without having to create a whole new syntax. Therefore new programmers can feel familiarized with the Pollen language right on the beggining of learning on how to code on it.
-        </p>
-        <p>
-          XML tags represent the data structure and contain metadata.
-        </p>
-        <p>
-          Pollen (previously webutils) was created with the intent to stick to the UNIX philosophy of keeping things simple and modular while staying fast and keeping the memory consumption low.
-        </p>
-        <p>
-          The original idea was to create a Common Gateway Interface (CGI) executable and an Apache module. Something like PHP. But instead of interpreting a script, Pollen would load a compiled dynamic library. It provides a simple templating engine while keeping the speed of compiled languagues.
-        </p>
-        <p>
-          The Apache Runtime Library (APR) is being added to ensure good security. APR provides dynamic arrays and memory pools to mitigate use-after-free, buffer overflows and buffer underflows. A good explanation can be found here.
-        </p>
-        <p>
-          setuid can be used to make Apache run Pollen as root. Pollen gets the user and password from the CGI environment flags and use setuid to drop privileges to the specified user. This can be used to restrict filesystem access without using fakechroot. fakechroot provides wrappers for common system calls.
-        </p>
-        <p>
-          libtemplatizer provides common functions which are independent from the templatizer runtime executable. Plugins use libtemplatizer for code reuse.
-        </p>
-      </div>
-      <div class="grid-x grid-margin-xy">
-        <h2>Plugins</h2>
-        <p>
-          In computing, a plug-in (or plugin, add-in, addin, add-on, or addon) is a software component that adds a specific feature to an existing computer program. When a program supports plug-ins, it enables customization.
-        </p>
-        <p>
-          Input plugins read url-encoded and JSON input from the client. Those values are then used in a script using the '@' symbol. Input plugins can be selected using the 'templatizer' tag.
-        </p>
-        <p>
-          Dynamic Linker plugins can be used to load programs written in specific programming languages. The plugin is specified using the 'lib' attribute on the 'templatizer' element. The template can set plugin arguments using the 'args' XML attribute.
-        </p>
-        <p>
-          A linker called ld-exec.so can be used to run binary programs or text scripts that begin with a shebang on Linux.
-        </p>
-        <p>
-         Some plugins are full web apps. Text placeholder variables are set using variable names and those variables can be used on XHTML template placeholders. Different websites can have different user interfaces while using the same Templatier app plugin.
-        </p>
+    <body>
+      <div class="grid-container">
+        <div class="grid-x grid-margin-xy">
+          <div class="medium-2 cell">
+            <img src="pollen.svg"/>
+          </div>
+        </div>
+
+        <div class="grid-x grid-margin-xy">
+          <h1>Pollen programmming language</h1>
+          <p>
+            A programming language with XML syntax. Scripts are a series of complex instructions provided by the runtime. New element tags can be added to the runtime by using general purpose plugins.
+          </p>
+          <p>
+            An HTML template is an HTML model. Templates are preformatted HTML in which text or image content can be inserted into. Most modern template languages have some form of programming in them. Pollen also does that but it reuses the XML systax for that, without having to create a whole new syntax. Therefore new programmers can feel familiarized with the Pollen language right on the beggining of learning on how to code on it.
+          </p>
+          <p>
+            XML tags represent the data structure and contain metadata.
+          </p>
+          <p>
+            Pollen (previously webutils) was created with the intent to stick to the UNIX philosophy of keeping things simple and modular while staying fast and keeping the memory consumption low.
+          </p>
+          <p>
+            The original idea was to create a Common Gateway Interface (CGI) executable and an Apache module. Something like PHP. But instead of interpreting a script, Pollen would load a compiled dynamic library. It provides a simple templating engine while keeping the speed of compiled languagues.
+          </p>
+          <p>
+            The Apache Runtime Library (APR) is being added to ensure good security. APR provides dynamic arrays and memory pools to mitigate use-after-free, buffer overflows and buffer underflows. A good explanation can be found here.
+          </p>
+          <p>
+            setuid can be used to make Apache run Pollen as root. Pollen gets the user and password from the CGI environment flags and use setuid to drop privileges to the specified user. This can be used to restrict filesystem access without using fakechroot. fakechroot provides wrappers for common system calls.
+          </p>
+          <p>
+            libtemplatizer provides common functions which are independent from the templatizer runtime executable. Plugins use libtemplatizer for code reuse.
+          </p>
+        </div>
+        <div class="grid-x grid-margin-xy">
+          <h2>Plugins</h2>
+          <p>
+            In computing, a plug-in (or plugin, add-in, addin, add-on, or addon) is a software component that adds a specific feature to an existing computer program. When a program supports plug-ins, it enables customization.
+          </p>
+          <p>
+            Input plugins read url-encoded and JSON input from the client. Those values are then used in a script using the '@' symbol. Input plugins can be selected using the 'templatizer' tag.
+          </p>
+          <p>
+            Dynamic Linker plugins can be used to load programs written in specific programming languages. The plugin is specified using the 'lib' attribute on the 'templatizer' element. The template can set plugin arguments using the 'args' XML attribute.
+          </p>
+          <p>
+            A linker called ld-exec.so can be used to run binary programs or text scripts that begin with a shebang on Linux.
+          </p>
+          <p>
+           Some plugins are full web apps. Text placeholder variables are set using variable names and those variables can be used on XHTML template placeholders. Different websites can have different user interfaces while using the same Templatier app plugin.
+          </p>
+        </div>
       </div>
     </div>
 
