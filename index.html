@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/css/foundation-prototype.min.css">
     <link href='https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css' rel='stylesheet' type='text/css'>
     <!-- optional CDN for Foundation Icons ^^ -->
+
+    <link rel="stylesheet"
+          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
   </head>
   <body>
     <body>
@@ -62,24 +65,74 @@
             </p>
           </div>
         </div>
+
         <div class="grid-x grid-margin-xy">
-          <h2>Plugins</h2>
-          <p>
-            In computing, a plug-in (or plugin, add-in, addin, add-on, or addon) is a software component that adds a specific feature to an existing computer program. When a program supports plug-ins, it enables customization.
-          </p>
-          <p>
-            Input plugins read url-encoded and JSON input from the client. Those values are then used in a script using the '@' symbol. Input plugins can be selected using the 'templatizer' tag.
-          </p>
-          <p>
-            Dynamic Linker plugins can be used to load programs written in specific programming languages. The plugin is specified using the 'lib' attribute on the 'templatizer' element. The template can set plugin arguments using the 'args' XML attribute.
-          </p>
-          <p>
-            A linker called ld-exec.so can be used to run binary programs or text scripts that begin with a shebang on Linux.
-          </p>
-          <p>
-           Some plugins are full web apps. Text placeholder variables are set using variable names and those variables can be used on XHTML template placeholders. Different websites can have different user interfaces while using the same Templatier app plugin.
-          </p>
+
+          <div class="medium-6 cell">
+            <h2>Plugins</h2>
+            <p>
+              In computing, a plug-in (or plugin, add-in, addin, add-on, or addon) is a software component that adds a specific feature to an existing computer program. When a program supports plug-ins, it enables customization.
+            </p>
+            <p>
+              Input plugins read url-encoded and JSON input from the client. Those values are then used in a script using the '@' symbol. Input plugins can be selected using the 'templatizer' tag.
+            </p>
+            <p>
+              Dynamic Linker plugins can be used to load programs written in specific programming languages. The plugin is specified using the 'lib' attribute on the 'templatizer' element. The template can set plugin arguments using the 'args' XML attribute.
+            </p>
+            <p>
+              A linker called ld-exec.so can be used to run binary programs or text scripts that begin with a shebang on Linux.
+            </p>
+            <p>
+             Some plugins are full web apps. Text placeholder variables are set using variable names and those variables can be used on XHTML template placeholders. Different websites can have different user interfaces while using the same Templatier app plugin.
+            </p>
+          </div>
         </div>
+        
+        <div class="medium-2 cell">
+        </div>
+
+        <div class="medium-6 cell">
+
+          <h2>Example</h2>
+
+          <p>
+            The following is an example of a program written in Pollen. It prints hello world comming from two Pollen plugins written in different languages. Note that the Pollen syntax this example as well as other Pollen programs were intentionaly made to be similar to XML syntax.
+          </p>
+
+          <pre>
+<!-- Copyright (C) 2023 Mateus de Lima Oliveira -->
+<templatizer lib="../plugins/input/in_helloworld.so">
+<templatizer lib="../plugins/input/helloworld-rs/target/release/libhelloworld_rs.so">
+<templatizer lib="../plugins/net/headers.so">
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Hello world pipeline</title>
+  </head>
+  <body>
+    <h1>Hello world pipeline</h1>
+    <p>Hello world Templatizer pipeline in multiple programming languages:</p>
+    <ul>
+      <li>C: <span>@</span></li>
+      <li>Rust: <span>@</span></li>
+    </ul>
+    <p>Have a nice day!</p>
+    <templatizer lib="../plugins/net/copyright.so">
+    <p>@</p>
+    </templatizer>
+  </body>
+</html>
+</templatizer>
+</templatizer>
+</templatizer>
+          </pre>
+
+        </div>
+
+      </div>
+      
+      <div class="grid-x grid-margin-xy">
+        
       </div>
 
       <hr>
@@ -110,5 +163,7 @@
     <script>
       $(document).foundation();
     </script>
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
   </body>
 </html>
