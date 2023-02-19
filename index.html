@@ -87,43 +87,18 @@
              Some plugins are full web apps. Text placeholder variables are set using variable names and those variables can be used on XHTML template placeholders. Different websites can have different user interfaces while using the same Templatier app plugin.
             </p>
           </div>
-        </div>
-        
-        <div class="medium-4 cell">
-          <h2>Compiling from source</h2>
 
-          <p>Pollen was only tested on Linux.</p>
+          <div class="medium-2 cell"></div>
 
-          <p>It requires:</p>
+          <div class="medium-6 cell">
 
-          <ol>
-            <li>sys/queue.h for list macros (installed by default on most Linux distributions);</li>
-            <li>libdl for dynamically loading libraries (installed by default on most Linux distributions);</li>
-            <li>build-essential;</li>
-            <li>libexpat1-dev;</li>
-            <li>flex and bison;</li>
-            <li>libapr1-dev;</li>
-            <li>libvirt-dev;</li>
-            <li>liblmdb-dev;</li>
-            <li>ldc;</li>
-            <li>cargo;</li>
-            <li>rustc;</li>
-            <li>valgrind;</li>
-            <li>llvm-dev.</li>
-          </ol>
+            <h2>Example</h2>
 
-        </div>
+            <p>
+              The following is an example of a program written in Pollen. It prints hello world comming from two Pollen plugins written in different languages. Note that the Pollen syntax this example as well as other Pollen programs were intentionaly made to be similar to XML syntax.
+            </p>
 
-        <div class="medium-6 cell">
-
-          <h2>Example</h2>
-
-          <p>
-            The following is an example of a program written in Pollen. It prints hello world comming from two Pollen plugins written in different languages. Note that the Pollen syntax this example as well as other Pollen programs were intentionaly made to be similar to XML syntax.
-          </p>
-
-          <pre><code class="language-xml">
-&lt;!-- Copyright (C) 2023 Mateus de Lima Oliveira --&gt;
+            <pre><code class="language-xml">&lt;!-- Copyright (C) 2023 Mateus de Lima Oliveira --&gt;
 &lt;templatizer lib=&quot;../plugins/input/in_helloworld.so&quot;&gt;
 &lt;templatizer lib=&quot;../plugins/input/helloworld-rs/target/release/libhelloworld_rs.so&quot;&gt;
 &lt;templatizer lib=&quot;../plugins/net/headers.so&quot;&gt;
@@ -148,9 +123,34 @@
 &lt;/templatizer&gt;
 &lt;/templatizer&gt;
 &lt;/templatizer&gt;
-          </code></pre>
+            </code></pre>
 
-        </div>
+          </div>
+
+          <div class="medium-4 cell">
+            <h2>Compiling from source</h2>
+
+            <p>Pollen was only tested on Linux.</p>
+
+            <p>It requires:</p>
+
+            <ol>
+              <li>sys/queue.h for list macros (installed by default on most Linux distributions);</li>
+              <li>libdl for dynamically loading libraries (installed by default on most Linux distributions);</li>
+              <li>build-essential;</li>
+              <li>libexpat1-dev;</li>
+              <li>flex and bison;</li>
+              <li>libapr1-dev;</li>
+              <li>libvirt-dev;</li>
+              <li>liblmdb-dev;</li>
+              <li>ldc;</li>
+              <li>cargo;</li>
+              <li>rustc;</li>
+              <li>valgrind;</li>
+              <li>llvm-dev.</li>
+            </ol>
+
+          </div>
 
       </div>
       
