@@ -181,6 +181,8 @@ struct templatizer_callbacks {
 	int (*add_ewhile_node)(tmpl_ctx_t ctx);
 	int (*add_call_special_node)(tmpl_ctx_t ctx, void (*f)());
 
+	int (*codegen_sanity_check)();
+
 	void (*exit)(tmpl_ctx_t ctx, int status);
 	int (*get_num_plugin_parameters)(tmpl_ctx_t ctx);
 	int (*get_plugin_parameter)(tmpl_ctx_t ctx, int index, const char **param_ptr, size_t *param_length);

@@ -3,10 +3,13 @@
 #include <llvm-c/Core.h>
 #include <llvm-c/ExecutionEngine.h>
 #include <llvm-c/Analysis.h>
+#include <llvm-c/Target.h>
+#include <llvm-c/BitWriter.h>
 
 /* TODO: generate code from the Pollen AST nodes. */
 
-int tmpl_jit() {
+int pollen_codegen_sanity_check()
+{
     LLVMModuleRef mod = LLVMModuleCreateWithName("test_module");
 
     LLVMTypeRef param_types[] = { LLVMInt32Type(), LLVMInt32Type() };
@@ -27,6 +30,9 @@ int tmpl_jit() {
     LLVMDisposeMessage(error);
 
     LLVMExecutionEngineRef engine;
+    LLVMLinkInMCJIT();
+    LLVMInitializeNativeTarget();
+    LLVMInitializeNativeAsmPrinter();
     if (LLVMCreateJITCompilerForModule(&engine, mod, 2, &error) != 0) {
         fprintf(stderr, "failed to create JIT compiler: %s\n", error);
         LLVMDisposeMessage(error);
@@ -35,11 +41,15 @@ int tmpl_jit() {
 
     int (*sum_ptr)(int, int) = (int (*)(int, int))LLVMGetFunctionAddress(engine, "sum");
     int result = sum_ptr(2, 3);
-    printf("sum(2, 3) = %d\n", result);
+    printf("Codegen-Sanity-Check: 2 plus 3 equals %d\r\n", result);
 
-    LLVMDisposeExecutionEngine(engine);
+    // Write out bitcode to file
+    if (LLVMWriteBitcodeToFile(mod, "test.bc") != 0) {
+        fprintf(stderr, "error writing bitcode to file, skipping\n");
+    }
+
     LLVMDisposeBuilder(builder);
-    LLVMDisposeModule(mod);
+    LLVMDisposeExecutionEngine(engine);
 
     return 0;
 }

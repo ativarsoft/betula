@@ -30,6 +30,7 @@
 #include "virt.h"
 #include "config.h"
 #include "tmplregex.h"
+#include "jit.h"
 
 #define VERSION "0.1"
 #define COPYRIGHT "Copyright (C) 2017-2023 Mateus de Lima Oliveira"
@@ -368,6 +369,7 @@ static struct templatizer_callbacks callbacks = {
 	.register_element_start_tag = &tmpl_register_element_start_tag,
 	.register_element_end_tag = &tmpl_register_element_end_tag,
 	.add_selfclosing_html_node = &tmpl_add_selfclosing_html_node,
+	.codegen_sanity_check = &pollen_codegen_sanity_check,
 	.exit = &tmpl_exit,
 	.get_num_plugin_parameters = &tmpl_get_num_plugin_parameters,
 	.get_plugin_parameter = &tmpl_get_plugin_parameter,
@@ -1303,7 +1305,7 @@ int main(int argc, char **argv)
 	data.keep_alive = false;
 	parse_xml_file(&data, tmpl);
 	serialize_template_file(&data);
-	print_list(&data);
+	print_list(&data); /* Interpreter */
 	apr_pool_destroy(data.pools.connection);
 
 #if 1

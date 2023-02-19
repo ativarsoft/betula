@@ -1,0 +1,28 @@
+<!-- Copyright (C) 2023 Mateus de Lima Oliveira -->
+<templatizer lib="../plugins/tests/sanity_checks.so">
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Sanity checks</title>
+  </head>
+  <body>
+    <p>
+      According to
+      <a href="https://en.m.wikipedia.org/wiki/Sanity_check">
+        this
+      </a>
+      Wikipedia page,
+      "a sanity check or sanity test is a basic test to
+      quickly evaluate whether a claim or the result of
+      a calculation can possibly be true".
+    </p>
+    <ol>
+      <li>
+        Codegen:
+        <sanity test="codegen"/>
+        <span>@</span>
+      </li>
+    </ol>
+  </body>
+</html>
+</templatizer>
