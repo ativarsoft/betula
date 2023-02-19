@@ -164,10 +164,10 @@ root@debian:~# make install
 
 The following is my future development:
 
-  # Convert Quick to a series daemons
-  # Remove autotools from Quick
-  # Merge Quick with Templatizer
-  # Fix bugs
+  - Convert Quick to a series daemons
+  - Remove autotools from Quick
+  - Merge Quick with Templatizer
+  - Fix bugs
 
 ## Contributing
 
