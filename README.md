@@ -160,6 +160,15 @@ mateus@debian:~$ make termux
 root@debian:~# make install
 ```
 
+## Development roadmap
+
+The following is my future development:
+
+  # Convert Quick to a series daemons
+  # Remove autotools from Quick
+  # Merge Quick with Templatizer
+  # Fix bugs
+
 ## Contributing
 
 If you like this project, please consider making
