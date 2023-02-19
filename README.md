@@ -141,7 +141,8 @@ It requires:
   * [ldc](https://packages.debian.org/bullseye/ldc);
   * [cargo](https://packages.debian.org/bullseye/cargo);
   * [rustc](https://packages.debian.org/bullseye/rustc);
-  * [valgrind](https://packages.debian.org/bullseye/valgrind).
+  * [valgrind](https://packages.debian.org/bullseye/valgrind);
+  * [llvm-dev](https://packages.debian.org/bullseye/devel/llvm-dev).
 
 ```console
 root@debian:~# make dependencies
