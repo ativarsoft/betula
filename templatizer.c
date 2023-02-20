@@ -13,6 +13,7 @@
 #include <sys/queue.h>
 #include <expat.h>
 #include <templatizer.h>
+#include "pollen.h"
 #include <ctype.h>
 #include <apr_pools.h>
 #include <apr_strings.h>
@@ -413,7 +414,7 @@ static struct templatizer_callbacks callbacks = {
 #ifdef _WIN32
 #error win32 is not supported yet
 #else
-static void *load_library(struct context *data, const char *path)
+void *load_library(struct context *data, const char *path)
 {
 	void *handle;
 	const char *path_translated, *dir, *full_path;
