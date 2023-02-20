@@ -15,6 +15,10 @@ CFLAGS+=-DTERMUX
 LIBS=-lexpat -ldl -lapr-1 -lsqlite3
 endif
 
+ifeq ($(DEBUG),y)
+CFLAGS+=-DDEBUG
+endif
+
 all: $(EXEC) libtemplatizer templatizer-d templatizer-rs plugins
 
 deb: templatizer-$(VERSION).deb

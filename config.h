@@ -12,4 +12,8 @@
 #define HAS_REGEX
 #endif
 
+#ifdef DEBUG
+#define CONFIG_CODEGEN_PATH "/home/mateus/pollen-lang/plugins/codegen/llvm.so"
+#endif
+
 #endif
