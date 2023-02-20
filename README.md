@@ -160,6 +160,16 @@ mateus@debian:~$ make termux
 root@debian:~# make install
 ```
 
+### Debug
+
+Enabling debug can be done by
+setting the DEBUG environment
+variable to "y":
+
+```console
+mateus@debian:~$ DEBUG=y make
+```
+
 ## Development roadmap
 
 The following is my future development:
