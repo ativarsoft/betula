@@ -54,7 +54,7 @@ opcode.o: opcode.c opcode.h
 storage.o: storage.c storage.h
 templatizer.o: templatizer.c
 
-templatizer: y.tab.o lex.yy.o templatizer.o interpreter.o opcode.o storage.o sql.o virt.o regex.o jit.o
+templatizer: y.tab.o lex.yy.o pollen.o interpreter.o opcode.o storage.o sql.o virt.o regex.o jit.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 test: templatizer plugins libtemplatizer templatizer-d
