@@ -1,23 +1,29 @@
 %{
 
 #include <stdio.h>
+#include <string.h>
 #include "y.tab.h"
 int c;
 %}
 %%
-" "       ;
-[a-z]     {
-            c = yytext[0];
-            yylval.a = c - 'a';
-            return(LETTER);
-          }
+" \t"     ;
 [0-9]     {
             c = yytext[0];
             yylval.a = c - '0';
-            return(DIGIT);
+            return DIGIT;
           }
-[^a-z0-9\b]    {
-                 c = yytext[0];
-                 return(c);
-               }
+[A-Za-z_][A-Za-z_0-9]*   {
+                           yylval.identifier = strdup(yytext);
+                           return IDENTIFIER;
+                         }
+\"(\\.|[^"\\])*\" {
+                    yylval.strval = strdup(yytext);
+                    return STRING;
+                  }
+=                 {
+                    return EQUAL;
+                  }
+\n                {
+                    return NEWLINE;
+                  }
 %%

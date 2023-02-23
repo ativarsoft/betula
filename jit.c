@@ -12,14 +12,10 @@ int pollen_codegen_sanity_check()
 
 int pollen_codegen_init(tmpl_ctx_t ctx)
 {
-	char *path = NULL;
+	char *path = config_codegen;
 
 	if (ctx == NULL)
 		return 1;
-
-#ifdef POLLEN_DEBUG
-	path = POLLEN_DEBUG_CODEGEN_PATH;
-#endif
 
 	/* TODO: get selected codegen plugin path
          * from config file.

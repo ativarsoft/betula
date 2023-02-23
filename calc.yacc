@@ -1,8 +1,12 @@
 %{
-#include<stdio.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "pollen.h"
 
 int regs[26];
 int base;
+char *config_name;
+char *config_string_value;
 
 void yyerror(const char *s);
 int yylex();
@@ -11,96 +15,53 @@ int yylex();
 
 %start list
 
-%union { int a; }
+%union { int a; char *identifier; char *strval; }
 
 
-%token<a> DIGIT LETTER
-
-%left '|'
-%left '&'
-%left '+' '-'
-%left '*' '/' '%'
-%left UMINUS  /*supplies precedence for unary minus */
+%token<a> DIGIT IDENTIFIER STRING EQUAL NEWLINE
 
 
-%type<a> stat expr number
+%type<a> statement number
 
 %%                   /* beginning of rules section */
 
 list:                       /*empty */
          |
-        list stat '\n'
+        list statement NEWLINE
          |
-        list error '\n'
+        list error NEWLINE
          {
            yyerrok;
          }
          ;
-stat:    expr
-         {
-           printf("%d\n",$1);
-         }
-         |
-         LETTER '=' expr
-         {
-           regs[$1] = $3;
-         }
-
-         ;
-
-expr:    '(' expr ')'
-         {
-           $$ = $2;
-         }
-         |
-         expr '*' expr
-         {
-
-           $$ = $1 * $3;
-         }
-         |
-         expr '/' expr
-         {
-           $$ = $1 / $3;
-         }
-         |
-         expr '%' expr
-         {
-           $$ = $1 % $3;
-         }
-         |
-         expr '+' expr
-         {
-           $$ = $1 + $3;
-         }
-         |
-         expr '-' expr
-         {
-           $$ = $1 - $3;
-         }
-         |
-         expr '&' expr
-         {
-           $$ = $1 & $3;
-         }
-         |
-         expr '|' expr
-         {
-           $$ = $1 | $3;
-         }
-         |
-         '-' expr %prec UMINUS
-         {
-           $$ = -$2;
-         }
-         |
-         LETTER
-         {
-           $$ = regs[$1];
-         }
-         |
-         number
-         ;
+statement: identifier EQUAL string
+             {
+               int rc;
+               rc = set_config_option_string(config_name, config_string_value);
+               free(config_name);
+               free(config_string_value);
+               if (rc)
+                 exit(1);
+             }
+             |
+             identifier EQUAL number
+             {
+               int rc;
+               rc = set_config_option_int(config_name, $3);
+               free(config_name);
+               if (rc)
+                 exit(1);
+             }
+             ;
+identifier: IDENTIFIER
+          {
+            config_name = yylval.identifier;
+          }
+          ;
+string: STRING
+          {
+            config_string_value = yylval.strval;
+          }
 
 number:  DIGIT
          {
@@ -114,7 +75,7 @@ number:  DIGIT
          ;
 
 %%
-int tmpl_parse_expression()
+int read_config_file()
 {
 	return(yyparse());
 }

@@ -73,6 +73,59 @@ static int tmpl_add_selfclosing_html_node(tmpl_ctx_t ctx, const char *el, tmpl_a
 #define TMPL_CAST(value, type) ((value | TMPL_MASK(type)) == value)? (type) value : abort())
 #endif
 
+#ifdef POLLEN_DEBUG
+char *config_codefen = POLLEN_DEBUG_CODEGEN_PATH;
+#else
+char *config_codegen = NULL;
+#endif
+int config_timeout = 0;
+
+FILE *open_config_file()
+{
+	FILE *file = NULL;
+	file = fopen("resilient.conf", "r");
+	if (file != NULL)
+		return file;
+	file = fopen("/etc/resilient.conf", "r" );
+	if (file != NULL)
+		return file;
+	return NULL;
+}
+
+void close_config_file(FILE *file)
+{
+	fclose(file);
+}
+
+static char *get_string(const char *value)
+{
+	return strndup(&value[1], strlen(value) - 2);
+}
+
+int set_config_option_string(const char *name, const char *value)
+{
+	if (strcasecmp(name, "codegen") == 0) {
+		config_codegen = get_string(value);
+	} else {
+		fprintf(stderr, "warning: unknown string configururation option: %s\n", name);
+	}
+	return 0;
+}
+
+int set_config_option_int(const char *name, int value)
+{
+	if (strcasecmp(name, "timeout") == 0) {
+		if (value < 0) {
+			fprintf(stderr, "error: invalid timout value\n");
+			return 1;
+		}
+		config_timeout = value;
+	} else {
+		fprintf(stderr, "warning: unknown integer configururation option: %s\n", name);
+	}
+	return 0;
+}
+
 static struct context *get_tmpl_context(tmpl_ctx_t ctx)
 {
 	return (struct context *) ctx;
