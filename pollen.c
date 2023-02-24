@@ -36,7 +36,7 @@
 #define VERSION "0.1"
 #define COPYRIGHT "Copyright (C) 2017-2023 Mateus de Lima Oliveira"
 
-static int parse_xml_file(struct context *data, const char *tmpl);
+static int parse_xml_file(struct context *data, string_t tmpl);
 
 static const char tmpl_version[] = VERSION;
 static const char tmpl_copyright[] = COPYRIGHT;
@@ -58,13 +58,13 @@ enum {
 
 /* Function prototypes */
 static struct node *add_node(struct context *data);
-static FILE *open_path_translated(tmpl_ctx_t data, const char *pathtranslated);
-static const char *tmpl_get_version_string();
+static FILE *open_path_translated(tmpl_ctx_t data, string_t pathtranslated);
+static string_t tmpl_get_version_string();
 static int tmpl_try_get_int_variable
   (tmpl_ctx_t ctx,
-   const char *name,
+   string_t name,
    int *value);
-static int tmpl_add_selfclosing_html_node(tmpl_ctx_t ctx, const char *el, tmpl_attr_t attr);
+static int tmpl_add_selfclosing_html_node(tmpl_ctx_t ctx, string_t el, tmpl_attr_t attr);
 
 #define TMPL_MASK_BITS(bits) (~0L << (bits))
 #define TMPL_MASK(type) TMPL_MASK_BITS(sizeof(type) * 8)
@@ -97,12 +97,12 @@ void close_config_file(FILE *file)
 	fclose(file);
 }
 
-static char *get_string(const char *value)
+static char *get_string(string_t value)
 {
 	return strndup(&value[1], strlen(value) - 2);
 }
 
-int set_config_option_string(const char *name, const char *value)
+int set_config_option_string(string_t name, string_t value)
 {
 	if (strcasecmp(name, "codegen") == 0) {
 		config_codegen = get_string(value);
@@ -112,7 +112,7 @@ int set_config_option_string(const char *name, const char *value)
 	return 0;
 }
 
-int set_config_option_int(const char *name, int value)
+int set_config_option_int(string_t name, int value)
 {
 	if (strcasecmp(name, "timeout") == 0) {
 		if (value < 0) {
@@ -147,17 +147,17 @@ void templatizer_free(tmpl_ctx_t data, void *ptr)
 	//free(ptr);
 }
 
-static char *templatizer_strdup(tmpl_ctx_t data, const char *s)
+static char *templatizer_strdup(tmpl_ctx_t data, string_t s)
 {
 	return apr_pstrdup(data->pools.process, s);
 }
 
-static char *tmpl_process_strdup(tmpl_ctx_t data, const char *s)
+static char *tmpl_process_strdup(tmpl_ctx_t data, string_t s)
 {
 	return apr_pstrdup(data->pools.process, s);
 }
 
-static char *tmpl_connection_strndup(tmpl_ctx_t ctx, const char *ptr, size_t length)
+static char *tmpl_connection_strndup(tmpl_ctx_t ctx, string_t ptr, size_t length)
 {
 	return apr_pstrndup(ctx->pools.connection, ptr, length);
 }
@@ -190,7 +190,7 @@ void set_keep_alive(struct context *data)
 	data->keep_alive = true;
 }
 
-void send_header(struct context *data, const char *key, const char *value)
+void send_header(struct context *data, string_t key, string_t value)
 {
 	(void) data;
 	if (key)
@@ -201,7 +201,7 @@ void send_header(struct context *data, const char *key, const char *value)
 
 void send_default_headers(struct context *data)
 {
-	const char *content_type;
+	string_t content_type;
 
 	switch (data->output_format) {
 		case TMPL_FMT_HTML:
@@ -235,7 +235,7 @@ nomem:
 	return NULL;
 }
 
-static int add_filler_text(struct context *data, const char *text)
+static int add_filler_text(struct context *data, string_t text)
 {
 	struct input *p;
 
@@ -266,7 +266,7 @@ static bool is_control_flow_keyword(const XML_Char *el)
         return false;
 }
 
-static int tmpl_register_element_start_tag(tmpl_ctx_t ctx, const char *s, on_element_start_callback_t cb)
+static int tmpl_register_element_start_tag(tmpl_ctx_t ctx, string_t s, on_element_start_callback_t cb)
 {
 	struct context *data = get_tmpl_context(ctx);
 	struct element_start_callback *p;
@@ -279,7 +279,7 @@ static int tmpl_register_element_start_tag(tmpl_ctx_t ctx, const char *s, on_ele
 	return 0;
 }
 
-static int tmpl_register_element_end_tag(tmpl_ctx_t ctx, const char *s, on_element_end_callback_t cb)
+static int tmpl_register_element_end_tag(tmpl_ctx_t ctx, string_t s, on_element_end_callback_t cb)
 {
 	struct context *data = get_tmpl_context(ctx);
 	struct element_end_callback *p;
@@ -309,7 +309,7 @@ int tmpl_get_num_plugin_parameters(tmpl_ctx_t ctx)
 }
 
 /* Get plugin parameter supplied on the teplatizer tag. */
-int tmpl_get_plugin_parameter(tmpl_ctx_t ctx, int index, const char **param_ptr, size_t *param_length)
+int tmpl_get_plugin_parameter(tmpl_ctx_t ctx, int index, string_t *param_ptr, size_t *param_length)
 {
 	struct plugin_parameters_head *head = &ctx->plugin_parameters;
 	struct plugin_parameters *np;
@@ -345,7 +345,7 @@ TAILQ_HEAD(plugin_variable_list_head, plugin_variable);
 
 static int tmpl_try_get_int_variable(ctx, name, value)
 tmpl_ctx_t ctx;
-const char *name;
+string_t name;
 int *value;
 {
 	struct plugin_variable *np = NULL;
@@ -370,7 +370,7 @@ int *value;
  * is undefined. */
 static int tmpl_get_int_variable(ctx, name)
 tmpl_ctx_t ctx;
-const char *name;
+string_t name;
 {
 	int l;
 	int rc;
@@ -384,7 +384,7 @@ const char *name;
 
 static int tmpl_set_int_variable(ctx, name, value)
 tmpl_ctx_t ctx;
-const char *name;
+string_t name;
 int value;
 {
 	struct plugin_variable *np = NULL;
@@ -409,12 +409,12 @@ int value;
 	return 0;
 }
 
-static const char *tmpl_get_version_string()
+static string_t tmpl_get_version_string()
 {
 	return tmpl_version;
 }
 
-static const char *tmpl_get_copyright_string()
+static string_t tmpl_get_copyright_string()
 {
 	return tmpl_copyright;
 }
@@ -467,10 +467,10 @@ static struct templatizer_callbacks callbacks = {
 #ifdef _WIN32
 #error win32 is not supported yet
 #else
-void *load_library(struct context *data, const char *path)
+void *load_library(struct context *data, string_t path)
 {
 	void *handle;
-	const char *path_translated, *dir, *full_path;
+	string_t path_translated, *dir, *full_path;
 
 	if (noplugin != false)
 		return NULL;
@@ -510,7 +510,7 @@ static void unload_library(struct context *data)
 	dlclose(data->plugin_handle);
 }
 
-static void *get_symbol(struct context *data, const char *name)
+static void *get_symbol(struct context *data, string_t name)
 {
 	return dlsym(data->plugin_handle, name);
 }
@@ -719,14 +719,14 @@ struct stack_entry {
 
 static int lookup_stack_variable
     (struct context *data,
-     const char *name)
+     string_t name)
 {
 	return -1;
 }
 
 static int lookup_global_variable
     (struct context *data,
-     const char *name)
+     string_t name)
 {
 	return -1;
 }
@@ -789,12 +789,12 @@ static int add_callspecial_node(struct context *data, struct prototype *proto, c
 	return 0;
 }
 
-struct node *lookup_node_tag(tmpl_ctx_t ctx, const char *el)
+struct node *lookup_node_tag(tmpl_ctx_t ctx, string_t el)
 {
 	return NULL;
 }
 
-static int add_jump_node(tmpl_ctx_t data, const char *el)
+static int add_jump_node(tmpl_ctx_t data, string_t el)
 {
 	struct node *n = NULL;
 	struct node *dest = NULL;
@@ -811,7 +811,7 @@ static int add_jump_node(tmpl_ctx_t data, const char *el)
 	return 0;
 }
 
-static int parse_registered_start_tags(struct context *data, const char *el, const XML_Char **attr)
+static int parse_registered_start_tags(struct context *data, string_t el, const XML_Char **attr)
 {
 	struct prototype *p;
 	struct element_start_callback *cb;
@@ -837,7 +837,7 @@ static int parse_registered_start_tags(struct context *data, const char *el, con
 	return ELEMENT_NOT_HANDLED;
 }
 
-static int parse_registered_end_tags(struct context *data, const char *el)
+static int parse_registered_end_tags(struct context *data, string_t el)
 {
 	struct prototype *p;
 	struct element_end_callback *cb;
@@ -861,7 +861,7 @@ static int parse_registered_end_tags(struct context *data, const char *el)
 	return ELEMENT_NOT_HANDLED;
 }
 
-static int tmpl_add_start_node(tmpl_ctx_t data, const char *el, const char **attr)
+static int tmpl_add_start_node(tmpl_ctx_t data, string_t el, string_t *attr)
 {
 	int i;
 	void *p;
@@ -971,7 +971,7 @@ static bool parse_element_start(struct context *data, const XML_Char *el, const 
     return true;
 }
 
-static struct node *add_end_node(tmpl_ctx_t data, const char *el, bool selfclosing)
+static struct node *add_end_node(tmpl_ctx_t data, string_t el, bool selfclosing)
 {
 	struct node *n;
 	n = add_node(data);
@@ -982,7 +982,7 @@ static struct node *add_end_node(tmpl_ctx_t data, const char *el, bool selfclosi
 	return n;
 }
 
-static int tmpl_add_end_node(tmpl_ctx_t ctx, const char *el)
+static int tmpl_add_end_node(tmpl_ctx_t ctx, string_t el)
 {
 	struct node *n = NULL;
 	n = add_end_node(ctx, el, false);
@@ -994,7 +994,7 @@ static int tmpl_add_end_node(tmpl_ctx_t ctx, const char *el)
 
 static bool tmpl_add_if_end_node(tmpl_ctx_t data)
 {
-	const char *eif = "if";
+	string_t eif = "if";
 	struct node *n = add_end_node(data, eif, false);
 	struct node *if_start_node = NULL;
 	/* The previous label (start tag) will jump to this node. */
@@ -1011,7 +1011,7 @@ static bool tmpl_add_if_end_node(tmpl_ctx_t data)
 
 static bool tmpl_add_swhile_end_node(tmpl_ctx_t data)
 {
-	const char *swhile = "swhile";
+	string_t swhile = "swhile";
 	struct node *n = add_end_node(data, swhile, false);
 	struct node *swhile_start_node = NULL;
 	data->num_labels--;
@@ -1030,7 +1030,7 @@ static bool tmpl_add_swhile_end_node(tmpl_ctx_t data)
 
 static bool tmpl_add_ewhile_end_node(tmpl_ctx_t ctx)
 {
-	const char *ewhile = "ewhile";
+	string_t ewhile = "ewhile";
 	struct node *n = add_end_node(ctx, ewhile, false);
 	struct node *ewhile_start_node = NULL;
 	ewhile_start_node = ctx->labels[--ctx->num_labels];
@@ -1045,7 +1045,7 @@ static bool tmpl_add_ewhile_end_node(tmpl_ctx_t ctx)
 	return true;
 }
 
-static int parse_unregistred_end_tag(tmpl_ctx_t ctx, const char *el)
+static int parse_unregistred_end_tag(tmpl_ctx_t ctx, string_t el)
 {
 	bool rc = false;
 	if (strcmp("ewhile", el) == 0) {
@@ -1060,7 +1060,7 @@ static int parse_unregistred_end_tag(tmpl_ctx_t ctx, const char *el)
 	return rc;
 }
 
-int parse_element_end(tmpl_ctx_t ctx, const char *el)
+int parse_element_end(tmpl_ctx_t ctx, string_t el)
 {
 	int rc = -1;
 
@@ -1085,7 +1085,7 @@ int parse_element_end(tmpl_ctx_t ctx, const char *el)
 	return true;
 }
 
-static int tmpl_add_selfclosing_html_node(tmpl_ctx_t ctx, const char *el, tmpl_attr_t attr)
+static int tmpl_add_selfclosing_html_node(tmpl_ctx_t ctx, string_t el, tmpl_attr_t attr)
 {
 	bool rc = false;
 	rc = parse_element_start(ctx, el, attr);
@@ -1176,7 +1176,7 @@ static void free_all_input(struct context *data)
 	templatizer_free(data, data->input);
 }
 
-static int parse_xml_file(struct context *data, const char *tmpl)
+static int parse_xml_file(struct context *data, string_t tmpl)
 {
 	XML_Parser parser;
 	FILE *file;
@@ -1222,7 +1222,7 @@ out:
 	return r;
 }
 
-static FILE *open_path_translated(tmpl_ctx_t data, const char *pathtranslated)
+static FILE *open_path_translated(tmpl_ctx_t data, string_t pathtranslated)
 {
 	char *token, *string, *tofree;
 	struct stat statbuf;
@@ -1233,7 +1233,7 @@ static FILE *open_path_translated(tmpl_ctx_t data, const char *pathtranslated)
 #else
 	const char separators[] = "/";
 #endif
-	const char *documentroot = getenv("DOCUMENT_ROOT");
+	string_t documentroot = getenv("DOCUMENT_ROOT");
 	tofree = string = templatizer_strdup(data, pathtranslated);
 	if (string == NULL)
 		return NULL;
@@ -1306,7 +1306,7 @@ int main(int argc, char **argv)
 	clock_t end;
 	double time_spent;
 	FILE *log;
-	const char *gateway_interface;
+	string_t gateway_interface;
 	int rc = -1;
 
 	(void) argc;
