@@ -74,30 +74,30 @@ static int tmpl_add_selfclosing_html_node(tmpl_ctx_t ctx, string_t el, tmpl_attr
 #endif
 
 #ifdef POLLEN_DEBUG
-char *config_codefen = POLLEN_DEBUG_CODEGEN_PATH;
+string_t config_codefen = POLLEN_DEBUG_CODEGEN_PATH;
 #else
-char *config_codegen = NULL;
+string_t config_codegen = NULL;
 #endif
 int config_timeout = 0;
 
-FILE *open_config_file()
+file_t open_config_file()
 {
-	FILE *file = NULL;
+	file_t file = NULL;
 	file = fopen("resilient.conf", "r");
 	if (file != NULL)
 		return file;
-	file = fopen("/etc/resilient.conf", "r" );
+	file = fopen("/etc/pollen.conf", "r");
 	if (file != NULL)
 		return file;
 	return NULL;
 }
 
-void close_config_file(FILE *file)
+void close_config_file(file_t file)
 {
 	fclose(file);
 }
 
-static char *get_string(string_t value)
+static string_t get_string(string_t value)
 {
 	return strndup(&value[1], strlen(value) - 2);
 }
@@ -126,12 +126,12 @@ int set_config_option_int(string_t name, int value)
 	return 0;
 }
 
-static struct context *get_tmpl_context(tmpl_ctx_t ctx)
+static tmpl_ctx_t get_tmpl_context(tmpl_ctx_t ctx)
 {
-	return (struct context *) ctx;
+	return ctx;
 }
 
-void *templatizer_malloc(tmpl_ctx_t data, size_t size)
+void_ptr_t templatizer_malloc(tmpl_ctx_t data, size_t size)
 {
 #if 1
 	return apr_pcalloc(data->pools.process, size);
@@ -140,29 +140,29 @@ void *templatizer_malloc(tmpl_ctx_t data, size_t size)
 #endif
 }
 
-void templatizer_free(tmpl_ctx_t data, void *ptr)
+void templatizer_free(tmpl_ctx_t data, void_ptr_t ptr)
 {
 	(void) data;
 	(void) ptr;
 	//free(ptr);
 }
 
-static char *templatizer_strdup(tmpl_ctx_t data, string_t s)
+static string_t templatizer_strdup(tmpl_ctx_t data, string_t s)
 {
 	return apr_pstrdup(data->pools.process, s);
 }
 
-static char *tmpl_process_strdup(tmpl_ctx_t data, string_t s)
+static string_t tmpl_process_strdup(tmpl_ctx_t data, string_t s)
 {
 	return apr_pstrdup(data->pools.process, s);
 }
 
-static char *tmpl_connection_strndup(tmpl_ctx_t ctx, string_t ptr, size_t length)
+static string_t tmpl_connection_strndup(tmpl_ctx_t ctx, string_t ptr, size_t length)
 {
 	return apr_pstrndup(ctx->pools.connection, ptr, length);
 }
 
-void *tmpl_process_malloc(ctx, size)
+void_ptr_t tmpl_process_malloc(ctx, size)
 tmpl_ctx_t ctx;
 size_t size;
 {
@@ -171,7 +171,7 @@ size_t size;
 
 /* Data allocated by this function is freed when
  * connection is closed. */
-void *tmpl_connection_malloc(tmpl_ctx_t ctx, size_t size)
+void_ptr_t tmpl_connection_malloc(tmpl_ctx_t ctx, size_t size)
 {
 #if 1
 	return apr_pcalloc(ctx->pools.connection, size);
@@ -180,7 +180,7 @@ void *tmpl_connection_malloc(tmpl_ctx_t ctx, size_t size)
 #endif
 }
 
-void set_compression(struct context *data, enum templatizer_compression opt)
+void set_compression(tmpl_ctx_t data, enum templatizer_compression opt)
 {
 	data->output_compression = opt;
 }
@@ -190,7 +190,7 @@ void set_keep_alive(struct context *data)
 	data->keep_alive = true;
 }
 
-void send_header(struct context *data, string_t key, string_t value)
+void send_header(tmpl_ctx_t data, string_t key, string_t value)
 {
 	(void) data;
 	if (key)
@@ -199,7 +199,7 @@ void send_header(struct context *data, string_t key, string_t value)
 		fputs("\r\n", stdout);
 }
 
-void send_default_headers(struct context *data)
+void send_default_headers(tmpl_ctx_t data)
 {
 	string_t content_type;
 
@@ -216,12 +216,12 @@ void send_default_headers(struct context *data)
 	send_header(data, NULL, NULL);
 }
 
-void set_output_format(struct context *data, enum templatizer_format fmt)
+void set_output_format(tmpl_ctx_t data, enum templatizer_format fmt)
 {
 	data->output_format = fmt;
 }
 
-static struct input *add_input(struct context *data)
+static input_t add_input(tmpl_ctx_t data)
 {
 	struct input *n;
 
@@ -235,7 +235,7 @@ nomem:
 	return NULL;
 }
 
-static int add_filler_text(struct context *data, string_t text)
+static int add_filler_text(tmpl_ctx_t data, string_t text)
 {
 	struct input *p;
 
@@ -246,9 +246,9 @@ static int add_filler_text(struct context *data, string_t text)
 	return 0;
 }
 
-static int add_control_flow(struct context *data, int b)
+static int add_control_flow(tmpl_ctx_t data, int b)
 {
-	struct input *p;
+	input_t p;
 
 	if ((p = add_input(data)) == NULL)
 		return 1;
@@ -257,7 +257,7 @@ static int add_control_flow(struct context *data, int b)
 	return 0;
 }
 
-static bool is_control_flow_keyword(const XML_Char *el)
+static bool is_control_flow_keyword(string_t el)
 {
         if (strcmp("if", el) == 0
                 || strcmp("swhile", el) == 0
@@ -268,7 +268,7 @@ static bool is_control_flow_keyword(const XML_Char *el)
 
 static int tmpl_register_element_start_tag(tmpl_ctx_t ctx, string_t s, on_element_start_callback_t cb)
 {
-	struct context *data = get_tmpl_context(ctx);
+	tmpl_ctx_t data = get_tmpl_context(ctx);
 	struct element_start_callback *p;
 	p = calloc(1, sizeof(struct element_start_callback));
 	if (p == NULL)
@@ -281,7 +281,7 @@ static int tmpl_register_element_start_tag(tmpl_ctx_t ctx, string_t s, on_elemen
 
 static int tmpl_register_element_end_tag(tmpl_ctx_t ctx, string_t s, on_element_end_callback_t cb)
 {
-	struct context *data = get_tmpl_context(ctx);
+	tmpl_ctx_t data = get_tmpl_context(ctx);
 	struct element_end_callback *p;
 	p = calloc(1, sizeof(struct element_end_callback));
 	if (p == NULL)
@@ -294,7 +294,7 @@ static int tmpl_register_element_end_tag(tmpl_ctx_t ctx, string_t s, on_element_
 
 static void tmpl_exit(tmpl_ctx_t ctx, int status)
 {
-	struct context *data = get_tmpl_context(ctx);
+	tmpl_ctx_t data = get_tmpl_context(ctx);
 	data->status = status;
 }
 

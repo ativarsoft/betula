@@ -98,6 +98,8 @@ struct input {
 
 TAILQ_HEAD(input_list_head, input);
 
+typedef struct input *input_t;
+
 struct element_start_callback {
 	TAILQ_ENTRY(element_callback) entries;
 	const char *el;
