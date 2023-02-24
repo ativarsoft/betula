@@ -16,4 +16,10 @@
 #define CONFIG_CODEGEN_PATH "/home/mateus/pollen-lang/plugins/codegen/llvm.so"
 #endif
 
+#ifndef PREFIX
+#define PREFIX "/usr"
+#endif
+
+#define POLLEN_CONFIG_PATH PREFIX "/etc/pollen.conf"
+
 #endif

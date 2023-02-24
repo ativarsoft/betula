@@ -17,12 +17,19 @@ int pollen_codegen_init(tmpl_ctx_t ctx)
 	if (ctx == NULL)
 		return 1;
 
+	if (path == NULL)
+		return 0; /* No plugin selected */
+
 	/* TODO: get selected codegen plugin path
          * from config file.
          * Codegen is disabled if no plugin
          * was selected. */
 
-	load_library(ctx, path);
+	void *plugin = load_library(ctx, path);
+	if (plugin == NULL) {
+		fprintf(stderr, "Failed to load codegen plugin \"%s\".", path);
+		return 3;
+	}
 	return 0;
 }
 

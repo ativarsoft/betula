@@ -66,6 +66,8 @@ static int tmpl_try_get_int_variable
    int *value);
 static int tmpl_add_selfclosing_html_node(tmpl_ctx_t ctx, string_t el, tmpl_attr_t attr);
 
+extern FILE *yyin;
+
 #define TMPL_MASK_BITS(bits) (~0L << (bits))
 #define TMPL_MASK(type) TMPL_MASK_BITS(sizeof(type) * 8)
 
@@ -83,10 +85,12 @@ int config_timeout = 0;
 file_t open_config_file()
 {
 	file_t file = NULL;
-	file = fopen("resilient.conf", "r");
+#ifdef DEBUG
+	file = fopen("pollen.conf", "r");
 	if (file != NULL)
 		return file;
-	file = fopen("/etc/pollen.conf", "r");
+#endif
+	file = fopen(POLLEN_CONFIG_PATH, "r");
 	if (file != NULL)
 		return file;
 	return NULL;
@@ -94,6 +98,8 @@ file_t open_config_file()
 
 void close_config_file(file_t file)
 {
+	if (file == NULL)
+		return;
 	fclose(file);
 }
 
@@ -1308,6 +1314,7 @@ int main(int argc, char **argv)
 	FILE *log;
 	string_t gateway_interface;
 	int rc = -1;
+	file_t config_file;
 
 	(void) argc;
 
@@ -1320,6 +1327,12 @@ int main(int argc, char **argv)
 			fputs("Unable to open log file.\n", stderr);
 			return 1;
 		}
+	}
+
+	config_file = open_config_file();
+	if (config_file) {
+		yyin = config_file;
+		read_config_file();
 	}
 
 	memset(&data, 0, sizeof(data));
@@ -1376,9 +1389,13 @@ int main(int argc, char **argv)
 	data.output_format = TMPL_FMT_XHTML;
 	data.output_compression = TMPL_Z_PLAIN; /* NOTE: remember CRIME and BREACH exploits. */
 	data.keep_alive = false;
+	rc = pollen_codegen_init(&data);
+	assert(rc == 0);
 	parse_xml_file(&data, tmpl);
 	serialize_template_file(&data);
 	print_list(&data); /* Interpreter */
+	rc = pollen_codegen_quit(&data);
+	assert(rc == 0);
 	apr_pool_destroy(data.pools.connection);
 
 #if 1
@@ -1399,6 +1416,8 @@ int main(int argc, char **argv)
 #endif
 
 	apr_terminate();
+
+	close_config_file(config_file);
 
 	end = clock();
 	time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
