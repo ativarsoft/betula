@@ -8,7 +8,10 @@ struct parameter {
 	char *name;
 };
 
-static int gen_function_start()
+static int gen_function_start(ctx, el, attr)
+tmpl_ctx_t ctx;
+const char *el;
+const char **attr;
 {
 	char *func_name = "";
 	char *func_ret_type = "";
@@ -32,7 +35,10 @@ static int gen_function_end()
 	return 0;
 }
 
-static int gen_if_start()
+static int gen_if_start(ctx, el, attr)
+tmpl_ctx_t ctx;
+const char *el;
+const char **attr;
 {
 	fputs("if", stdout);
 	fputc(' ', stdout);
@@ -41,14 +47,19 @@ static int gen_if_start()
 	return 0;
 }
 
-static int gen_if_end()
+static int gen_if_end(ctx, el)
+tmpl_ctx_t ctx;
+const char *el;
 {
 	fputc('}', stdout);
 	fputc('\n', stdout);
 	return 0;
 }
 
-static int gen_swhile_start()
+static int gen_swhile_start(ctx, el, attr)
+tmpl_ctx_t ctx;
+const char *el;
+const char **attr;
 {
 	fputs("while", stdout);
 	fputc(' ', stdout);
@@ -57,27 +68,50 @@ static int gen_swhile_start()
 	return 0;
 }
 
-static int gen_ewhile_start()
+static int gen_swhile_end(ctx, el)
+tmpl_ctx_t ctx;
+const char *el;
+{
+	return 0;
+}
+
+static int gen_ewhile_start(ctx, el, attr)
+tmpl_ctx_t ctx;
+const char *el;
+const char **attr;
 {
 	fputc('}', stdout);
 	fputc('\n', stdout);
 	return 0;
 }
 
-static int init(tmpl_ctx_t data, struct templatizer_callbacks *cb)
+static int gen_ewhile_end(ctx, el)
+tmpl_ctx_t ctx;
+const char *el;
 {
-	/*cb->register_tag_handler
+	return 0;
+}
+
+static int init(tmpl_ctx_t data, tmpl_cb_t cb)
+{
+	cb->register_element_start_tag
 		(data, "if",
-		&gen_swhile_start,
+		&gen_swhile_start);
+	cb->register_element_end_tag
+		(data, "if",
 		&gen_swhile_end);
-	cb->register_tag_handler
+	cb->register_element_start_tag
 		(data, "swhile",
-		&gen_swhile_start,
+		&gen_swhile_start);
+	cb->register_element_end_tag
+		(data, "swhile",
 		&gen_swhile_end);
-	cb->register_tag_handler
+	cb->register_element_start_tag
 		(data, "ewhile",
-		&gen_ewhile_start,
-		&gen_ewhile_end);*/
+		&gen_ewhile_start);
+	cb->register_element_end_tag
+		(data, "ewhile",
+		&gen_ewhile_end);
 	return 0;
 }
 
