@@ -1,6 +1,6 @@
 # Copyright (C) 2023 Mateus de Lima Oliveira
 
-TESTS=simple.xhtml library.xhtml placeholder.xhtml placeholder-d.xhtml placeholder-rs.xhtml kv.xhtml pipeline1.xhtml selfclosing.xhtml controlflow.xhtml echo.xhtml sanity.xhtml
+TESTS=simple.xhtml library.xhtml placeholder.xhtml placeholder-d.xhtml placeholder-rs.xhtml kv.xhtml pipeline1.xhtml selfclosing.xhtml controlflow.xhtml echo.xhtml sanity.xhtml noplugin.xhtml
 CFLAGS=-O0 -ggdb -I../include
 LDFLAGS=-ltemplatizer
 EXEC= #cookie percent json
@@ -31,6 +31,8 @@ controlflow.xhtml: controlflow.tmpl ../templatizer
 echo.xhtml: echo.tmpl ../templatizer
 	./run-templatizer.sh $< $@
 sanity.xhtml: sanity.tmpl ../templatizer
+	./run-templatizer.sh $< $@
+noplugin.xhtml: noplugin.tmpl ../templatizer
 	./run-templatizer.sh $< $@
 
 clean:

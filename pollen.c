@@ -478,8 +478,12 @@ void *load_library(struct context *data, string_t path)
 	void *handle;
 	string_t path_translated, *dir, *full_path;
 
-	if (noplugin != false)
+	if (noplugin != false) {
+		fputs("Script tried to load a plugin "
+		     "when noplugin is enabled.\n",
+		     stderr);
 		return NULL;
+	}
 
 	path_translated = data->script_path;
 	if (path_translated == NULL) return NULL;

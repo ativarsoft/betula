@@ -1,0 +1,27 @@
+<!-- Copyright (C) 2023 Mateus de Lima Oliveira -->
+<templatizer lib="../plugins/tests/sanity_checks.so">
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Sanity checks</title>
+  </head>
+  <body>
+    <p>
+      This script should fail to load the "hello world" plugin.
+      The "noplugin" element disables all plugins.
+      The "noplugin.so" library must be loaded before its use.
+    </p>
+    <ol>
+      <li>
+        No plugin:
+        <templatizer lib="../plugins/net/noplugin.so">
+        <noplugin/>
+        </templatizer>
+        <templatizer lib="../plugins/input/in_helloworld.so">
+        <span>@</span>
+        </templatizer>
+      </li>
+    </ol>
+  </body>
+</html>
+</templatizer>
