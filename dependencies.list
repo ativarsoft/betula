@@ -5,6 +5,7 @@ libapr1-dev
 libexpat1-dev
 liblmdb-dev
 libvirt-dev
+libsqlite3-dev
 ldc
 cargo
 rustc
