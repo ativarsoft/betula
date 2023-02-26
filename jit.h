@@ -1,3 +1,5 @@
+/* Copyright (C) 2023 Mateus de Lima Oliveira */
+
 #ifndef POLLEN_JIT_H
 #define POLLEN_JIT_H
 

@@ -1,7 +1,9 @@
+/* Copyright (C) 2023 Mateus de Lima Oliveira */
+
 #include "pollen.h"
 
 struct pollen_codegen_plugin {
-    tmpl_ctx_t *ctx;
+    tmpl_ctx_t ctx;
     /* This is the parent context structure. */
 };
 
@@ -12,7 +14,7 @@ int pollen_codegen_sanity_check()
 
 int pollen_codegen_init(tmpl_ctx_t ctx)
 {
-	char *path = config_codegen;
+	string_t path = config_codegen;
 
 	if (ctx == NULL)
 		return 1;
