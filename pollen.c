@@ -36,7 +36,7 @@
 #define VERSION "0.1"
 #define COPYRIGHT "Copyright (C) 2017-2023 Mateus de Lima Oliveira"
 
-static int parse_xml_file(struct context *data, string_t tmpl);
+static int parse_xml_file(tmpl_ctx_t data, string_t tmpl);
 
 static const char tmpl_version[] = VERSION;
 static const char tmpl_copyright[] = COPYRIGHT;
@@ -57,8 +57,8 @@ enum {
 };
 
 /* Function prototypes */
-static struct node *add_node(struct context *data);
-static FILE *open_path_translated(tmpl_ctx_t data, string_t pathtranslated);
+static struct node *add_node(tmpl_ctx_t data);
+static file_t open_path_translated(tmpl_ctx_t data, string_t pathtranslated);
 static string_t tmpl_get_version_string();
 static int tmpl_try_get_int_variable
   (tmpl_ctx_t ctx,
@@ -66,10 +66,10 @@ static int tmpl_try_get_int_variable
    int *value);
 static int tmpl_add_selfclosing_html_node(tmpl_ctx_t ctx, string_t el, tmpl_attr_t attr);
 
-extern FILE *yyin;
+extern file_t yyin;
 
 #define TMPL_MASK_BITS(bits) (~0L << (bits))
-#define TMPL_MASK(type) TMPL_MASK_BITS(sizeof(type) * 8)
+#define TMPL_MASK(type) TMPL_MASK_BITS(TMPL_MUL(sizeof(type), 8))
 
 #ifndef TMPL_CAST
 #define TMPL_CAST(value, type) ((value | TMPL_MASK(type)) == value)? (type) value : abort())

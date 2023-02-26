@@ -4,6 +4,8 @@
 #include <templatizer.h>
 #include <stdio.h>
 
+#define TMPL_MUL(lhs, rhs) ((lhs) * (rhs))
+
 typedef const char *string_t;
 typedef FILE *file_t;
 typedef void *void_ptr_t;
