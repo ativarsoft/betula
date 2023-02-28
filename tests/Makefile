@@ -13,29 +13,29 @@ pollen.conf:
 
 test: $(TESTS) $(EXEC)
 
-simple.xhtml: simple.tmpl ../templatizer
+simple.xhtml: simple.tmpl ../templatizer pollen.conf
 	./run-templatizer.sh $< $@
-library.xhtml: library.tmpl ../templatizer
+library.xhtml: library.tmpl ../templatizer pollen.conf
 	./run-templatizer.sh $< $@
-placeholder.xhtml: placeholder.tmpl ../templatizer
+placeholder.xhtml: placeholder.tmpl ../templatizer pollen.conf
 	./run-templatizer.sh $< $@
-placeholder-d.xhtml: placeholder-d.tmpl ../templatizer
+placeholder-d.xhtml: placeholder-d.tmpl ../templatizer pollen.conf
 	./run-templatizer.sh $< $@
-placeholder-rs.xhtml: placeholder-rs.tmpl ../templatizer
+placeholder-rs.xhtml: placeholder-rs.tmpl ../templatizer pollen.conf
 	./run-templatizer.sh $< $@
-kv.xhtml: kv.tmpl ../templatizer
+kv.xhtml: kv.tmpl ../templatizer pollen.conf
 	./run-templatizer.sh $< $@
-pipeline1.xhtml: pipeline1.tmpl ../templatizer
+pipeline1.xhtml: pipeline1.tmpl ../templatizer pollen.conf
 	./run-templatizer.sh $< $@
-selfclosing.xhtml: selfclosing.tmpl ../templatizer
+selfclosing.xhtml: selfclosing.tmpl ../templatizer pollen.conf
 	./run-templatizer.sh $< $@
-controlflow.xhtml: controlflow.tmpl ../templatizer
+controlflow.xhtml: controlflow.tmpl ../templatizer pollen.conf
 	./run-templatizer.sh $< $@
-echo.xhtml: echo.tmpl ../templatizer
+echo.xhtml: echo.tmpl ../templatizer pollen.conf
 	./run-templatizer.sh $< $@
 sanity.xhtml: sanity.tmpl ../templatizer pollen.conf
 	./run-templatizer.sh $< $@
-noplugin.xhtml: noplugin.tmpl ../templatizer
+noplugin.xhtml: noplugin.tmpl ../templatizer pollen.conf
 	./run-templatizer.sh $< $@
 
 clean:
