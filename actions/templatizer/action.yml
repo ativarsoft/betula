@@ -10,7 +10,7 @@ runs:
       run: sudo make dependencies
       shell: bash
     - name: Build
-      run: make
+      run: make debug
       shell: bash
     - name: Test
       run: make test
