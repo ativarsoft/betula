@@ -11,4 +11,3 @@ cargo
 rustc
 valgrind
 llvm-dev
-clang
