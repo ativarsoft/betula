@@ -90,7 +90,7 @@ int config_timeout = 0;
 file_t open_config_file()
 {
 	file_t file = NULL;
-#ifdef DEBUG
+#if defined DEBUG || 1
 	file = fopen("pollen.conf", "r");
 	if (file != NULL)
 		return file;
