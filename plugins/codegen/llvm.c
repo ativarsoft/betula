@@ -6,12 +6,15 @@
 #include <llvm-c/ExecutionEngine.h>
 #include <llvm-c/Analysis.h>
 #include <llvm-c/Target.h>
+#include "llvm-c/TargetMachine.h"
 #include <llvm-c/BitWriter.h>
 
-thread_local LLVMModuleRef mod;
-thread_local LLVMBuilderRef builder;
-thread_local LLVMValueRef current_fn;
-thread_local LLVMValueRef last_expr;
+static thread_local LLVMModuleRef mod;
+static thread_local LLVMBuilderRef builder;
+static thread_local LLVMValueRef current_fn;
+static thread_local LLVMValueRef last_expr;
+
+static thread_local const char *script_name = NULL;
 
 int pollen_codegen_sanity_check()
 {
@@ -48,11 +51,23 @@ int pollen_codegen_sanity_check()
     int result = sum_ptr(2, 3);
     printf("Codegen-Sanity-Check: 2 plus 3 equals %d\r\n", result);
 
-    // Write out bitcode to file
+    /* Write out bitcode to file (LLVM IR bitcode) */
     if (LLVMWriteBitcodeToFile(mod, "test.bc") != 0) {
         fprintf(stderr, "error writing bitcode to file, skipping\n");
     }
+    
+    /*
+     * Write object file (".o" file)
+     */
+    LLVMTargetRef target = LLVMGetFirstTarget();
+    LLVMTargetMachineRef target_machine = LLVMCreateTargetMachine(target, LLVMGetDefaultTargetTriple(), "x86-64", "", LLVMCodeGenLevelNone, LLVMRelocDefault, LLVMCodeModelDefault);
 
+    if (LLVMTargetMachineEmitToFile(target_machine, mod, "sanity.o", LLVMObjectFile, &error) != 0) {
+        fprintf(stderr, "error: %s\n", error);
+        LLVMDisposeMessage(error);
+        return 1;
+    }
+    
     LLVMDisposeBuilder(builder);
     LLVMDisposeExecutionEngine(engine);
 
@@ -196,6 +211,8 @@ static int gen_div_node_end(tmpl_ctx_t ctx, const char *el)
 
 static int init(tmpl_ctx_t data, tmpl_cb_t cb)
 {
+    //script_name = cb->get_script_name(data);
+    script_name = "expr.tmpl";
     cb->register_element_start_tag(data, "add", gen_add_node_start);
     cb->register_element_end_tag(data, "add", gen_add_node_end);
     cb->register_element_start_tag(data, "sub", gen_sub_node_start);
@@ -204,12 +221,25 @@ static int init(tmpl_ctx_t data, tmpl_cb_t cb)
     cb->register_element_end_tag(data, "mul", gen_mul_node_end);
     cb->register_element_start_tag(data, "div", gen_div_node_start);
     cb->register_element_end_tag(data, "div", gen_div_node_end);
-    mod = LLVMModuleCreateWithName("test_module");
+
+    LLVMModuleRef mod = LLVMModuleCreateWithName("test_module");
+
+    LLVMTypeRef param_types[] = { LLVMInt32Type(), LLVMInt32Type() };
+    LLVMTypeRef fn_type = LLVMFunctionType(LLVMInt32Type(), param_types, 2, 0);
+    LLVMValueRef main_fn = LLVMAddFunction(mod, "pollen_main", fn_type);
+
+    LLVMBasicBlockRef entry = LLVMAppendBasicBlock(main_fn, "entry");
+    LLVMBuilderRef builder = LLVMCreateBuilder();
+    LLVMPositionBuilderAtEnd(builder, entry);
+
+    current_fn = main_fn;
     return 0;
 }
 
 static void quit()
 {
+    LLVMBuildRet(builder, current_fn);
+
     char *error = NULL;
     LLVMVerifyModule(mod, LLVMAbortProcessAction, &error);
     LLVMDisposeMessage(error);
@@ -224,9 +254,11 @@ static void quit()
         exit(EXIT_FAILURE);
     }
 
-    int (*sum_ptr)(int, int) = (int (*)(int, int))LLVMGetFunctionAddress(engine, "sum");
-    int result = sum_ptr(2, 3);
-    printf("Codegen-Sanity-Check: 2 plus 3 equals %d\r\n", result);
+#if 1
+    int (*test_fn_ptr)(int, int) = (int (*)(int, int))LLVMGetFunctionAddress(engine, "pollen_main");
+    int result = test_fn_ptr(2, 3);
+    printf("Codegen-Sanity-Check: test function returned %d\r\n", result);
+#endif
 
     // Write out bitcode to file
     if (LLVMWriteBitcodeToFile(mod, "test.bc") != 0) {
