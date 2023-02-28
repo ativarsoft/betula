@@ -114,7 +114,7 @@ termux:
 	TERMUX="y" make
 
 debug:
-	DEBUG=y make
+	DEBUG="y" make
 
 .PHONY: dependencies plugins libtemplatizer templatizer-d templatizer-rs test install clean deb termux $(LIBYEAST_A)
 

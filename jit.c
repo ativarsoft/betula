@@ -43,7 +43,7 @@ int pollen_codegen_sanity_check(tmpl_ctx_t ctx)
     if (symbol == NULL)
         return -3; // Failed to get symbol
 
-    // Call the symbol as a function
+    /* Call the symbol as a function */
     POLLEN_CALL_SYMBOL_0(symbol, rc);
     return rc;
 }
@@ -68,7 +68,7 @@ int pollen_codegen_init(tmpl_ctx_t ctx)
 
 	library = tmpl_load_library(ctx, path);
 	if (library == NULL) {
-		fprintf(stderr, "Failed to load codegen plugin \"%s\".", path);
+		fprintf(stderr, "Failed to load codegen plugin \"%s\".\n", path);
 		return 4;
 	}
 

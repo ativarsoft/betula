@@ -13,9 +13,9 @@ cd_i386.so: cd_i386.o
 
 codegen_c.so: codegen_c.o
 	$(CC) $(CFLAGS) --shared -o $@ $^
-	
+
 llvm.o: llvm.c
-	$(CC) -c $(CFLAGS) $(LLVM_CFLAGS) -o $@ $^
+	$(CC) -c $(CFLAGS) $(LLVM_CFLAGS) $(LLVM_LDFLAGS) -o $@ $^ $(LLVM_LIBS)
 
 llvm.so: llvm.o
 	$(CC) $(CFLAGS) $(LLVM_CFLAGS) $(LDFLAGS) $(LLVM_LDFLAGS) --shared -o $@ $^ $(LLVM_LIBS)

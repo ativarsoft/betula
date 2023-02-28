@@ -515,7 +515,7 @@ tmpl_lib_t tmpl_load_library(tmpl_ctx_t data, string_t path)
 	}
 	handle = dlopen(full_path, RTLD_LAZY);
 	if (handle == NULL) {
-		fprintf(stderr, "%s\n", dlerror());
+		fprintf(stderr, "Error: %s\n", dlerror());
 		templatizer_free(data, (void *) full_path);
 		return NULL;
 	}

@@ -8,6 +8,9 @@ EXEC= #cookie percent json
 ../templatizer:
 	$(error Templatizer executable not found)
 
+pollen.conf:
+	./create-config.sh
+
 test: $(TESTS) $(EXEC)
 
 simple.xhtml: simple.tmpl ../templatizer
@@ -30,7 +33,7 @@ controlflow.xhtml: controlflow.tmpl ../templatizer
 	./run-templatizer.sh $< $@
 echo.xhtml: echo.tmpl ../templatizer
 	./run-templatizer.sh $< $@
-sanity.xhtml: sanity.tmpl ../templatizer
+sanity.xhtml: sanity.tmpl ../templatizer pollen.conf
 	./run-templatizer.sh $< $@
 noplugin.xhtml: noplugin.tmpl ../templatizer
 	./run-templatizer.sh $< $@
@@ -39,5 +42,6 @@ clean:
 	rm -f $(EXEC) *.o *.md5
 	rm -f $(TESTS)
 	rm -f access.log
+	rm -f pollen.conf
 
 .PHONY: clean
