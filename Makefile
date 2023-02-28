@@ -1,11 +1,9 @@
 # Copyright (C) 2017-2023 Mateus de Lima Oliveira
 
-LLVM_CFLAGS=$(shell llvm-config --cflags)
-LLVM_LDFLAGS=$(shell llvm-config --ldflags --libs)
 APR_CFLAGS=$(shell pkg-config --cflags apr-1)
 
-CFLAGS=-fPIC -Wall -O0 -ggdb -Iinclude $(APR_CFLAGS) $(LLVM_CFLAGS)
-LIBS?=-lexpat -ldl -lapr-1 -llmdb -lsqlite3 -lvirt $(LLVM_LDFLAGS)
+CFLAGS=-fPIC -Wall -O0 -ggdb -Iinclude $(APR_CFLAGS)
+LIBS?=-lexpat -ldl -lapr-1 -llmdb -lsqlite3 -lvirt
 EXEC=templatizer
 VERSION=$(shell ./version.sh)
 PREFIX?=/usr
@@ -19,12 +17,17 @@ ifeq ($(DEBUG),y)
 CFLAGS+=-DDEBUG
 endif
 
+LIBYEAST_A=yeast/libyeast.a
+
 all: $(EXEC) libtemplatizer templatizer-d templatizer-rs plugins
 
 deb: templatizer-$(VERSION).deb
 
 dependencies:
 	apt-get install $(shell cat dependencies.list)
+
+$(LIBYEAST_A): yeast/
+	make -C yeast
 
 plugins:
 	make -C plugins
@@ -54,7 +57,7 @@ opcode.o: opcode.c opcode.h
 storage.o: storage.c storage.h
 templatizer.o: templatizer.c
 
-templatizer: y.tab.o lex.yy.o pollen.o interpreter.o opcode.o storage.o sql.o virt.o regex.o jit.o
+templatizer: yeast/libyeast.a y.tab.o lex.yy.o pollen.o interpreter.o opcode.o storage.o sql.o virt.o regex.o jit.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 test: templatizer plugins libtemplatizer templatizer-d
@@ -92,6 +95,7 @@ clean:
 	rm -f $(EXEC) *.o lex.yy.c y.tab.c y.tab.h
 	rm -fr templatizer-$(VERSION)/
 	rm -f templatizer-$(VERSION).deb
+	make -C yeast clean
 	make -C plugins clean
 	make -C libtemplatizer clean
 	make -C templatizer-d clean
@@ -109,4 +113,5 @@ misra: templatizer.c
 termux:
 	TERMUX="y" make
 
-.PHONY: dependencies plugins libtemplatizer templatizer-d templatizer-rs test install clean deb termux
+.PHONY: dependencies plugins libtemplatizer templatizer-d templatizer-rs test install clean deb termux $(LIBYEAST_A)
+

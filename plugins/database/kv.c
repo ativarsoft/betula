@@ -1,26 +1,32 @@
-#include "templatizer.h"
+#include <templatizer.h>
+#include <threads.h>
 
-TMPL_CALLBACKS(tmpl);
+thread_local tmpl_cb_t kv_cb = NULL;
 
-int create_kv_object(tmpl_ctx_t ctx)
+int kv_get()
+{
+	/* TODO: return actual data from database to a placeholder. */
+	return 0;
+}
+
+static int create_kv_object(tmpl_ctx_t ctx)
 {
 	return 0;
 }
 
-int on_kv_start_tag(tmpl_ctx_t ctx, const char *el, const char **attr)
+static int on_kv_start_tag(tmpl_ctx_t ctx, const char *el, const char **attr)
 {
 	int handle;
 	handle = create_kv_object(ctx);
-	tmpl->exit(ctx, handle);
 	return 0;
 }
 
-static int init(tmpl_ctx_t ctx, struct templatizer_callbacks *cb)
+static int init(tmpl_ctx_t ctx, tmpl_cb_t cb)
 {
-	TMPL_INIT_CALLBACKS(tmpl, cb);
-	tmpl->send_default_headers(ctx);
-	tmpl->add_filler_text(ctx, "Hello world!");
-	tmpl->register_element_start_tag(ctx, "kv", &on_kv_start_tag);
+	kv_cb = cb;
+	kv_cb->send_default_headers(ctx);
+	kv_cb->add_filler_text(ctx, "Hello world!");
+	kv_cb->register_element_start_tag(ctx, "kv", &on_kv_start_tag);
 	return 0;
 }
 

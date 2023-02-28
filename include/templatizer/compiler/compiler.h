@@ -14,6 +14,7 @@
 
 typedef int (*declare_variable_t)(struct context *data, char *name, char *type);
 typedef apr_pool_t *tmpl_pool_t;
+typedef struct pollen_codegen_plugin *tmpl_codegen_t;
 
 struct plugin_variable;
 
@@ -146,12 +147,13 @@ struct context {
 	struct prototype *current_prototype;
 
 	void *plugin_handle;
-	void *codegen_plugin_handle;
 	struct templatizer_plugin *plugin_data;
-	struct templatizer_plugin *codegen_plugin_data;
 	struct plugin_parameters_head plugin_parameters;
 	struct plugin_variable_list_head *plugin_variables;
 	int error;
+
+	/* Binary code generation and JIT */
+	tmpl_codegen_t codegen;
 
 	/* interpreter data */
 	const char *script_path;

@@ -107,7 +107,7 @@ struct templatizer_callbacks {
         int function(tmpl_ctx_t ctx) add_ewhile_node;
         int function(tmpl_ctx_t ctx, void *f) add_call_special_node;
 
-	int function() codegen_sanity_check;
+	int function(tmpl_ctx_t ctx) codegen_sanity_check;
 
 	void function() noplugin;
 

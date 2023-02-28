@@ -1,5 +1,5 @@
 <!-- Copyright (C) 2022 Mateus de Lima Oliveira -->
-<templatizer lib="../plugins/input/in_helloworld.so">
+<templatizer lib="../plugins/database/kv.so">
 <html>
 	<head>
 		<meta charset="UTF-8"/>
@@ -7,11 +7,11 @@
 	</head>
 	<body>
 		<link lib="../plugins/database/kv.so"/>
-		<prototype name="kv" return="int">
+		<prototype name="kv_get" return="int">
 			<string name="op"/>
 			<string name="key"/>
 		</prototype>
-		<extern name="kv"/>
+		<extern name="kv_get"/>
 		<kv op="get" key="users/mateus/age"/>
 		<let var="ret" value="$$"/>
 		<p>$ret</p>

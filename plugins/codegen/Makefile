@@ -1,4 +1,9 @@
+LLVM_CFLAGS=$(shell llvm-config --cflags)
+LLVM_LDFLAGS=$(shell llvm-config --ldflags)
+LLVM_LIBS=$(shell llvm-config --libs)
+
 CFLAGS=-Wall -Wextra -fPIC -I../../include/
+LDFLAGS=-Wl,--no-as-needed
 PLUGINS=llvm.so cd_i386.so codegen_c.so
 
 all: $(PLUGINS)
@@ -8,9 +13,12 @@ cd_i386.so: cd_i386.o
 
 codegen_c.so: codegen_c.o
 	$(CC) $(CFLAGS) --shared -o $@ $^
+	
+llvm.o: llvm.c
+	$(CC) -c $(CFLAGS) $(LLVM_CFLAGS) -o $@ $^
 
 llvm.so: llvm.o
-	$(CC) $(CFLAGS) --shared -o $@ $^
+	$(CC) $(CFLAGS) $(LLVM_CFLAGS) $(LDFLAGS) $(LLVM_LDFLAGS) --shared -o $@ $^ $(LLVM_LIBS)
 
 install:
 

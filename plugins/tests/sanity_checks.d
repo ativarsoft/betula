@@ -5,12 +5,12 @@ __gshared tmpl_cb_t cb;
 
 extern(C)
 @system
-int pollen_codegen_sanity_check();
+int pollen_codegen_sanity_check(tmpl_ctx_t ctx);
 
-static int codegen_sanity_checks()
+static int codegen_sanity_checks(tmpl_ctx_t ctx)
 @trusted
 {
-	return cb.codegen_sanity_check();
+	return cb.codegen_sanity_check(ctx);
 }
 
 static string toString(const(char) *s)
@@ -31,7 +31,7 @@ static int add_filler_text_expr(tmpl_ctx_t ctx, const(char) *sanity_check_test)
 {
 	string sctstr = toString(sanity_check_test);
 	if (sctstr == "codegen") {
-		if (codegen_sanity_checks() == 0) {
+		if (codegen_sanity_checks(ctx) == 0) {
 			add_filler_text(ctx, "OK");
 		} else {
 			add_filler_text(ctx, "Fail");

@@ -69,17 +69,22 @@ static int tmpl_add_selfclosing_html_node(tmpl_ctx_t ctx, string_t el, tmpl_attr
 extern file_t yyin;
 
 #define TMPL_MASK_BITS(bits) (~0L << (bits))
-#define TMPL_MASK(type) TMPL_MASK_BITS(TMPL_MUL(sizeof(type), 8))
+#define TMPL_MASK(type) TMPL_MASK_BITS(TMPL_UNCHECKED_MUL(sizeof(type), 8))
 
 #ifndef TMPL_CAST
 #define TMPL_CAST(value, type) ((value | TMPL_MASK(type)) == value)? (type) value : abort())
 #endif
 
-#ifdef POLLEN_DEBUG
-string_t config_codefen = POLLEN_DEBUG_CODEGEN_PATH;
-#else
-string_t config_codegen = NULL;
-#endif
+tmpl_codegen_t tmpl_get_codegen(tmpl_ctx_t ctx)
+{
+	return POLLEN_GET_CODEGEN(ctx);
+}
+
+tmpl_codegen_t tmpl_set_codegen(tmpl_ctx_t ctx, tmpl_codegen_t codegen)
+{
+	return POLLEN_SET_CODEGEN(ctx, codegen);
+}
+
 int config_timeout = 0;
 
 file_t open_config_file()
@@ -153,7 +158,7 @@ void templatizer_free(tmpl_ctx_t data, void_ptr_t ptr)
 	//free(ptr);
 }
 
-static string_t templatizer_strdup(tmpl_ctx_t data, string_t s)
+static chars_ptr_t templatizer_strdup(tmpl_ctx_t data, string_t s)
 {
 	return apr_pstrdup(data->pools.process, s);
 }
@@ -473,9 +478,16 @@ static struct templatizer_callbacks callbacks = {
 #ifdef _WIN32
 #error win32 is not supported yet
 #else
-void *load_library(struct context *data, string_t path)
+static bool is_absolute_path(string_t path)
 {
-	void *handle;
+	if (path[0] == '/')
+		return true;
+	return false;
+}
+
+tmpl_lib_t tmpl_load_library(tmpl_ctx_t data, string_t path)
+{
+	tmpl_lib_t handle;
 	string_t path_translated, *dir, *full_path;
 
 	if (noplugin != false) {
@@ -485,46 +497,101 @@ void *load_library(struct context *data, string_t path)
 		return NULL;
 	}
 
-	path_translated = data->script_path;
-	if (path_translated == NULL) return NULL;
-	path_translated = apr_pstrdup(data->pools.process, path_translated);
-	if (path_translated == NULL) return NULL;
-	dir = dirname(path_translated);
-	full_path = templatizer_malloc(data, strlen(dir) + 1 + strlen(path) + 1);
-	if (full_path == NULL) {
+	if (is_absolute_path(path) == false) {
+		path_translated = data->script_path;
+		if (path_translated == NULL) return NULL;
+		path_translated = apr_pstrdup(data->pools.process, path_translated);
+		if (path_translated == NULL) return NULL;
+		dir = dirname(path_translated);
+		full_path = templatizer_malloc(data, strlen(dir) + 1 + strlen(path) + 1);
+		if (full_path == NULL) {
+			templatizer_free(data, (void *) path_translated);
+			return NULL;
+		}
+		sprintf((char *) full_path, "%s/%s", dir, path);
 		templatizer_free(data, (void *) path_translated);
-		return NULL;
+	} else {
+		full_path = path;
 	}
-	sprintf((char *) full_path, "%s/%s", dir, path);
-	templatizer_free(data, (void *) path_translated);
 	handle = dlopen(full_path, RTLD_LAZY);
 	if (handle == NULL) {
 		fprintf(stderr, "%s\n", dlerror());
 		templatizer_free(data, (void *) full_path);
 		return NULL;
 	}
-	data->plugin_data = dlsym(handle, "templatizer_plugin_v1");
-	if (data->plugin_data == NULL) {
-		dlclose(handle);
-		fprintf(stderr, "%s\n", dlerror());
+	if (is_absolute_path(path) == false) {
 		templatizer_free(data, (void *) full_path);
-		return NULL;
 	}
-	templatizer_free(data, (void *) full_path);
-	data->plugin_handle = handle;
 	return handle;
 }
 
-static void unload_library(struct context *data)
+int tmpl_unload_library(tmpl_lib_t handle)
 {
-	dlclose(data->plugin_handle);
+	int rc = -1;
+	if (handle == NULL) {
+		fputs("Error: Unable to unload library because"
+		      "the library handle is invalid.\n",
+		      stderr);
+		return -1;
+	}
+	rc = dlclose(handle);
+	if (rc != 0) {
+		fprintf(stderr, "%s\n", dlerror());
+		return 1;
+	}
+	return 0;
 }
 
-static void *get_symbol(struct context *data, string_t name)
+tmpl_sym_t tmpl_get_symbol(tmpl_lib_t handle, string_t name)
 {
-	return dlsym(data->plugin_handle, name);
+	tmpl_sym_t symbol = NULL;
+
+	if (handle == NULL) {
+		fputs("Error: Unable to get symbol because"
+		      "the library handle is invalid.\n",
+		      stderr);
+		abort();
+	}
+	if (name == NULL) {
+		fputs("Error: Symbol name cannot be null.\n",
+		      stderr);
+		abort();
+	}
+	symbol = dlsym(handle, name);
+	if (symbol == NULL) {
+		fprintf(stderr, "%s\n", dlerror());
+		return NULL;
+	}
+	return symbol;
 }
 #endif
+
+static tmpl_lib_t load_library(tmpl_ctx_t data, string_t path)
+{
+	tmpl_lib_t handle = tmpl_load_library(data, path);
+
+	if (handle != NULL) {
+		data->plugin_data = dlsym(handle, "templatizer_plugin_v1");
+		if (data->plugin_data == NULL) {
+			dlclose(handle);
+			fprintf(stderr, "%s\n", dlerror());
+			return NULL;
+		}
+		data->plugin_handle = handle;
+	}
+	return handle;
+}
+
+static int unload_library(tmpl_ctx_t data)
+{
+	tmpl_lib_t handle = POLLEN_GET_PLUGIN_HANDLE(data);
+	return tmpl_unload_library(handle);
+}
+
+static void_ptr_t get_symbol(tmpl_ctx_t data, string_t name)
+{
+	return tmpl_get_symbol(data->plugin_handle, name);
+}
 
 static bool parse_templatizer_tag(struct context *data, const XML_Char **attr)
 {
@@ -727,20 +794,25 @@ struct stack_entry {
 	int value;
 };
 
+#if 0
 static int lookup_stack_variable
     (struct context *data,
      string_t name)
 {
 	return -1;
 }
+#endif
 
+#if 0
 static int lookup_global_variable
     (struct context *data,
      string_t name)
 {
 	return -1;
 }
+#endif
 
+#if 0
 static int create_param
     (struct context *data,
      struct stack_entry *entry,
@@ -764,7 +836,9 @@ static int create_param
 	}
 	return 0;
 }
+#endif
 
+#if 0
 static int add_callspecial_node(struct context *data, struct prototype *proto, const XML_Char **attr)
 {
 	struct variable *param;
@@ -798,6 +872,7 @@ static int add_callspecial_node(struct context *data, struct prototype *proto, c
 	}
 	return 0;
 }
+#endif
 
 struct node *lookup_node_tag(tmpl_ctx_t ctx, string_t el)
 {
@@ -1234,7 +1309,7 @@ out:
 
 static FILE *open_path_translated(tmpl_ctx_t data, string_t pathtranslated)
 {
-	char *token, *string, *tofree;
+	chars_ptr_t token, string, tofree;
 	struct stat statbuf;
 	int fd = 0;
 	FILE *file = NULL;
@@ -1292,7 +1367,7 @@ static FILE *open_path_translated(tmpl_ctx_t data, string_t pathtranslated)
 		goto out1;
 	}
 out1:
-	templatizer_free(data, tofree);
+	FREE_STRING(data, tofree);
 	return file;
 }
 
@@ -1398,7 +1473,7 @@ int main(int argc, char **argv)
 	parse_xml_file(&data, tmpl);
 	serialize_template_file(&data);
 	print_list(&data); /* Interpreter */
-	rc = pollen_codegen_quit(&data);
+	rc = pollen_codegen_quit(data.codegen);
 	assert(rc == 0);
 	apr_pool_destroy(data.pools.connection);
 
