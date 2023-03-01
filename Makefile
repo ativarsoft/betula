@@ -43,6 +43,9 @@ ifneq ($(shell which cargo),)
 	make -C templatizer-rs
 endif
 
+runtime/pollenrt0.o runtime/libpollen.a: runtime
+	make -C runtime
+
 y.tab.c y.tab.y: calc.yacc
 	yacc -d $<
 
@@ -57,10 +60,10 @@ opcode.o: opcode.c opcode.h
 storage.o: storage.c storage.h
 templatizer.o: templatizer.c
 
-templatizer: yeast/libyeast.a y.tab.o lex.yy.o pollen.o interpreter.o opcode.o storage.o sql.o virt.o regex.o jit.o
+templatizer: yeast/libyeast.a y.tab.o lex.yy.o pollen.o interpreter.o opcode.o storage.o sql.o virt.o regex.o jit.o linker.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
-test: templatizer plugins libtemplatizer templatizer-d
+test: templatizer plugins libtemplatizer templatizer-d runtime/pollenrt0.o runtime/libpollen.a
 	$(MAKE) -C tests test
 
 install: templatizer
@@ -99,6 +102,7 @@ clean:
 	make -C plugins clean
 	make -C libtemplatizer clean
 	make -C templatizer-d clean
+	make -C runtime clean
 ifneq ($(shell which cargo),)
 	make -C templatizer-rs clean
 endif

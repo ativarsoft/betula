@@ -3,7 +3,7 @@
 TESTS=simple.xhtml library.xhtml placeholder.xhtml placeholder-d.xhtml placeholder-rs.xhtml kv.xhtml pipeline1.xhtml selfclosing.xhtml controlflow.xhtml echo.xhtml sanity.xhtml noplugin.xhtml
 CFLAGS=-O0 -ggdb -I../include
 LDFLAGS=-ltemplatizer
-EXEC= #cookie percent json
+EXEC= sanity #cookie percent json
 
 ../templatizer:
 	$(error Templatizer executable not found)

@@ -32,6 +32,7 @@
 #include "config.h"
 #include "tmplregex.h"
 #include "jit.h"
+#include "linker.h"
 
 #define VERSION "0.1"
 #define COPYRIGHT "Copyright (C) 2017-2023 Mateus de Lima Oliveira"
@@ -1472,9 +1473,15 @@ int main(int argc, char **argv)
 	assert(rc == 0);
 	parse_xml_file(&data, tmpl);
 	serialize_template_file(&data);
-	print_list(&data); /* Interpreter */
 	rc = pollen_codegen_quit(data.codegen);
 	assert(rc == 0);
+#if 1
+	rc = link_file("sanity.o", "sanity");
+	if (rc != 0) {
+		fputs("Failed to link file.\n", stderr);
+	}
+#endif
+	print_list(&data); /* Interpreter */
 	apr_pool_destroy(data.pools.connection);
 
 #if 1

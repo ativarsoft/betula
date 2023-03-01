@@ -20,6 +20,16 @@
 #define PREFIX "/usr"
 #endif
 
-#define POLLEN_CONFIG_PATH PREFIX "/etc/pollen.conf"
+#define POLLEN_CONFIG_PATH                         \
+    PREFIX "/etc/pollen.conf"
+
+#if defined PREFIX && 0
+#define POLLEN_LIBRARY_SEARCH_PATH                 \
+    PREFIX "/lib"
+#else
+#define POLLEN_LIBRARY_SEARCH_PATH "../runtime/"
+#endif
+
+#define POLLENRT0_PATH "../runtime/pollenrt0.o"
 
 #endif

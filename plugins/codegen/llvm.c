@@ -22,7 +22,7 @@ int pollen_codegen_sanity_check()
 
     LLVMTypeRef param_types[] = { LLVMInt32Type(), LLVMInt32Type() };
     LLVMTypeRef fn_type = LLVMFunctionType(LLVMInt32Type(), param_types, 2, 0);
-    LLVMValueRef sum_fn = LLVMAddFunction(mod, "sum", fn_type);
+    LLVMValueRef sum_fn = LLVMAddFunction(mod, "pollen_main", fn_type);
 
     LLVMBasicBlockRef entry = LLVMAppendBasicBlock(sum_fn, "entry");
     LLVMBuilderRef builder = LLVMCreateBuilder();
@@ -47,7 +47,7 @@ int pollen_codegen_sanity_check()
         exit(EXIT_FAILURE);
     }
 
-    int (*sum_ptr)(int, int) = (int (*)(int, int))LLVMGetFunctionAddress(engine, "sum");
+    int (*sum_ptr)(int, int) = (int (*)(int, int))LLVMGetFunctionAddress(engine, "pollen_main");
     int result = sum_ptr(2, 3);
     printf("Codegen-Sanity-Check: 2 plus 3 equals %d\r\n", result);
 
