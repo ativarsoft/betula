@@ -1,5 +1,6 @@
 FROM debian:bullseye
-RUN apt install git
+RUN apt-get update
+RUN apt-get install git
 RUN git clone https://github.com/ativarsoft/pollen-lang.git
 RUN make clean
 RUN make dependencies
