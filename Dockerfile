@@ -4,10 +4,10 @@ RUN apt-get install -y git build-essential
 RUN git clone https://github.com/ativarsoft/pollen-lang.git
 WORKDIR pollen-lang
 RUN make clean
-RUN make dependencies
+RUN apt-get install $(shell cat dependencies.list)
 RUN make
 RUN make test
-RUN make deb"]
+RUN make deb
 RUN make install
 EXPOSE 80
 CMD [“apache2ctl”, “-D”, “FOREGROUND”]

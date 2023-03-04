@@ -24,7 +24,7 @@ all: $(EXEC) libtemplatizer templatizer-d templatizer-rs plugins
 deb: pollen-$(VERSION).deb
 
 dependencies:
-	apt-get -y install $(shell cat dependencies.list)
+	apt-get install $(shell cat dependencies.list)
 
 $(LIBYEAST_A): yeast/
 	make -C yeast
