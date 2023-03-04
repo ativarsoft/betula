@@ -120,5 +120,8 @@ termux:
 debug:
 	DEBUG="y" make
 
+docker:
+	docker build -t ativarsoft/pollen-$(VERSION) .
+
 .PHONY: dependencies plugins libtemplatizer templatizer-d templatizer-rs test install clean deb termux $(LIBYEAST_A)
 
