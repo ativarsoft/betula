@@ -10,4 +10,4 @@ RUN make test
 RUN make deb
 RUN make install
 EXPOSE 80
-CMD [“apache2ctl”, “-D”, “FOREGROUND”]
+CMD ["apache2ctl", "-D", "FOREGROUND"]
