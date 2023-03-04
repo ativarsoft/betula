@@ -11,3 +11,4 @@ cargo
 rustc
 valgrind
 llvm-dev
+apache2
