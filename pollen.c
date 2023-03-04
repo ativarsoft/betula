@@ -1475,7 +1475,7 @@ int main(int argc, char **argv)
 	serialize_template_file(&data);
 	rc = pollen_codegen_quit(data.codegen);
 	assert(rc == 0);
-#if 1
+#if USE_SYSTEM_LINKER == 1
 	rc = link_file("sanity.o", "sanity");
 	if (rc != 0) {
 		fputs("Failed to link file.\n", stderr);

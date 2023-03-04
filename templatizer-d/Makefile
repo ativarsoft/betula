@@ -22,7 +22,7 @@ clean:
 
 install: $(SOURCES)
 	mkdir -p $(PREFIX)/lib/
-	install libtemplatizer.a $(PREFIX)/lib/
+	install libtemplatizer.a $(PREFIX)/lib/libtemplatizer-d.a
 	mkdir -p $(PREFIX)/include/templatizer-d/
 	install $(SOURCES) $(PREFIX)/include/templatizer-d/
 

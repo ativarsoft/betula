@@ -11,7 +11,7 @@ EXEC= sanity #cookie percent json
 pollen.conf:
 	./create-config.sh
 
-test: $(TESTS) $(EXEC)
+test: $(TESTS)
 
 simple.xhtml: simple.tmpl ../templatizer pollen.conf
 	./run-templatizer.sh $< $@
@@ -43,5 +43,6 @@ clean:
 	rm -f $(TESTS)
 	rm -f access.log
 	rm -f pollen.conf
+	rm -f sanity
 
 .PHONY: clean

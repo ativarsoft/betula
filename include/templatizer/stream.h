@@ -3,7 +3,7 @@
 #ifndef TMPL_STREAM_H
 #define TMPL_STREAM_H
 
-# ifndef USE_BUILTIN_STREAMS
+# ifndef TMPL_USE_BUILTIN_STREAMS
 
 #include <stdio.h>
 #include <stddef.h>

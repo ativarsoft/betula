@@ -21,7 +21,7 @@ LIBYEAST_A=yeast/libyeast.a
 
 all: $(EXEC) libtemplatizer templatizer-d templatizer-rs plugins
 
-deb: templatizer-$(VERSION).deb
+deb: pollen-$(VERSION).deb
 
 dependencies:
 	apt-get install $(shell cat dependencies.list)
@@ -70,7 +70,7 @@ install: templatizer
 	mkdir -p $(PREFIX)/lib/cgi-bin/
 	mkdir -p $(PREFIX)/include
 	install templatizer $(PREFIX)/lib/cgi-bin/
-	#install libtemplatizer/libtemplatizer.a $(PREFIX)/lib/
+	make -C libtemplatizer install
 	cp include/templatizer.h $(PREFIX)/include
 	cp -r include/templatizer/ $(PREFIX)/include/
 	make -C plugins install
@@ -80,24 +80,24 @@ install: templatizer
 debian/control: VERSION
 	./gen-control.sh
 
-templatizer-$(VERSION).deb: debian/control templatizer include/templatizer.h conf/templatizer.conf.original
-	mkdir -p templatizer-$(VERSION)
-	mkdir -p templatizer-$(VERSION)/DEBIAN
-	cp debian/control debian/postinst templatizer-$(VERSION)/DEBIAN/
-	chmod 0775 templatizer-$(VERSION)/DEBIAN/*
-	mkdir -p templatizer-$(VERSION)/usr/lib/cgi-bin/
-	cp templatizer templatizer-$(VERSION)/usr/lib/cgi-bin/
-	mkdir -p templatizer-$(VERSION)/usr/include
-	cp include/templatizer.h templatizer-$(VERSION)/usr/include
-	mkdir -p templatizer-$(VERSION)/etc/apache2/conf-available/
-	cp conf/templatizer.conf.original templatizer-$(VERSION)/etc/apache2/conf-available/templatizer.conf
-	PREFIX="$(shell pwd)/templatizer-$(VERSION)"/usr make install
-	dpkg-deb --build templatizer-$(VERSION)
+pollen-$(VERSION).deb: debian/control templatizer include/templatizer.h conf/templatizer.conf.original
+	mkdir -p pollen-$(VERSION)
+	mkdir -p pollen-$(VERSION)/DEBIAN
+	cp debian/control debian/postinst pollen-$(VERSION)/DEBIAN/
+	chmod 0775 pollen-$(VERSION)/DEBIAN/*
+	mkdir -p pollen-$(VERSION)/usr/lib/cgi-bin/
+	cp templatizer pollen-$(VERSION)/usr/lib/cgi-bin/
+	mkdir -p pollen-$(VERSION)/usr/include
+	cp include/templatizer.h pollen-$(VERSION)/usr/include
+	mkdir -p pollen-$(VERSION)/etc/apache2/conf-available/
+	cp conf/templatizer.conf.original pollen-$(VERSION)/etc/apache2/conf-available/templatizer.conf
+	PREFIX="$(shell pwd)/pollen-$(VERSION)"/usr make install
+	dpkg-deb --build pollen-$(VERSION)
 
 clean:
 	rm -f $(EXEC) *.o lex.yy.c y.tab.c y.tab.h
-	rm -fr templatizer-$(VERSION)/
-	rm -f templatizer-$(VERSION).deb
+	rm -fr pollen-$(VERSION)/
+	rm -f pollen-$(VERSION).deb
 	make -C yeast clean
 	make -C plugins clean
 	make -C libtemplatizer clean

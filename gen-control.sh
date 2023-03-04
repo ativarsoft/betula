@@ -3,7 +3,7 @@
 version=$(./version.sh)
 
 gen() {
-    echo "Package: templatizer"
+    echo "Package: pollen"
     echo "Version: $version"
     echo "Maintainer: Mateus de Lima Oliveira"
     echo "Architecture: amd64"

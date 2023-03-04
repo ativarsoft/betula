@@ -1,6 +1,6 @@
 #include <templatizer/stream.h>
 
-#ifdef USE_BUILTIN_STREAMS
+#ifdef TMPL_USE_BUILTIN_STREAMS
 
 tmpl_stream_t tmpl_fmemopen
     (void *buf, size_t size, const char *mode)

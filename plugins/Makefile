@@ -1,5 +1,7 @@
 # Copyright (C) 2022 Mateus de Lima Oliveira
 
+PREFIX?=/usr
+
 all:
 	make -C input
 	make -C output
@@ -11,6 +13,7 @@ all:
 	make -C tests
 
 install:
+	mkdir -p $(PREFIX)/lib/templatizer/plugins/
 	make -C input install
 	make -C output install
 	make -C net install

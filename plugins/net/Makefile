@@ -28,7 +28,7 @@ noplugin.so: noplugin.o
 	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 install: $(PLUGINS)
-	#cp -f $(PLUGINS) /usr/lib
+	cp -f $(PLUGINS) $(PREFIX)/lib/templatizer/plugins/
 
 clean:
 	rm -f $(PLUGINS) *.o

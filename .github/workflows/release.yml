@@ -20,4 +20,4 @@ jobs:
         with:
           files: |
             Release.txt
-            templatizer-*.deb
+            pollen-*.deb

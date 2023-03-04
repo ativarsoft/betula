@@ -32,4 +32,6 @@
 
 #define POLLENRT0_PATH "../runtime/pollenrt0.o"
 
+#define USE_SYSTEM_LINKER 0
+
 #endif
