@@ -73,6 +73,7 @@ install: templatizer
 	make -C libpollen install
 	cp include/templatizer.h $(PREFIX)/include
 	cp -r include/templatizer/ $(PREFIX)/include/
+	cp -r include/pollen/ $(PREFIX)/include/
 	make -C plugins install
 	make -C templatizer-d install
 	make -C apps install

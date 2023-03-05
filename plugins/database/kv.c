@@ -1,4 +1,4 @@
-#include <templatizer.h>
+#include <pollen/pollen.h>
 #include <threads.h>
 
 thread_local tmpl_cb_t kv_cb = NULL;
@@ -32,7 +32,7 @@ static int init(tmpl_ctx_t ctx, tmpl_cb_t cb)
 
 static void quit() {}
 
-struct templatizer_plugin templatizer_plugin_v1 = {
+const tmpl_plugin_record_t templatizer_plugin_v1 = {
 	&init,
 	&quit,
 };

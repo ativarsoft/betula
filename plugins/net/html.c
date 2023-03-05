@@ -1,4 +1,4 @@
-#include "templatizer.h"
+#include <pollen/pollen.h>
 #include <threads.h>
 
 TMPL_CALLBACKS(tmpl);
@@ -19,7 +19,7 @@ int on_selfclosing_html_end_tag(tmpl_ctx_t ctx, const char *el)
 	return 0;
 }
 
-static int init(tmpl_ctx_t ctx, struct templatizer_callbacks *cb)
+static int init(tmpl_ctx_t ctx, tmpl_cb_t cb)
 {
 	int rc = -1;
 	html_cb = cb;
@@ -40,7 +40,7 @@ static int init(tmpl_ctx_t ctx, struct templatizer_callbacks *cb)
 
 static void quit() {}
 
-struct templatizer_plugin templatizer_plugin_v1 = {
+const tmpl_plugin_record_t templatizer_plugin_v1 = {
 	&init,
 	&quit,
 };

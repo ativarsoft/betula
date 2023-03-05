@@ -1,4 +1,4 @@
-#include <templatizer.h>
+#include <pollen/pollen.h>
 #include <stdio.h>
 
 static char *get_string_constant_label(tmpl_ctx_t ctx, const char *el)
@@ -37,7 +37,7 @@ static int init(tmpl_ctx_t ctx, struct templatizer_callbacks *cb)
 
 static void quit() {}
 
-struct templatizer_plugin templatizer_plugin_v1 = {
+const tmpl_plugin_record_t templatizer_plugin_v1 = {
     &init,
     &quit
 };

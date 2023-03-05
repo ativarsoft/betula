@@ -1,8 +1,8 @@
-#include <templatizer.h>
+#include <pollen/pollen.h>
 #include <unistd.h>
 #include <stddef.h>
 
-int init(tmpl_ctx_t data, struct templatizer_callbacks *cb)
+int init(tmpl_ctx_t data, tmpl_cb_t cb)
 {
     const char *executable = NULL;
     size_t length = 0;
@@ -27,7 +27,7 @@ int init(tmpl_ctx_t data, struct templatizer_callbacks *cb)
 
 void quit() {}
 
-struct templatizer_plugin templatizer_plugin_v1 = {
+const tmpl_plugin_record_t templatizer_plugin_v1 = {
     &init,
     &quit
 };

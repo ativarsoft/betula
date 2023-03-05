@@ -2,13 +2,13 @@ CFLAGS=-Wall -Wextra -fPIC -I../include -g
 
 PREFIX?=/usr
 
-all: libtemplatizer.a
+all: libpollen.a
 
-libtemplatizer.a: percent.o cookie.o query.o stream.o
+libpollen.a: percent.o cookie.o query.o stream.o sanity.o
 	ar rcs $@ $^
 
 install:
-	install libtemplatizer.a $(PREFIX)/lib/
+	install libpollen.a $(PREFIX)/lib/
 
 clean:
 	rm -f *.o *.a

@@ -1,4 +1,6 @@
-#include <templatizer.h>
+/* Copyright (C) 2023 Mateus de Lima Oliveira */
+
+#include <pollen/pollen.h>
 #include <threads.h>
 #include <assert.h>
 #include <dlfcn.h>
@@ -11,7 +13,7 @@ void initialize_dav();
 void finalize_dav();
 
 thread_local tmpl_ctx_t dav_ctx;
-thread_local struct templatizer_callbacks *dav_cb;
+thread_local tmpl_cb_t dav_cb;
 
 void *handle;
 
@@ -39,7 +41,7 @@ void dav_swhile(int a)
     dav_cb->add_control_flow(dav_ctx, a? SWHILE_TRUE : SWHILE_FALSE);
 }
 
-static int init(tmpl_ctx_t data, struct templatizer_callbacks *cb)
+static int init(tmpl_ctx_t data, tmpl_cb_t cb)
 {
     char *error;
     void (*tmpl_ada_initialize)();
@@ -76,7 +78,7 @@ static void quit()
     dlclose(handle);
 }
 
-struct templatizer_plugin templatizer_plugin_v1 = {
+const tmpl_plugin_record_t templatizer_plugin_v1 = {
     &init,
     &quit
 };

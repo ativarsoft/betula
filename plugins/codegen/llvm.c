@@ -1,4 +1,6 @@
-#include <templatizer.h>
+/* Copyright (C) 2023 Mateus de Lima Oliveira */
+
+#include <pollen/pollen.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <threads.h>
@@ -55,7 +57,7 @@ int pollen_codegen_sanity_check()
     if (LLVMWriteBitcodeToFile(mod, "test.bc") != 0) {
         fprintf(stderr, "error writing bitcode to file, skipping\n");
     }
-    
+
     /*
      * Write object file (".o" file)
      */
@@ -67,7 +69,7 @@ int pollen_codegen_sanity_check()
         LLVMDisposeMessage(error);
         return 1;
     }
-    
+
     LLVMDisposeBuilder(builder);
     LLVMDisposeExecutionEngine(engine);
 
@@ -269,7 +271,7 @@ static void quit()
     LLVMDisposeExecutionEngine(engine);
 }
 
-struct templatizer_plugin templatizer_plugin_v1 = {
+const tmpl_plugin_record_t templatizer_plugin_v1 = {
     &init,
     &quit
 };

@@ -147,7 +147,7 @@ struct context {
 	struct prototype *current_prototype;
 
 	void *plugin_handle;
-	struct templatizer_plugin *plugin_data;
+	tmpl_plugin_t plugin_data;
 	struct plugin_parameters_head plugin_parameters;
 	struct plugin_variable_list_head *plugin_variables;
 	int error;

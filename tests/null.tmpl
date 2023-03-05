@@ -1,0 +1,27 @@
+<!-- Copyright (C) 2022 Mateus de Lima Oliveira -->
+<templatizer lib="../plugins/input/null.so">
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Load library</title>
+  </head>
+  <body>
+    <p>
+      The null library contains no actual code but it links to libpollen
+      which is linked by default on Pollen plugins.
+    </p>
+    <p>
+      This script will now call the libpollen sanity check function.
+      If no further output is generated, it means there was an error
+      and this test failed.
+    </p>
+    <link lib="../plugins/input/null.so"/>
+    <prototype name="tmpl_runtime_sanity_check" return="int"/>
+    <extern name="tmpl_runtime_sanity_check"/>
+    <tmpl_runtime_sanity_check/>
+    <p>
+      Success!
+    </p>
+  </body>
+</html>
+</templatizer>

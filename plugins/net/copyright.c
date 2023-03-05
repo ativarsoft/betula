@@ -1,4 +1,6 @@
-#include <templatizer.h>
+/* Copyright (C) 2023 Mateus de Lima Oliveira */
+
+#include <pollen/pollen.h>
 
 #define VERSION "1.0"
 
@@ -13,7 +15,7 @@ tmpl_cb_t cb;
 
 static void quit() {}
 
-struct templatizer_plugin templatizer_plugin_v1 = {
+const tmpl_plugin_record_t templatizer_plugin_v1 = {
 	&init,
 	&quit
 };

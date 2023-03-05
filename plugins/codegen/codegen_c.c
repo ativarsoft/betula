@@ -1,4 +1,6 @@
-#include <templatizer.h>
+/* Copyright (C) 2023 Mateus de Lima Oliveira */
+
+#include <pollen/pollen.h>
 #include <stdio.h>
 
 #define QLIST_FOREACH(a, b, c)
@@ -117,7 +119,7 @@ static int init(tmpl_ctx_t data, tmpl_cb_t cb)
 
 static void quit() {}
 
-struct templatizer_plugin templatizer_plugin_v1 = {
+const tmpl_plugin_record_t templatizer_plugin_v1 = {
 	&init,
 	&quit
 };

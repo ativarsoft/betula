@@ -436,7 +436,7 @@ static void tmpl_noplugin()
 	noplugin = true;
 }
 
-static struct templatizer_callbacks callbacks = {
+static struct pollen_callbacks callbacks = {
 	.noplugin = &tmpl_noplugin,
 	.malloc = &templatizer_malloc,
 	.free = &templatizer_free,

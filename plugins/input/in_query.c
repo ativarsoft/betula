@@ -1,3 +1,5 @@
+/* Copyright (C) 2023 Mateus de Lima Oliveira */
+
 #include <templatizer.h>
 #include <templatizer/query.h>
 #include <string.h>
@@ -12,7 +14,7 @@ int query_callback
 	return 0;
 }
 
-static int init(struct context *data, struct templatizer_callbacks *cb)
+static int init(tmpl_ctx_t data, tmpl_cb_t cb)
 {
 	char *method = getenv("REQUEST_METHOD");
 	char *contenttype = getenv("CONTENT_TYPE");
@@ -29,7 +31,7 @@ static int init(struct context *data, struct templatizer_callbacks *cb)
 
 static void quit() {}
 
-struct templatizer_plugin templatizer_plugin_v1 = {
+const tmpl_plugin_record_t templatizer_plugin_v1 = {
 	&init,
 	&quit
 };

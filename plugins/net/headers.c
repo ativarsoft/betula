@@ -1,4 +1,4 @@
-#include <templatizer.h>
+#include <pollen/pollen.h>
 
 #define VERSION "1.0"
 
@@ -30,7 +30,7 @@ static int init(struct context *data, struct templatizer_callbacks *cb)
 
 static void quit() {}
 
-struct templatizer_plugin templatizer_plugin_v1 = {
+const tmpl_plugin_record_t templatizer_plugin_v1 = {
 	&init,
 	&quit
 };

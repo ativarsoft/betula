@@ -1,6 +1,8 @@
-#include "templatizer.h"
+/* Copyright (C) 2023 Mateus de Lima Oliveira */
 
-static int init(struct context *data, struct templatizer_callbacks *cb)
+#include <pollen/pollen.h>
+
+static int init(tmpl_ctx_t data, tmpl_cb_t cb)
 {
 	cb->add_control_flow(data, TMPL_FALSE);
 	return 0;
@@ -8,7 +10,7 @@ static int init(struct context *data, struct templatizer_callbacks *cb)
 
 static void quit() {}
 
-struct templatizer_plugin templatizer_plugin_v1 = {
+const tmpl_plugin_record_t templatizer_plugin_v1 = {
 	&init,
 	&quit
 };
