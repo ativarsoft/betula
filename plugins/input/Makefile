@@ -1,6 +1,6 @@
 CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb -I../../include
 PLUGINS=in_helloworld.so in_query.so helloworld_d.so true.so false.so
-CFLAGS+=-L"../../libtemplatizer"
+CFLAGS+=-L"../../libpollen"
 
 D=ldc2
 ifeq ($(D),dmd)

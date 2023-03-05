@@ -19,7 +19,7 @@ endif
 
 LIBYEAST_A=yeast/libyeast.a
 
-all: $(EXEC) libtemplatizer templatizer-d templatizer-rs plugins
+all: $(EXEC) libpollen templatizer-d templatizer-rs plugins
 
 deb: pollen-$(VERSION).deb
 
@@ -32,8 +32,8 @@ $(LIBYEAST_A): yeast/
 plugins:
 	make -C plugins
 
-libtemplatizer:
-	make -C libtemplatizer
+libpollen:
+	make -C libpollen
 
 templatizer-d:
 	make -C templatizer-d
@@ -63,14 +63,14 @@ templatizer.o: templatizer.c
 templatizer: yeast/libyeast.a y.tab.o lex.yy.o pollen.o interpreter.o opcode.o storage.o sql.o virt.o regex.o jit.o linker.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
-test: templatizer plugins libtemplatizer templatizer-d runtime/pollenrt0.o runtime/libpollen.a
+test: templatizer plugins libpollen templatizer-d runtime/pollenrt0.o runtime/libpollen.a
 	$(MAKE) -C tests test
 
 install: templatizer
 	mkdir -p $(PREFIX)/lib/cgi-bin/
 	mkdir -p $(PREFIX)/include
 	install templatizer $(PREFIX)/lib/cgi-bin/
-	make -C libtemplatizer install
+	make -C libpollen install
 	cp include/templatizer.h $(PREFIX)/include
 	cp -r include/templatizer/ $(PREFIX)/include/
 	make -C plugins install
@@ -100,7 +100,7 @@ clean:
 	rm -f pollen-$(VERSION).deb
 	make -C yeast clean
 	make -C plugins clean
-	make -C libtemplatizer clean
+	make -C libpollen clean
 	make -C templatizer-d clean
 	make -C runtime clean
 ifneq ($(shell which cargo),)
@@ -123,5 +123,5 @@ debug:
 docker:
 	docker build -t ativarsoft/pollen-$(VERSION) .
 
-.PHONY: dependencies plugins libtemplatizer templatizer-d templatizer-rs test install clean deb termux $(LIBYEAST_A)
+.PHONY: dependencies plugins libpollen templatizer-d templatizer-rs test install clean deb termux $(LIBYEAST_A)
 
