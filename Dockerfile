@@ -8,6 +8,6 @@ RUN apt-get install -y $(cat dependencies.list)
 RUN make
 RUN make test
 RUN make deb
-RUN make install
+RUN dpkg -i pollen-$(cat VERSION).deb
 EXPOSE 80
 CMD ["apache2ctl", "-D", "FOREGROUND"]
