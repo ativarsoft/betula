@@ -1,0 +1,16 @@
+Alias /sysinfo /usr/share/pollen/
+
+<Directory /usr/share/pollen/>
+  Options +FollowSymLinks
+  AllowOverride All
+  <IfVersion >= 2.3>
+    Require all granted
+  </IfVersion>
+  <IfVersion < 2.3>
+    Order allow,deny
+    Allow from all
+  </IfVersion>
+  <IfModule mod_dir.c>
+    DirectoryIndex index.tmpl index.html
+  </IfModule>
+</Directory>

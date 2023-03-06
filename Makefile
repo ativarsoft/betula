@@ -92,6 +92,7 @@ pollen-$(VERSION).deb: debian/control templatizer include/templatizer.h conf/tem
 	cp include/templatizer.h pollen-$(VERSION)/usr/include
 	mkdir -p pollen-$(VERSION)/etc/apache2/conf-available/
 	cp conf/templatizer.conf.original pollen-$(VERSION)/etc/apache2/conf-available/templatizer.conf
+	cp conf/sysinfo.conf.original pollen-$(VERSION)/etc/apache2/conf-available/sysinfo.conf
 	PREFIX="$(shell pwd)/pollen-$(VERSION)"/usr make install
 	dpkg-deb --build pollen-$(VERSION)
 
