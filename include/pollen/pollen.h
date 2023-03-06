@@ -241,7 +241,7 @@ struct pollen_callbacks {
 };
 
 struct pollen_plugin {
-	int (*init)(struct context *data, struct templatizer_callbacks *cb);
+	int (*init)(tmpl_ctx_t data, tmpl_cb_t cb);
 	void (*quit)();
 };
 

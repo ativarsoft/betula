@@ -27,10 +27,10 @@
 #include "memory.h"
 #include "interpreter.h"
 #include "opcode.h"
-#include "storage.h"
-#include "virt.h"
+//#include "storage.h"
+//#include "virt.h"
 #include "config.h"
-#include "tmplregex.h"
+//#include "tmplregex.h"
 #include "jit.h"
 #include "linker.h"
 
@@ -436,6 +436,8 @@ static void tmpl_noplugin()
 	noplugin = true;
 }
 
+/* Callbacks for plugins for this compilers.
+ * All the other callbacks are set to null. */
 static struct pollen_callbacks callbacks = {
 	.noplugin = &tmpl_noplugin,
 	.malloc = &templatizer_malloc,
@@ -459,21 +461,6 @@ static struct pollen_callbacks callbacks = {
 	.get_copyright_string = &tmpl_get_copyright_string,
 	.get_int_variable = &tmpl_get_int_variable,
 	.set_int_variable = &tmpl_set_int_variable,
-	.regex_compile = &tmpl_regex_compile,
-#ifdef USE_STORAGE
-	.storage_open = &storage_open,
-        .storage_begin_transaction = &storage_begin_transaction,
-        .storage_commit_transaction = &storage_commit_transaction,
-        .storage_open_database = &storage_open_database,
-	.storage_close_database = &storage_close_database,
-        .storage_get_string = &storage_get_string,
-	.storage_get_integer = &storage_get_integer,
-#endif
-#ifdef USE_VIRTUALIZATION
-	.vm_define = &vmDefine,
-	.vm_start = &vmStart,
-	.vm_destroy = &vmDestroy
-#endif
 };
 
 #ifdef _WIN32
@@ -1445,7 +1432,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-#ifdef USE_STORAGE
+#if defined USE_STORAGE && 0
 	rc = storage_initialize();
 	assert(rc == 0);
 #endif
@@ -1503,7 +1490,7 @@ int main(int argc, char **argv)
 		unload_library(&data);
 #endif
 
-#ifdef USE_STORAGE
+#if defined USE_STORAGE && 0
 	rc = storage_finalize();
 	assert(rc == 0);
 #endif

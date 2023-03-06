@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stddef.h>
-#include "sql.h"
+#include <pollen/sql.h>
 
 static int callback(void *NotUsed, int argc, char **argv, char **azColName){
 	int i;

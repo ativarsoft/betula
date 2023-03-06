@@ -15,7 +15,7 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <stdbool.h>
-#include "storage.h"
+#include <pollen/storage.h>
 
 static thread_local tmpl_ctx_t dav_ctx;
 static thread_local struct templatizer_callbacks *dav_cb;

@@ -2,11 +2,11 @@
 
 APR_CFLAGS=$(shell pkg-config --cflags apr-1)
 
-CFLAGS=-fPIC -Wall -O0 -ggdb -Iinclude $(APR_CFLAGS)
-LIBS?=-lexpat -ldl -lapr-1 -llmdb -lsqlite3 -lvirt
+export CFLAGS=-fPIC -Wall -O0 -ggdb -I"$(shell pwd)/include" $(APR_CFLAGS)
+LIBS?=-lexpat -ldl -lapr-1
 EXEC=templatizer
-VERSION=$(shell ./version.sh)
-PREFIX?=/usr
+export VERSION=$(shell ./version.sh)
+export PREFIX?=/usr
 
 ifeq ($(TERMUX),y)
 CFLAGS+=-DTERMUX
@@ -60,7 +60,7 @@ opcode.o: opcode.c opcode.h
 storage.o: storage.c storage.h
 templatizer.o: templatizer.c
 
-templatizer: yeast/libyeast.a y.tab.o lex.yy.o pollen.o interpreter.o opcode.o storage.o sql.o virt.o regex.o jit.o linker.o
+templatizer: yeast/libyeast.a y.tab.o lex.yy.o pollen.o interpreter.o opcode.o jit.o linker.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 test: templatizer plugins libpollen templatizer-d runtime/pollenrt0.o runtime/libpollen.a

@@ -10,7 +10,7 @@
 #include <string.h>
 #include <libvirt/libvirt.h>
 #include <libvirt/virterror.h>
-#include "virt.h"
+#include <pollen/virt.h>
 
 int vmDefine()
 {
