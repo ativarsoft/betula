@@ -1,0 +1,41 @@
+<!-- Copyright (C) 2023 Mateus de Lima Oliveira -->
+
+<!--
+  Include this file to have access to the functions on the standard library.
+-->
+
+<templatizer>
+
+  <!--
+    size_t tmpl_percent_decoded_len(const char *in, size_t inputlen);
+  -->
+  <prototype return="size_t" name="tmpl_percent_decoded_len">
+    <string name="in"/>
+    <size_t name="inputlen"/>
+  </prototype>
+
+  <!--
+    size_t tmpl_percent_decode_file(tmpl_stream_t fin, tmpl_stream_t fout, size_t *nbytes);
+  -->
+  <prototype return="size_t" name="tmpl_percent_decode_file">
+    <tmpl_stream_t name="fin"/>
+    <tmpl_stream_t name="fout"/>
+    <size_t out="true" name="len"/>
+  </prototype>
+
+  <!--
+    int tmpl_percent_decode_array
+      (char *in, size_t inputlen,
+       char *out, size_t outputlen,
+       size_t *nbytes);
+  -->
+  <prototype return="int">
+    <string name="in"/>
+    <size_t name="inputlen"/>
+    <char out="true" name="out"/>
+    <size_t name="outputlen"/>
+    <size_t out="true" name="nbytes"/>
+  </prototype>
+
+</templatizer>
+

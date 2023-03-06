@@ -1,6 +1,8 @@
 # Copyright (C) 2023 Mateus de Lima Oliveira
 
-TESTS=simple.xhtml library.xhtml placeholder.xhtml placeholder-d.xhtml placeholder-rs.xhtml kv.xhtml pipeline1.xhtml selfclosing.xhtml controlflow.xhtml echo.xhtml sanity.xhtml noplugin.xhtml
+TESTS=simple.xhtml library.xhtml placeholder.xhtml placeholder-d.xhtml \
+  placeholder-rs.xhtml kv.xhtml pipeline1.xhtml selfclosing.xhtml \
+  controlflow.xhtml echo.xhtml sanity.xhtml noplugin.xhtml include.xhtml
 CFLAGS=-O0 -ggdb -I../include
 LDFLAGS=-ltemplatizer
 EXEC= sanity #cookie percent json
@@ -36,6 +38,8 @@ echo.xhtml: echo.tmpl ../templatizer pollen.conf
 sanity.xhtml: sanity.tmpl ../templatizer pollen.conf
 	./run-templatizer.sh $< $@
 noplugin.xhtml: noplugin.tmpl ../templatizer pollen.conf
+	./run-templatizer.sh $< $@
+include.xhtml: include.tmpl ../templatizer pollen.conf
 	./run-templatizer.sh $< $@
 
 clean:
