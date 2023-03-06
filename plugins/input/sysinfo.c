@@ -4,7 +4,7 @@
 
 #define BUFFER_SIZE 16
 
-int sysinfo(tmpl_ctx_t ctx, tmpl_cb_t cb)
+static int sysinfo(tmpl_ctx_t ctx, tmpl_cb_t cb)
 {
 	char buffer[BUFFER_SIZE];
 	int num_processors = tmpl_get_num_processors();
@@ -17,7 +17,7 @@ int sysinfo(tmpl_ctx_t ctx, tmpl_cb_t cb)
 
 static int init(tmpl_ctx_t ctx, tmpl_cb_t cb)
 {
-	return 0;
+	return sysinfo(ctx, cb);
 }
 
 static void quit() {}
