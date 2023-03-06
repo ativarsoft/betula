@@ -1,5 +1,6 @@
 /* Copyright (C) 2023 Mateus de Lima Oliveira */
 
+#include <pollen/pollen.h>
 #include <pollen/system.h>
 
 #define BUFFER_SIZE 16
@@ -11,7 +12,7 @@ static int sysinfo(tmpl_ctx_t ctx, tmpl_cb_t cb)
 	if (num_processors <= 0)
 		return 2;
 	snprintf(buffer, BUFFER_SIZE, "%d", num_processors);
-	cb->add_place_holder(ctx, buffer);
+	cb->add_filler_text(ctx, buffer);
 	return 0;
 }
 

@@ -1,8 +1,9 @@
 # Copyright (C) 2023 Mateus de Lima Oliveira
 
-CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb -I../../include
+CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb -I../../include -L../../libpollen
+LDFLAGS=-Wl,--no-as-needed
 PLUGINS=in_helloworld.so in_query.so helloworld_d.so true.so false.so \
-  null.so
+  null.so sysinfo.so
 CFLAGS+=-L"../../libpollen"
 
 # libpollen is linked by default. A typical program in Pollen language
