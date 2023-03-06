@@ -29,6 +29,7 @@ DFLAGS=-relocation-model=pic -I../../templatizer-d/
 endif
 
 PREFIX?=/usr
+INSTALL_DIR=$(PREFIX)/lib/pollen/plugins/
 
 BUILD_PROFILE?=release
 
@@ -38,7 +39,9 @@ BUILD_PROFILE?=release
 all: $(PLUGINS) helloworld-rs
 
 null.so: null.o
-	# libpollen
+	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
+
+sysinfo.so: sysinfo.o
 	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 in_helloworld.so: helloworld.o
@@ -65,6 +68,8 @@ in_json.so: jsonc.o
 	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^ -llaxjson
 
 install:
+	mkdir -p $(INSTALL_DIR)
+	cp $(PLUGINS) $(INSTALL_DIR)
 
 clean:
 	rm -f $(PLUGINS) *.o

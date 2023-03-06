@@ -4,7 +4,7 @@ PREFIX?=/usr
 
 all: libpollen.a
 
-libpollen.a: percent.o cookie.o query.o stream.o sanity.o
+libpollen.a: percent.o cookie.o query.o stream.o sanity.o system.o
 	ar rcs $@ $^
 
 install:
