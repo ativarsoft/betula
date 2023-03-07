@@ -123,7 +123,7 @@ debug:
 	DEBUG="y" make
 
 docker:
-	docker build -t ativarsoft/pollen-$(VERSION) .
+	docker build -t ativarsoft/pollen-$(VERSION) --no-cache .
 
 .PHONY: dependencies plugins libpollen templatizer-d templatizer-rs test install clean deb termux $(LIBYEAST_A)
 
