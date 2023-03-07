@@ -1,9 +1,14 @@
 chown root:root /usr/lib/cgi-bin/templatizer
 chmod 755 /usr/lib/cgi-bin/templatizer
+
 mkdir -p /var/log/templatizer
 chown www-data:www-data /var/log/templatizer/
+
+ln -s /usr/lib/cgi-bin/templatizer /usr/bin/pollen
+
 a2enconf templatizer
 a2enconf sysinfo
 a2enmod cgi
 a2enmod actions
 service apache2 restart
+
