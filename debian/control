@@ -1,5 +1,20 @@
-Package: pollen
+Package: pollen-lang
 Version: 1.000
 Maintainer: Mateus de Lima Oliveira
 Architecture: amd64
-Description: A XML/HTML templating programming language.
+Description: A programming language compatible with XML/HTML.
+Depends: build-essential,
+         flex,
+         bison,
+         libapr1-dev,
+         libexpat1-dev,
+         liblmdb-dev,
+         libvirt-dev,
+         libsqlite3-dev,
+         ldc,
+         cargo,
+         rustc,
+         valgrind,
+         llvm-dev,
+         apache2
+
