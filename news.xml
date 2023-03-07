@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="log.xsl"?>
+<log>	
+  <post>
+    <body>
+      Today I will be making modifications to the code generation
+      framework. The JIT framework is supposed to load the codegen
+      plugin specified on the configuration file.
+    </body>
+    <author>Mateus</author>
+    <datetime>2023-02-24 11:12 AM</datetime>
+    <categories>
+      <tag>Pollen</tag>
+      <tag>JIT</tag>
+    </categories>
+  </post>
+  
+  <post>
+    <body>
+      The Makefile gets the PREFIX environment variable and
+      defines it as a preprocessor variable. If not defined,
+      the PREFIX preprocessor variable is defined to "/usr".
+      The PREFIX is then used to define a hardcoded path for
+      the "pollen.conf" file. That file contains various
+      definitions including the path for the codegen plugin.
+      The values on the "pollen.conf" file are soft-coded.
+    </body>
+    <author>Mateus</author>
+    <datetime>2023-02-24 12:37 PM</datetime>
+    <categories>
+      <tag>Pollen</tag>
+      <tag>JIT</tag>
+    </categories>
+  </post>
+</log>

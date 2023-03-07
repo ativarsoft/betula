@@ -9,5 +9,6 @@ RUN make
 RUN make test
 RUN make deb
 RUN dpkg -i pollen-$(cat VERSION).deb
+RUN make install-site
 EXPOSE 80
 CMD ["apache2ctl", "-D", "FOREGROUND"]

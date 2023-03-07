@@ -1,20 +1,51 @@
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8"/>
     <title>Pollen programming language</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="pollen.svg">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/css/foundation.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/motion-ui/1.2.3/motion-ui.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/css/foundation-prototype.min.css">
+
+    <link rel="stylesheet" href="foundation/6.7.5/css/foundation.css">
     <link href='https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css' rel='stylesheet' type='text/css'>
-    <!-- optional CDN for Foundation Icons ^^ -->
 
     <link rel="stylesheet"
           href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
   </head>
   <body>
+
+    <div class="title-bar">
+      <div class="title-bar-left">
+        <img src="https://ativarsoft.com/ativarsoft.png" alt="Ativarsoft" style="height: 4em">
+      </div>
+      <div class="title-bar-title">
+        <img src="https://pollen-lang.org/pollen-social-card.svg" alt="Pollen" style="height: 4em;">
+      </div>
+      <div class="title-bar-right">
+        <button class="menu-icon" type="button" data-open="pollen-canvas-menu"></button>
+      </div>
+    </div>
+
+    <div class="off-canvas-wrapper">
+      <div id="pollen-canvas-menu" class="off-canvas position-left" id="offCanvas" data-off-canvas data-content-id="pollen-canvas-content" data-nested="true">
+        <button class="close-button" aria-label="Close menu" type="button" data-close>
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <ul class="mobile-ofc vertical menu">
+          <li>
+            <a href="/"><img src="https://pollen-lang.org/pollen.svg" style="height: 2em;"/> Pollen</a>
+          </li>
+          <li>
+            <ol>
+              <li><a href="/news.html">News</a></li>
+            </ol>
+          </li>
+        </ul>
+      </div>
+
+      <div id="pollen-canvas-content" class="off-canvas-content" data-off-canvas-content>
+
     <div class="grid-container">
       <div class="grid-x grid-margin-xy">
         <div class="medium-2 cell">
@@ -98,9 +129,9 @@
           </p>
 
           <pre><code class="language-xml">&lt;!-- Copyright (C) 2023 Mateus de Lima Oliveira --&gt;
-&lt;templatizer lib=&quot;../plugins/input/in_helloworld.so&quot;&gt;
-&lt;templatizer lib=&quot;../plugins/input/helloworld-rs/target/release/libhelloworld_rs.so&quot;&gt;
-&lt;templatizer lib=&quot;../plugins/net/headers.so&quot;&gt;
+&lt;templatizer lib=&quot;in_helloworld.so&quot;&gt;
+&lt;templatizer lib=&quot;libhelloworld_rs.so&quot;&gt;
+&lt;templatizer lib=&quot;headers.so&quot;&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;meta charset=&quot;UTF-8&quot;/&gt;
@@ -114,7 +145,7 @@
       &lt;li&gt;Rust: &lt;span&gt;@&lt;/span&gt;&lt;/li&gt;
     &lt;/ul&gt;
     &lt;p&gt;Have a nice day!&lt;/p&gt;
-    &lt;templatizer lib=&quot;../plugins/net/copyright.so&quot;&gt;
+    &lt;templatizer lib=&quot;copyright.so&quot;&gt;
     &lt;p&gt;@&lt;/p&gt;
     &lt;/templatizer&gt;
   &lt;/body&gt;
@@ -203,11 +234,14 @@ termux@android:~$ make install
         </div>
       </footer>
 
-    </div>
+    </div> <!-- grid container -->
 
-    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/js/foundation.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/motion-ui/1.2.3/motion-ui.min.js"></script>
+      </div> <!-- canvas content -->
+    </div> <!-- canvas wrapper -->
+
+    <script src="foundation/6.7.5/js/vendor/jquery.js"></script>
+    <script src="foundation/6.7.5/js/vendor/what-input.js"></script>
+    <script src="foundation/6.7.5/js/vendor/foundation.min.js"></script>
     <script>
       $(document).foundation();
     </script>

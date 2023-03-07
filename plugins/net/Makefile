@@ -9,6 +9,7 @@ DFLAGS=--betterC -relocation-model=pic -I../../templatizer-d/
 endif
 
 PREFIX?=/usr
+PLUGIN_DIR?=$(PREFIX)/lib/pollen/plugins/
 
 %.o: %.d
 	$(D) -c $(DFLAGS) -of="$@" $<
@@ -28,7 +29,8 @@ noplugin.so: noplugin.o
 	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 install: $(PLUGINS)
-	cp -f $(PLUGINS) $(PREFIX)/lib/templatizer/plugins/
+	mkdir -p $(PLUGIN_DIR)
+	cp -f $(PLUGINS) $(PLUGIN_DIR)
 
 clean:
 	rm -f $(PLUGINS) *.o

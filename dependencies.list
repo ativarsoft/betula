@@ -12,3 +12,4 @@ rustc
 valgrind
 llvm-dev
 apache2
+xsltproc

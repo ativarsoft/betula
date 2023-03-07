@@ -7,6 +7,7 @@ LIBS?=-lexpat -ldl -lapr-1
 EXEC=templatizer
 export VERSION=$(shell ./version.sh)
 export PREFIX?=/usr
+export PLUGIN_DIR?=$(PREFIX)/lib/pollen/plugins/
 
 ifeq ($(TERMUX),y)
 CFLAGS+=-DTERMUX
@@ -19,7 +20,10 @@ endif
 
 LIBYEAST_A=yeast/libyeast.a
 
-all: $(EXEC) libpollen templatizer-d templatizer-rs plugins
+HTML_PAGES=news.html
+HTDOCS?=/var/www/html/
+
+all: $(EXEC) libpollen templatizer-d templatizer-rs plugins $(HTML_PAGES)
 
 deb: pollen-$(VERSION).deb
 
@@ -69,6 +73,7 @@ test: templatizer plugins libpollen templatizer-d runtime/pollenrt0.o runtime/li
 install: templatizer
 	mkdir -p $(PREFIX)/lib/cgi-bin/
 	mkdir -p $(PREFIX)/include
+	mkdir -p $(PLUGIN_DIR)
 	install templatizer $(PREFIX)/lib/cgi-bin/
 	make -C libpollen install
 	cp include/templatizer.h $(PREFIX)/include
@@ -100,6 +105,7 @@ clean:
 	rm -f $(EXEC) *.o lex.yy.c y.tab.c y.tab.h
 	rm -fr pollen-$(VERSION)/
 	rm -f pollen-$(VERSION).deb
+	rm -f $(HTML_PAGES)
 	make -C yeast clean
 	make -C plugins clean
 	make -C libpollen clean
@@ -125,5 +131,14 @@ debug:
 docker:
 	docker build -t ativarsoft/pollen-$(VERSION) --no-cache .
 
-.PHONY: dependencies plugins libpollen templatizer-d templatizer-rs test install clean deb termux $(LIBYEAST_A)
+news.html: news.xml log.xsl
+	./news.sh
+
+install-site: $(HTML_PAGES)
+	cp *.html $(HTDOCS)
+	cp pollen.png  pollen-social-card.png  pollen-social-card.svg  pollen.svg $(HTDOCS)
+	cp -r foundation/ $(HTDOCS)
+	cp /usr/lib/pollen/plugins/* $(HTDOCS)
+
+.PHONY: dependencies plugins libpollen templatizer-d templatizer-rs test install install-site clean deb termux $(LIBYEAST_A)
 

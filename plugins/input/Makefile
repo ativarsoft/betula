@@ -71,6 +71,9 @@ in_json.so: jsonc.o
 install:
 	mkdir -p $(INSTALL_DIR)
 	cp $(PLUGINS) $(INSTALL_DIR)
+ifneq ($(shell which cargo),)
+	make -C helloworld-rs
+endif
 
 clean:
 	rm -f $(PLUGINS) *.o
