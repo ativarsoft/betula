@@ -1398,6 +1398,7 @@ int main(int argc, char **argv)
 	if (log == NULL) {
 		log = fopen("access.log", "a");
 		if (log == NULL) {
+			perror("log");
 			fputs("Unable to open log file.\n", stderr);
 			return 1;
 		}
