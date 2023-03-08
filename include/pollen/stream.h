@@ -18,6 +18,7 @@ typedef FILE *tmpl_stream_t;
 #define tmpl_fgetc(stream) fgetc(stream)
 #define tmpl_fputc(c, stream) fputc(c, stream)
 #define tmpl_fclose(stream) fclose(stream)
+#define tmpl_fputs(string, file) fputs(string, file)
 
 # else
 

@@ -10,6 +10,7 @@
 #include <linux/limits.h>
 #include <pollen/pollen.h>
 #include <pollen/query.h>
+#include <pollen/stream.h>
 
 #define FILE_EXTENSION ".tmpl"
 #define BUFFER_SIZE 4096
@@ -81,6 +82,8 @@ static int init(tmpl_ctx_t data, tmpl_cb_t cb)
 {
 	playground_ctx = data;
 	playground_cb = cb;
+	tmpl_fputs("Access-Control-Allow-Origin: *\r\n", stdout);
+	fflush(stdout);
 	char *method = getenv("REQUEST_METHOD");
         if (strcmp(method, "POST") == 0) {
                 tmpl_parse_query_string_post(data, query_callback);
