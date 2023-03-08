@@ -83,12 +83,20 @@ static int init(tmpl_ctx_t data, tmpl_cb_t cb)
 	playground_ctx = data;
 	playground_cb = cb;
 	tmpl_fputs("Access-Control-Allow-Origin: *\r\n", stdout);
+	tmpl_fputs("Access-Control-Allow-Origin: *\r\n", stdout);
+	tmpl_fputs("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS\r\n", stdout);
+	tmpl_fputs("Access-Control-Allow-Headers: Content-Type, Authorization\r\n", stdout);
+	tmpl_fputs("Allow: GET, POST, PUT, DELETE, OPTIONS\r\n", stdout);
 	fflush(stdout);
 	char *method = getenv("REQUEST_METHOD");
         if (strcmp(method, "POST") == 0) {
                 tmpl_parse_query_string_post(data, query_callback);
 		exit(0);
-        }
+        } else {
+		tmpl_fputs("Content-type: text/plain\r\n", stdout);
+		tmpl_fputs("Content-Length: 0\r\n", stdout);
+		tmpl_fputs("\r\n", stdout);
+	}
 	return 0;
 }
 
