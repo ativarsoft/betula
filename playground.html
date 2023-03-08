@@ -13,9 +13,37 @@
         <h1>Pollen-lang Playground</h1>
         <form id="pollen-form">
           <label for="pollen-code">Pollen Code</label>
-          <textarea id="pollen-code" name="pollen-code" rows="10">&lt;templatizer lib=&quot;/usr/lib/pollen/plugins/in_helloworld.so&quot;&gt;
+          <textarea id="pollen-code" name="pollen-code" rows="10">
+&lt;templatizer&gt;
+  &lt;templatizer lib=&quot;/usr/lib/pollen/plugins/in_helloworld.so&quot;/&gt;
   &lt;p&gt;@&lt;/p&gt;
-&lt;/templatizer&gt;</textarea>
+  &lt;p&gt;Welcome to Pollen-lang!&lt;/p&gt;
+
+  &lt;h3&gt;Conditionals&lt;/h3&gt;
+  &lt;templatizer lib=&quot;/usr/lib/pollen/plugins/true.so&quot;/&gt;
+  &lt;templatizer lib=&quot;/usr/lib/pollen/plugins/false.so&quot;/&gt;
+  &lt;if&gt;
+    &lt;p&gt;This string should be displayed.&lt;/p&gt;
+  &lt;/if&gt;
+  &lt;if&gt;
+    &lt;p&gt;This string should not be displayed.&lt;/p&gt;
+  &lt;/if&gt;
+
+  &lt;h3&gt;Loops&lt;/h3&gt;
+  &lt;p&gt;The swhile (start while) loop is&lt;br/&gt;similar to the&lt;br/&gt;while(...) {...} loop.&lt;/p&gt;
+  &lt;templatizer lib=&quot;/usr/lib/pollen/plugins/true.so&quot;/&gt;
+  &lt;templatizer lib=&quot;/usr/lib/pollen/plugins/true.so&quot;/&gt;
+  &lt;templatizer lib=&quot;/usr/lib/pollen/plugins/true.so&quot;/&gt;
+  &lt;templatizer lib=&quot;/usr/lib/pollen/plugins/false.so&quot;/&gt;
+  &lt;p&gt;&lt;swhile&gt;🥰&lt;/swhile&gt;&lt;/p&gt;
+  &lt;p&gt;The ewhile (end while) loop is&lt;br/&gt;similar to the&lt;br/&gt;do {...} while(...); loop.&lt;/p&gt;
+  &lt;templatizer lib=&quot;/usr/lib/pollen/plugins/true.so&quot;/&gt;
+  &lt;templatizer lib=&quot;/usr/lib/pollen/plugins/true.so&quot;/&gt;
+  &lt;templatizer lib=&quot;/usr/lib/pollen/plugins/false.so&quot;/&gt;
+  &lt;p&gt;&lt;ewhile&gt;😍&lt;/ewhile&gt;&lt;/p&gt;
+  &lt;p&gt;Have fun with Pollen-lang!&lt;/p&gt;
+&lt;/templatizer&gt;
+</textarea>
           <div class="grid-x grid-margin-x">
             <div class="cell large-6">
               <label for="template">Template</label>
