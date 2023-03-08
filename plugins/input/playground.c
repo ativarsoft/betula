@@ -38,7 +38,6 @@ int save_data(string_t data, size_t len)
 		perror("mkstemps");
 		return 1;
 	}
-	unlink(fd);
 	file = fdopen(fd, "wt");
 	if (file == NULL) {
 		perror("fdopen");
@@ -53,6 +52,7 @@ int save_data(string_t data, size_t len)
 	rc = run_file(filename, file);
 	if (rc != 0)
 		return 1;
+	unlink(fd);
 	fclose(file);
 	return 0;
 }
