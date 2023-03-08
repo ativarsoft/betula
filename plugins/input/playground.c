@@ -36,11 +36,13 @@ int save_data(string_t data, size_t len)
 	fd =  mkstemps(filename, sizeof(FILE_EXTENSION) - 1);
 	if (fd < 0) {
 		perror("mkstemps");
+		tmpl_fputs("Error creating temporary file.\n", stdout);
 		return 1;
 	}
 	file = fdopen(fd, "wt");
 	if (file == NULL) {
 		perror("fdopen");
+		tmpl_fputs("Error opening temporary file.\n", stdout);
 		return 1;
 	}
 	remaining = len;
@@ -50,8 +52,10 @@ int save_data(string_t data, size_t len)
 	};
 	fflush(file);
 	rc = run_file(filename, file);
-	if (rc != 0)
+	if (rc != 0) {
+		tmpl_fputs("Error running file.\n", stdout);
 		return 1;
+	}
 	unlink(fd);
 	fclose(file);
 	return 0;
@@ -68,12 +72,15 @@ int query_callback
 		decoded_ptr = (char *) playground_cb->malloc(playground_ctx, BUFFER_SIZE);
 		if (decoded_ptr == NULL) {
 			perror("pollen malloc");
+			tmpl_fputs("Error allocating memory.\n", stdout);
 			return 1;
 		}
 		decoded_length = tmpl_percent_decoded_len(value, valuelen);
 		tmpl_percent_decode_array(value, valuelen, decoded_ptr, decoded_length, &decoded_length);
-		if (save_data(decoded_ptr, decoded_length) != 0)
+		if (save_data(decoded_ptr, decoded_length) != 0) {
+			tmpl_fputs("Error saving data.\n", stdout);
 			return 1;
+		}
 	}
         return 0;
 }
@@ -121,16 +128,19 @@ int run_file(string_t filename, FILE *file)
 	setenv("PATH_TRANSLATED", filename, 1);
         if (execve("/usr/bin/pollen", args, environ) == -1) {
             perror("execve");
+            tmpl_fputs("Error executing file.\n", stdout);
             return 1;
         }
     } else {
         int status;
         if (waitpid(pid, &status, 0) == -1) {
             perror("waitpid");
+            tmpl_fputs("Error waiting for process.\n", stdout);
             return 2;
         }
         if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
             fprintf(stderr, "Compilation failed\n");
+            fprintf(stdout, "Compilation failed\n");
             return 3;
         }
     }
