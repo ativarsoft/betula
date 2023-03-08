@@ -135,7 +135,7 @@ news.html: news.xml log.xsl
 	./news.sh
 
 install-site: $(HTML_PAGES)
-	cp *.html *.tmpl $(HTDOCS)
+	cp *.html *.tmpl *.js $(HTDOCS)
 	cp pollen.png  pollen-social-card.png  pollen-social-card.svg  pollen.svg $(HTDOCS)
 	cp -r foundation/ $(HTDOCS)
 	cp /usr/lib/pollen/plugins/* $(HTDOCS)

@@ -31,7 +31,7 @@ int save_data(string_t data, size_t len)
 	char filename[PATH_MAX] = {0};
 	FILE *file = NULL;
 
-	strcpy(filename, "playground-test-XXXXXX" FILE_EXTENSION);
+	strcpy(filename, "/tmp/playground-test-XXXXXX" FILE_EXTENSION);
 	fd =  mkstemps(filename, sizeof(FILE_EXTENSION) - 1);
 	if (fd < 0) {
 		perror("mkstemps");
@@ -84,6 +84,7 @@ static int init(tmpl_ctx_t data, tmpl_cb_t cb)
 	char *method = getenv("REQUEST_METHOD");
         if (strcmp(method, "POST") == 0) {
                 tmpl_parse_query_string_post(data, query_callback);
+		exit(0);
         }
 	return 0;
 }
