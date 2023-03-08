@@ -138,7 +138,9 @@ install-site: $(HTML_PAGES)
 	cp *.html *.tmpl *.js $(HTDOCS)
 	cp pollen.png  pollen-social-card.png  pollen-social-card.svg  pollen.svg $(HTDOCS)
 	cp -r foundation/ $(HTDOCS)
-	cp /usr/lib/pollen/plugins/* $(HTDOCS)
+	cp $(PREFIX)/lib/pollen/plugins/* $(HTDOCS)
+	chmod g+w $(HTDOCS)
+	chown www-data:root $(HTDOCS)
 
 install-deb: pollen-$(VERSION).deb
 	dpkg -i pollen-$(VERSION).deb
