@@ -34,7 +34,7 @@
 #include "jit.h"
 #include "linker.h"
 
-#define VERSION "0.1"
+#define VERSION "Pollen v1.002"
 #define COPYRIGHT "Copyright (C) 2017-2023 Mateus de Lima Oliveira"
 
 static int parse_xml_file(tmpl_ctx_t data, string_t tmpl);

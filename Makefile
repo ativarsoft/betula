@@ -83,7 +83,7 @@ install: templatizer
 	make -C templatizer-d install
 	make -C apps install
 
-debian/control: VERSION
+debian/control: VERSION gen-control.sh
 	./gen-control.sh
 
 pollen-$(VERSION).deb: debian/control templatizer include/templatizer.h conf/templatizer.conf.original
