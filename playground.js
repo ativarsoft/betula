@@ -13,7 +13,7 @@ $('#pollen-form').submit(function(event) {
   // Send Ajax POST request with url-encoded query string
   $.ajax({
     type: 'POST',
-    url: 'playground.tmpl',
+    url: 'https://playground.pollen-lang.org/playground.tmpl',
     data: queryString,
     contentType: 'application/x-www-form-urlencoded',
     dataType: 'html',
