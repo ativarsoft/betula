@@ -9,7 +9,7 @@ DFLAGS=--betterC -relocation-model=pic -I../../templatizer-d/
 endif
 
 PREFIX?=/usr
-PLUGIN_DIR?=$(PREFIX)/lib/pollen/plugins/
+INSTALL_DIR=$(PREFIX)/lib/pollen/plugins/
 
 %.o: %.d
 	$(D) -c $(DFLAGS) -of="$@" $<
@@ -29,8 +29,10 @@ noplugin.so: noplugin.o
 	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 install: $(PLUGINS)
-	mkdir -p $(PLUGIN_DIR)
-	cp -f $(PLUGINS) $(PLUGIN_DIR)
+	mkdir -p $(INSTALL_DIR)
+	cp -f $(PLUGINS) $(INSTALL_DIR)
 
 clean:
 	rm -f $(PLUGINS) *.o
+
+.PHONY: install clean

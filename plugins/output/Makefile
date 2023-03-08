@@ -3,6 +3,7 @@ PLUGINS=echo.so
 CFLAGS+=-L"../../libtemplatizer"
 
 PREFIX?=/usr
+INSTALL_DIR=$(PREFIX)/lib/pollen/plugins
 
 D=ldc2
 
@@ -25,6 +26,8 @@ echo.so: echo.o
 	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 install:
+	mkdir -p $(INSTALL_DIR)
+	cp $(PLUGINS) $(INSTALL_DIR)
 
 clean:
 	rm -f $(PLUGINS) *.o

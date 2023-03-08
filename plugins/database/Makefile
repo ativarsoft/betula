@@ -1,7 +1,7 @@
 CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb -I../../include
 PLUGINS=kv.so
 PREFIX?=/usr
-INSTALL_DIR=$(PREFIX)/lib/templatizer/plugins/
+INSTALL_DIR=$(PREFIX)/lib/pollen/plugins
 
 all: $(PLUGINS)
 

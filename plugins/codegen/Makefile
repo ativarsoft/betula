@@ -6,6 +6,9 @@ CFLAGS=-Wall -Wextra -fPIC -I../../include/
 LDFLAGS=-Wl,--no-as-needed
 PLUGINS=llvm.so cd_i386.so codegen_c.so
 
+PREFIX?=/usr
+INSTALL_DIR=$(PREFIX)/lib/pollen/plugins
+
 all: $(PLUGINS)
 
 cd_i386.so: cd_i386.o
@@ -21,6 +24,8 @@ llvm.so: llvm.o
 	$(CC) $(CFLAGS) $(LLVM_CFLAGS) $(LDFLAGS) $(LLVM_LDFLAGS) --shared -o $@ $^ $(LLVM_LIBS)
 
 install:
+	mkdir -p $(INSTALL_DIR)
+	cp $(PLUGINS) $(INSTALL_DIR)
 
 clean:
 	rm -f $(PLUGINS) *.o
