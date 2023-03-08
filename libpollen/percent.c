@@ -8,9 +8,9 @@ static int nibble(int c)
 	if (c >= '0' && c <= '9')
 		return c - '0';
 	if (c >= 'A' && c <= 'F')
-		return c - 'A';
+		return (c - 'A') + 10;
 	if (c >= 'a' && c <= 'f')
-		return c - 'a';
+		return (c - 'a') + 10;
 	return -1;
 }
 
@@ -22,11 +22,11 @@ static int hex(int hi, int lo)
 
 	tmp = nibble(hi);
 	if (tmp < 0)
-		return EOF;
+		return -1;
 	n = tmp << 4;
 	tmp = nibble(lo);
 	if (tmp < 0)
-		return EOF;
+		return -1;
 	n |= tmp;
 	return n;
 }
@@ -63,10 +63,10 @@ static int tmpl_percent_decode_byte(tmpl_stream_t fin)
 
 	c = tmpl_fgetc(fin);
 	if (c == '%') {
-		if ((hi = tmpl_fgetc(fin)) == EOF)
-			return EOF;
-		if ((lo = tmpl_fgetc(fin)) == EOF)
-			return EOF;
+		if ((hi = tmpl_fgetc(fin)) < 0)
+			return -1;
+		if ((lo = tmpl_fgetc(fin)) < 0)
+			return -1;
 		ret = hex(hi, lo);
 	} else if (c == '+') {
 		ret = ' ';
@@ -74,7 +74,7 @@ static int tmpl_percent_decode_byte(tmpl_stream_t fin)
 #if 0
 		/* Allow alphanumeric characters only. */
 		if (isalnum(c) == 0)
-			return EOF;
+			return -1;
 #endif
 		ret = c;
 	}
@@ -82,7 +82,7 @@ static int tmpl_percent_decode_byte(tmpl_stream_t fin)
 }
 
 /* In can be the same as out. */
-size_t tmpl_percent_decode_file(tmpl_stream_t fin, tmpl_stream_t fout, size_t *nbytes)
+int tmpl_percent_decode_file(tmpl_stream_t fin, tmpl_stream_t fout, size_t *nbytes)
 {
 	size_t len = 0;
 	int c = 0;
@@ -90,15 +90,15 @@ size_t tmpl_percent_decode_file(tmpl_stream_t fin, tmpl_stream_t fout, size_t *n
 
 	while (tmpl_feof(fin) == 0) {
 		if (tmpl_ferror(fin)) {
-			ret = EOF;
+			ret = -1;
 			goto out;
 		}
-		if ((c = tmpl_percent_decode_byte(fin)) == EOF) {
-			ret = EOF;
+		if ((c = tmpl_percent_decode_byte(fin)) < 0) {
+			ret = -1;
 			goto out;
 		}
-		if (tmpl_fputc(c, fout) == EOF) {
-			ret = EOF;
+		if (tmpl_fputc(c, fout) < 0) {
+			ret = -1;
 			goto out;
 		}
 		len++;

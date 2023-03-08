@@ -52,6 +52,8 @@ static const char tmpl_copyright[] = COPYRIGHT;
  * corrupted. */
 static bool noplugin = false;
 
+bool is_cgi = true;
+
 enum {
     ELEMENT_HANDLED = 0,
     ELEMENT_NOT_HANDLED = 1
@@ -1330,8 +1332,9 @@ static FILE *open_path_translated(tmpl_ctx_t data, string_t pathtranslated)
 	while ((token = strsep(&string, separators)) != NULL) {
 		/* Do not open hidden files */
 		if (token[0] == '.' &&
-		    strcmp(token, ".") != 0 &&
-		    strcmp(token, "..") != 0)
+		    ((strcmp(token, ".") != 0 &&
+		    strcmp(token, "..") != 0) ||
+		    is_cgi == true))
 		{
 			close(fd);
 			goto out1;
@@ -1416,6 +1419,8 @@ int main(int argc, char **argv)
 	tmpl = getenv("PATH_TRANSLATED");
 
 	if (gateway_interface == NULL) {
+		is_cgi = false;
+
 		/* parse arguments with getopt */
 		parse_command_line();
 	}

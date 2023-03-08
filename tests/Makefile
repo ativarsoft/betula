@@ -2,7 +2,8 @@
 
 TESTS=simple.xhtml library.xhtml placeholder.xhtml placeholder-d.xhtml \
   placeholder-rs.xhtml kv.xhtml pipeline1.xhtml selfclosing.xhtml \
-  controlflow.xhtml echo.xhtml sanity.xhtml noplugin.xhtml include.xhtml
+  controlflow.xhtml echo.xhtml sanity.xhtml noplugin.xhtml include.xhtml \
+  playground.xhtml
 CFLAGS=-O0 -ggdb -I../include
 LDFLAGS=-ltemplatizer
 EXEC= sanity #cookie percent json
@@ -41,6 +42,8 @@ noplugin.xhtml: noplugin.tmpl ../templatizer pollen.conf
 	./run-templatizer.sh $< $@
 include.xhtml: include.tmpl ../templatizer pollen.conf
 	./run-templatizer.sh $< $@
+playground.xhtml: playground.tmpl ../templatizer pollen.conf
+	./run-playground.sh
 
 clean:
 	rm -f $(EXEC) *.o *.md5
@@ -48,5 +51,7 @@ clean:
 	rm -f access.log
 	rm -f pollen.conf
 	rm -f sanity
+	rm -f /tmp/playground-test-*.tmpl
+	rm -f playground-test-*.tmpl
 
 .PHONY: clean
