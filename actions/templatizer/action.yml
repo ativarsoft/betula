@@ -15,10 +15,10 @@ runs:
     - name: Test
       run: make test
       shell: bash
-    - name: Install
-      run: sudo make install
-      shell: bash
     - name: Create debian package
-      run: make deb
+      run: sudo make deb
+      shell: bash
+    - name: Install
+      run: make install-deb
       shell: bash
 

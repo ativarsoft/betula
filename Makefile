@@ -140,5 +140,8 @@ install-site: $(HTML_PAGES)
 	cp -r foundation/ $(HTDOCS)
 	cp /usr/lib/pollen/plugins/* $(HTDOCS)
 
+install-deb: pollen-$(VERSION).deb
+	dpkg -i pollen-$(VERSION).deb
+
 .PHONY: dependencies plugins libpollen templatizer-d templatizer-rs test install install-site clean deb termux $(LIBYEAST_A)
 

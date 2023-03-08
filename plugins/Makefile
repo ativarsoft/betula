@@ -2,6 +2,8 @@
 
 PREFIX?=/usr
 
+export PREFIX
+
 all:
 	make -C input
 	make -C output
