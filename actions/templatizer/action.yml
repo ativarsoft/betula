@@ -19,6 +19,6 @@ runs:
       run: sudo make deb
       shell: bash
     - name: Install
-      run: make install-deb
+      run: sudo make install-deb
       shell: bash
 
