@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<!-- Copyright (C) 2023 Mateus de Lima Oliveira -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Pollen-lang Playground</title>
+  <link rel="stylesheet" href="foundation/6.7.5/css/foundation.min.css"/>
+</head>
+<body>
+  <div class="grid-container">
+    <div class="grid-x grid-margin-x">
+      <div class="cell large-8">
+        <h1>Pollen-lang Playground</h1>
+        <form id="pollen-form">
+          <label for="pollen-code">Pollen Code</label>
+          <textarea id="pollen-code" name="pollen-code" rows="10">&lt;templatizer lib=&quot;headers.so&quot;&gt;
+  &lt;p&gt;Hello world!&lt;/p&gt;
+&lt;/templatizer&gt;</textarea>
+          <div class="grid-x grid-margin-x">
+            <div class="cell large-6">
+              <label for="template">Template</label>
+              <select id="template" name="template">
+                <option value="html">HTML</option>
+                <option value="xml">XML</option>
+                <option value="md">Markdown</option>
+              </select>
+            </div>
+            <div class="cell large-6">
+              <label for="output">Output</label>
+              <select id="output" name="output">
+                <option value="html">HTML</option>
+                <option value="xml">XML</option>
+                <option value="pdf">PDF</option>
+              </select>
+            </div>
+          </div>
+          <button class="button" type="submit">Run</button>
+        </form>
+      </div>
+      <div class="cell large-4">
+        <h2>Result</h2>
+        <div id="result"></div>
+      </div>
+    </div>
+  </div>
+  <script src="foundation/6.7.5/js/vendor/jquery.js"></script>
+  <script src="foundation/6.7.5/js/vendor/what-input.js"></script>
+  <script src="foundation/6.7.5/js/vendor/foundation.min.js"></script>
+  <script>
+    $(document).foundation();
+  </script>
+  <script src="playground.js"></script>
+</body>
+</html>
