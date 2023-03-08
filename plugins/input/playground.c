@@ -32,7 +32,7 @@ int save_data(string_t data, size_t len)
 	char filename[PATH_MAX] = {0};
 	FILE *file = NULL;
 
-	strcpy(filename, "playground-test-XXXXXX" FILE_EXTENSION);
+	strcpy(filename, "/tmp/playground-test-XXXXXX" FILE_EXTENSION);
 	fd =  mkstemps(filename, sizeof(FILE_EXTENSION) - 1);
 	if (fd < 0) {
 		perror("mkstemps");
