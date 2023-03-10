@@ -7,15 +7,28 @@
     <link rel="icon" type="image/svg+xml" href="pollen.svg">
     <title>Pollen-lang Playground</title>
     <link rel="stylesheet" href="foundation/6.7.5/css/foundation.min.css"/>
-</head>
-<body>
-  <div class="grid-container">
-    <div class="grid-x grid-margin-x">
-      <div class="cell large-8">
-        <h1>Pollen-lang Playground</h1>
-        <form id="pollen-form">
-          <label for="pollen-code">Pollen Code</label>
-          <textarea id="pollen-code" name="pollen-code" rows="10">
+  </head>
+  <body>
+
+  <div class="title-bar">
+      <div class="title-bar-left">
+        <img src="https://ativarsoft.com/ativarsoft.png" alt="Ativarsoft" style="height: 4em">
+      </div>
+      <div class="title-bar-title">
+        <img src="https://pollen-lang.org/pollen-social-card.svg" alt="Pollen" style="height: 4em;">
+      </div>
+      <div class="title-bar-right">
+        <button class="menu-icon" type="button" data-open="pollen-canvas-menu"></button>
+      </div>
+    </div>
+
+    <div class="grid-container">
+      <div class="grid-x grid-margin-x">
+        <div class="cell large-8">
+          <h1>Pollen-lang Playground</h1>
+          <form id="pollen-form">
+            <label for="pollen-code">Pollen Code</label>
+            <textarea id="pollen-code" name="pollen-code" rows="10">
 &lt;templatizer&gt;
   &lt;templatizer lib=&quot;/usr/lib/pollen/plugins/in_helloworld.so&quot;/&gt;
   &lt;p&gt;@&lt;/p&gt;
@@ -46,39 +59,39 @@
   &lt;p&gt;Have fun with Pollen-lang!&lt;/p&gt;
 &lt;/templatizer&gt;
 </textarea>
-          <div class="grid-x grid-margin-x">
-            <div class="cell large-6">
-              <label for="template">Template</label>
-              <select id="template" name="template">
-                <option value="html">HTML</option>
-                <option value="xml">XML</option>
-                <option value="md">Markdown</option>
-              </select>
+            <div class="grid-x grid-margin-x">
+              <div class="cell large-6">
+                <label for="template">Template</label>
+                <select id="template" name="template">
+                  <option value="html">HTML</option>
+                  <option value="xml">XML</option>
+                  <option value="md">Markdown</option>
+                </select>
+              </div>
+              <div class="cell large-6">
+                <label for="output">Output</label>
+                <select id="output" name="output">
+                  <option value="html">HTML</option>
+                  <option value="xml">XML</option>
+                  <option value="pdf">PDF</option>
+                </select>
+              </div>
             </div>
-            <div class="cell large-6">
-              <label for="output">Output</label>
-              <select id="output" name="output">
-                <option value="html">HTML</option>
-                <option value="xml">XML</option>
-                <option value="pdf">PDF</option>
-              </select>
-            </div>
-          </div>
-          <button class="button" type="submit">Run</button>
-        </form>
-      </div>
-      <div class="cell large-4">
-        <h2>Result</h2>
-        <div id="result"></div>
+            <button class="button" type="submit">Run</button>
+          </form>
+        </div>
+        <div class="cell large-4">
+          <h2>Result</h2>
+          <div id="result"></div>
+        </div>
       </div>
     </div>
-  </div>
-  <script src="foundation/6.7.5/js/vendor/jquery.js"></script>
-  <script src="foundation/6.7.5/js/vendor/what-input.js"></script>
-  <script src="foundation/6.7.5/js/vendor/foundation.min.js"></script>
-  <script>
-    $(document).foundation();
-  </script>
-  <script src="playground.js"></script>
-</body>
+    <script src="foundation/6.7.5/js/vendor/jquery.js"></script>
+    <script src="foundation/6.7.5/js/vendor/what-input.js"></script>
+    <script src="foundation/6.7.5/js/vendor/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+    </script>
+    <script src="playground.js"></script>
+  </body>
 </html>
