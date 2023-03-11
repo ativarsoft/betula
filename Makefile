@@ -105,7 +105,8 @@ clean:
 	rm -f $(EXEC) *.o lex.yy.c y.tab.c y.tab.h
 	rm -fr pollen-$(VERSION)/
 	rm -f pollen-$(VERSION).deb
-	rm -f $(HTML_PAGES)
+	# HTML pages are required by GitHub pages
+	# rm -f $(HTML_PAGES)
 	make -C yeast clean
 	make -C plugins clean
 	make -C libpollen clean
