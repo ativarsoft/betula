@@ -78,7 +78,7 @@
             The original idea was to create a Common Gateway Interface (CGI) executable and an Apache module. Something like PHP. But instead of interpreting a script, Pollen would load a compiled dynamic library. It provides a simple templating engine while keeping the speed of compiled languagues.
           </p>
           <p>
-            The Apache Runtime Library (APR) is being added to ensure good security. APR provides dynamic arrays and memory pools to mitigate use-after-free, buffer overflows and buffer underflows. A good explanation can be found here.
+            The <a href="https://apr.apache.org">Apache Runtime Library (APR)</a> is being added to ensure good security. APR provides dynamic arrays and memory pools to mitigate use-after-free, buffer overflows and buffer underflows. A good explanation can be found here.
           </p>
           <p>
             libpollen provides common functions which are independent from the templatizer runtime executable. Plugins use libtemplatizer for code reuse.
@@ -111,7 +111,7 @@
             In computing, a plug-in (or plugin, add-in, addin, add-on, or addon) is a software component that adds a specific feature to an existing computer program. When a program supports plug-ins, it enables customization.
           </p>
           <p>
-            Input plugins read url-encoded and JSON input from the client. Those values are then used in a script using the '@' symbol. Input plugins can be selected using the 'templatizer' tag.
+            Pollen input plugins are plugins that provide a set of functions to be used by the script such as functions that read url-encoded and JSON input from the client. The input plugins generate text and input for the control flow functions. Those text values are then used in a script using the '@' symbol. Input plugins can be selected using the 'templatizer' tag.
           </p>
           <p>
             Dynamic Linker plugins can be used to load programs written in specific programming languages. The plugin is specified using the 'lib' attribute on the 'templatizer' element. The template can set plugin arguments using the 'args' XML attribute.
