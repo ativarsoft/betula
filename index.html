@@ -75,19 +75,13 @@
             XML tags represent the data structure and contain metadata.
           </p>
           <p>
-            Pollen (previously webutils) was created with the intent to stick to the UNIX philosophy of keeping things simple and modular while staying fast and keeping the memory consumption low.
-          </p>
-          <p>
             The original idea was to create a Common Gateway Interface (CGI) executable and an Apache module. Something like PHP. But instead of interpreting a script, Pollen would load a compiled dynamic library. It provides a simple templating engine while keeping the speed of compiled languagues.
           </p>
           <p>
             The Apache Runtime Library (APR) is being added to ensure good security. APR provides dynamic arrays and memory pools to mitigate use-after-free, buffer overflows and buffer underflows. A good explanation can be found here.
           </p>
           <p>
-            setuid can be used to make Apache run Pollen as root. Pollen gets the user and password from the CGI environment flags and use setuid to drop privileges to the specified user. This can be used to restrict filesystem access without using fakechroot. fakechroot provides wrappers for common system calls.
-          </p>
-          <p>
-            libtemplatizer provides common functions which are independent from the templatizer runtime executable. Plugins use libtemplatizer for code reuse.
+            libpollen provides common functions which are independent from the templatizer runtime executable. Plugins use libtemplatizer for code reuse.
           </p>
         </div>
 
