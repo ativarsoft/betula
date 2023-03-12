@@ -104,9 +104,6 @@ pollen-$(VERSION).deb: debian/control templatizer include/templatizer.h conf/tem
 clean:
 	rm -f $(EXEC) *.o lex.yy.c y.tab.c y.tab.h
 	rm -fr pollen-$(VERSION)/
-	rm -f pollen-$(VERSION).deb
-	# HTML pages are required by GitHub pages
-	# rm -f $(HTML_PAGES)
 	make -C yeast clean
 	make -C plugins clean
 	make -C libpollen clean
@@ -117,6 +114,11 @@ ifneq ($(shell which cargo),)
 endif
 	make -C apps clean
 	make -C tests clean
+
+dist-clean: clean
+	rm -f pollen-$(VERSION).deb
+	# HTML pages are required by GitHub pages
+	rm -f $(HTML_PAGES)
 
 # MISRA-C standard compliance check for
 # failproof software
@@ -146,5 +148,5 @@ install-site: $(HTML_PAGES)
 install-deb: pollen-$(VERSION).deb
 	dpkg -i pollen-$(VERSION).deb
 
-.PHONY: dependencies plugins libpollen templatizer-d templatizer-rs test install install-site clean deb termux $(LIBYEAST_A)
+.PHONY: dependencies plugins libpollen templatizer-d templatizer-rs test install install-site clean dist-clean deb termux $(LIBYEAST_A)
 
