@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Pollen - FAQ</title>
+  </head>
+  <body>
+    <h1>FAQ</h1>
+    <h2>What is pollen?</h2>
+    <p>
+      Pollen is a general purpose programming language.
+    </p>
+    <h2>Is Pollen compiled or is it interpreted?</h2>
+    <p>
+      Both. Pollen code can be run using the compiler in
+      interpreter mode or compiled by running the
+      compiler in compiled mode.
+    </p>
+    <h2>
+      XML is not a programming language, so how Pollen
+      can be a programming language?
+    </h2>
+    <p>
+      Pollen is not XML, but it is built on top of XML.
+      Pollen is an extension of XML that adds plug-in
+      support, control flow (if, swhile, ewhile) and
+      place holders for text (known as filled text
+      internally).
+    </p>
+    <h2>
+      What is the difference between Pollen and
+      Rackets's Pollen?
+    </h2>
+    <p>
+      Rackets's pollen is not a general purpose
+      programming language, but a preprocessor macro
+      language. An example of a preprocessor language is
+      M4. Examples of programming languages are C and
+      Java.
+    </p>
+    <h2>What can I use Pollen for?</h2>
+    <p>
+      Pollen is mostly used as a backend language for
+      web services.
+    </p>
+    <h2>
+      How do I use Pollen as a programming language on
+      the Apache web server?
+    </h2>
+    <p>
+      Place a text file containing Pollen source code on
+      Apache html directory. Apache will consider files
+      ending with the <code>.tmpl</code> filename
+      extension to be Pollen programs. Apache will
+      execute them. If your web server displays the
+      content of the Pollen file, instead of executing
+      it, it means that your web server has a
+      configuration error and is not set up properly.
+    </p>
+    <h2>How do I run Pollen as a command line program?</h2>
+    <p>
+      Execute the pollen compiler using the
+      <code>pollen</code> command with the
+      <code>PATH_TRANSLATED</code> environment variable.
+    </p>
+    <pre><code class="language-xml">PATH_TRANSLATED="myprogram.tmpl" pollen</code></pre>
+  </body>
+</html>
+
