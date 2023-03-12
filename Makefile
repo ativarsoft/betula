@@ -117,6 +117,8 @@ endif
 
 dist-clean: clean
 	rm -f pollen-$(VERSION).deb
+
+site-clean:
 	# HTML pages are required by GitHub pages
 	rm -f $(HTML_PAGES)
 
@@ -148,5 +150,5 @@ install-site: $(HTML_PAGES)
 install-deb: pollen-$(VERSION).deb
 	dpkg -i pollen-$(VERSION).deb
 
-.PHONY: dependencies plugins libpollen templatizer-d templatizer-rs test install install-site clean dist-clean deb termux $(LIBYEAST_A)
+.PHONY: dependencies plugins libpollen templatizer-d templatizer-rs test install install-site clean dist-clean site-clean deb termux $(LIBYEAST_A)
 
