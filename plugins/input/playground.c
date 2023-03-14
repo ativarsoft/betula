@@ -123,10 +123,10 @@ int run_file(string_t filename, FILE *file)
         perror("fork");
         exit(EXIT_FAILURE);
     } else if (pid == 0) {
-        char *args[] = {"pollen", NULL};
+        char *args[] = {"pollenc", NULL};
         extern char **environ;
 	setenv("PATH_TRANSLATED", filename, 1);
-        if (execve("/usr/bin/pollen", args, environ) == -1) {
+        if (execve("/usr/bin/pollenc", args, environ) == -1) {
             perror("execve");
             tmpl_fputs("Error executing file.\n", stdout);
             return 1;

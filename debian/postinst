@@ -4,7 +4,7 @@ chmod 755 /usr/lib/cgi-bin/templatizer
 mkdir -p /var/log/templatizer
 chown www-data:www-data /var/log/templatizer/
 
-ln -s /usr/lib/cgi-bin/templatizer /usr/bin/pollen
+ln -s /usr/lib/cgi-bin/templatizer /usr/bin/pollenc
 
 a2enconf templatizer
 a2enconf sysinfo
