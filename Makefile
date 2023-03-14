@@ -136,6 +136,12 @@ debug:
 docker:
 	docker build -t ativarsoft/pollen-$(VERSION) --no-cache .
 
+docker-push:
+	docker push ativarsoft/pollen-$(VERSION)
+
+docker-run:
+	docker run -p12000:80 ativarsoft/pollen-$(VERSION)
+
 news.html: news.xml log.xsl
 	./news.sh
 
@@ -150,5 +156,5 @@ install-site: $(HTML_PAGES)
 install-deb: pollen-$(VERSION).deb
 	dpkg -i pollen-$(VERSION).deb
 
-.PHONY: dependencies plugins libpollen templatizer-d templatizer-rs test install install-site clean dist-clean site-clean deb termux $(LIBYEAST_A)
+.PHONY: dependencies plugins libpollen templatizer-d templatizer-rs test install install-site clean dist-clean site-clean deb termux $(LIBYEAST_A) docker docker-push docker-run
 
