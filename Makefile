@@ -20,7 +20,7 @@ endif
 
 LIBYEAST_A=yeast/libyeast.a
 
-HTML_PAGES=news.html
+HTML_PAGES=notes.html
 HTDOCS?=/var/www/html/
 
 all: $(EXEC) libpollen templatizer-d templatizer-rs plugins $(HTML_PAGES)
@@ -142,8 +142,8 @@ docker-push:
 docker-run:
 	docker run -p12000:80 ativarsoft/pollen-$(VERSION)
 
-news.html: news.xml log.xsl
-	./news.sh
+notes.html: notes.xml log.xsl
+	./notes.sh
 
 install-site: $(HTML_PAGES)
 	cp *.html *.tmpl *.js $(HTDOCS)
