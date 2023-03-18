@@ -23,7 +23,7 @@ LIBYEAST_A=yeast/libyeast.a
 HTML_PAGES=notes.html
 HTDOCS?=/var/www/html/
 
-all: $(EXEC) libpollen templatizer-d templatizer-rs plugins $(HTML_PAGES)
+all: alire $(EXEC) libpollen templatizer-d templatizer-rs plugins $(HTML_PAGES)
 
 deb: pollen-$(VERSION).deb
 
@@ -101,7 +101,7 @@ pollen-$(VERSION).deb: debian/control templatizer include/templatizer.h conf/tem
 	PREFIX="$(shell pwd)/pollen-$(VERSION)"/usr make install
 	dpkg-deb --build pollen-$(VERSION)
 
-clean:
+clean: alire-clean
 	rm -f $(EXEC) *.o lex.yy.c y.tab.c y.tab.h
 	rm -fr pollen-$(VERSION)/
 	make -C yeast clean
@@ -156,5 +156,15 @@ install-site: $(HTML_PAGES)
 install-deb: pollen-$(VERSION).deb
 	dpkg -i pollen-$(VERSION).deb
 
-.PHONY: dependencies plugins libpollen templatizer-d templatizer-rs test install install-site clean dist-clean site-clean deb termux $(LIBYEAST_A) docker docker-push docker-run
+alire: install-alire.sh
+	./install-alire.sh install
+
+alire-clean: install-alire.sh
+	./install-alire.sh remove
+
+.PHONY: dependencies plugins libpollen templatizer-d templatizer-rs \
+  test deb termux $(LIBYEAST_A) \
+  install install-site \
+  clean dist-clean site-clean alire-clean \
+  docker docker-push docker-run
 
