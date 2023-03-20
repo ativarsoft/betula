@@ -88,19 +88,6 @@
           <p>
             An HTML template is an HTML model. Templates are preformatted HTML in which text or image content can be inserted into. Most modern template languages have some form of programming in them. Pollen also does that but it reuses the XML systax for that, without having to create a whole new syntax. Therefore new programmers can feel familiarized with the Pollen language right on the beggining of learning on how to code on it.
           </p>
-          <p>
-            XML tags represent the data structure and contain metadata.
-          </p>
-          <p>
-            The original idea was to create a Common Gateway Interface (CGI) executable and an Apache module. Something like PHP. But instead of interpreting a script, Pollen would load a compiled dynamic library. It provides a simple templating engine while keeping the speed of compiled languagues.
-          </p>
-          <p>
-            The <a href="https://apr.apache.org">Apache Runtime Library (APR)</a> is being added to ensure good security. APR provides dynamic arrays and memory pools to mitigate use-after-free, buffer overflows and buffer underflows. A good explanation can be found here.
-          </p>
-          <p>
-            libpollen provides common functions which are independent from the templatizer runtime executable. Plugins use libtemplatizer for code reuse.
-          </p>
-        </div>
 
         <div class="large-2 cell"></div>
 
@@ -128,117 +115,6 @@
         </div>
       </div>
 
-      <div class="grid-x grid-margin-xy">
-
-        <div class="medium-4 cell">
-          <h2>Plugins</h2>
-          <p>
-            In computing, a plug-in (or plugin, add-in, addin, add-on, or addon) is a software component that adds a specific feature to an existing computer program. When a program supports plug-ins, it enables customization.
-          </p>
-          <p>
-            Pollen input plugins are plugins that provide a set of functions to be used by the script such as functions that read url-encoded and JSON input from the client. The input plugins generate text and input for the control flow functions. Those text values are then used in a script using the '@' symbol. Input plugins can be selected using the 'templatizer' tag.
-          </p>
-          <p>
-            Dynamic Linker plugins can be used to load programs written in specific programming languages. The plugin is specified using the 'lib' attribute on the 'templatizer' element. The template can set plugin arguments using the 'args' XML attribute.
-          </p>
-          <p>
-            A linker called ld-exec.so can be used to run binary programs or text scripts that begin with a shebang on Linux.
-          </p>
-          <p>
-            Some plugins are full web apps. Text placeholder variables are set using variable names and those variables can be used on XHTML template placeholders. Different websites can have different user interfaces while using the same Templatier app plugin.
-          </p>
-        </div>
-
-        <div class="medium-2 cell"></div>
-
-        <div class="medium-6 cell">
-
-          <h2>Example</h2>
-
-          <p>
-            The following is an example of a program written in Pollen. It prints hello world comming from two Pollen plugins written in different languages. Note that the Pollen syntax this example as well as other Pollen programs were intentionaly made to be similar to XML syntax.
-          </p>
-
-          <pre><code class="language-xml">&lt;!-- Copyright (C) 2023 Mateus de Lima Oliveira --&gt;
-&lt;templatizer lib=&quot;in_helloworld.so&quot;&gt;
-&lt;templatizer lib=&quot;libhelloworld_rs.so&quot;&gt;
-&lt;templatizer lib=&quot;headers.so&quot;&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;meta charset=&quot;UTF-8&quot;/&gt;
-    &lt;title&gt;Hello world pipeline&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;h1&gt;Hello world pipeline&lt;/h1&gt;
-    &lt;p&gt;Hello world Templatizer pipeline in multiple programming languages:&lt;/p&gt;
-    &lt;ul&gt;
-      &lt;li&gt;C: &lt;span&gt;@&lt;/span&gt;&lt;/li&gt;
-      &lt;li&gt;Rust: &lt;span&gt;@&lt;/span&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-    &lt;p&gt;Have a nice day!&lt;/p&gt;
-    &lt;templatizer lib=&quot;copyright.so&quot;&gt;
-    &lt;p&gt;@&lt;/p&gt;
-    &lt;/templatizer&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
-&lt;/templatizer&gt;
-&lt;/templatizer&gt;
-&lt;/templatizer&gt;
-          </code></pre>
-
-        </div>
-      </div>
-
-      <div class="grid-y grid-margin-xy">
-        <div class="cell">
-        <br/>
-      </div>
-
-      <div class="grid-x grid-margin-xy">
-        <div class="medium-4 cell">
-          <h2>Compiling from source</h2>
-
-          <p>Pollen was only tested on Linux.</p>
-
-          <p>It requires:</p>
-
-          <ol>
-            <li>sys/queue.h for list macros (installed by default on most Linux distributions);</li>
-            <li>libdl for dynamically loading libraries (installed by default on most Linux distributions);</li>
-            <li>build-essential;</li>
-            <li>libexpat1-dev;</li>
-            <li>flex and bison;</li>
-            <li>libapr1-dev;</li>
-            <li>libvirt-dev;</li>
-            <li>liblmdb-dev;</li>
-            <li>ldc;</li>
-            <li>cargo;</li>
-            <li>rustc;</li>
-            <li>valgrind;</li>
-            <li>llvm-dev.</li>
-          </ol>
-
-        </div>
-
-        <div class="medium-2 cell"></div>
-          
-        <div class="medium-4 cell">
-          <pre><code class="language-bash">root@debian:/home/mateus/pollen/# make dependencies
-mateus@debian:~/pollen/$ make
-mateus@debian:~/pollen/$ make test
-root@debian:/home/mateus/pollen/# make install
-          </code></pre>
-
-          <h3>Termux</h3>
-
-          <p>Compile Pollen for termux with:</p>
-
-          <pre><code class="language-bash">termux@android:~$ make termux
-termux@android:~$ make install
-          </code></pre>
-        </div>
-      </div>
-      
       <div class="grid-x grid-margin-xy">
         <div class="cell">
           <br/>
