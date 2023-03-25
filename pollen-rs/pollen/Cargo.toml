@@ -11,4 +11,4 @@ edition = "2018"
 [dependencies]
 # Uses `path` when used locally, and uses
 # version "*" from crates.io when published.
-pollen-sys = { path="../pollen-sys", version="*" }
+pollen-sys = { path="../pollen-sys", version="0.1.0" }
