@@ -1,5 +1,5 @@
 [package]
-name = "templatizer-sys"
+name = "pollen-sys"
 version = "0.1.0"
 authors = ["Mateus de Lima Oliveira <mateus@ativarsoft.com>"]
 edition = "2018"

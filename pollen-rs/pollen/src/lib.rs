@@ -3,14 +3,14 @@
 /* No standard library */
 #![no_std]
 
-extern crate templatizer_sys;
+extern crate pollen_sys;
 
 pub mod templatizer {
-    pub type Context = templatizer_sys::templatizer::Context;
+    pub type Context = pollen_sys::templatizer::Context;
     pub type TemplatizerCallbacks =
-        templatizer_sys::templatizer::TemplatizerCallbacks;
+        pollen_sys::templatizer::TemplatizerCallbacks;
     pub type TemplatizerPlugin =
-        templatizer_sys::templatizer::TemplatizerPlugin;
+        pollen_sys::templatizer::TemplatizerPlugin;
 
     pub struct Templatizer {
         ctx: *mut Context,

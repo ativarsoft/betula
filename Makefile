@@ -23,7 +23,7 @@ LIBYEAST_A=yeast/libyeast.a
 HTML_PAGES=notes.html
 HTDOCS?=/var/www/html/
 
-all: alire $(EXEC) libpollen templatizer-d templatizer-rs plugins $(HTML_PAGES)
+all: alire $(EXEC) libpollen templatizer-d pollen-rs plugins $(HTML_PAGES)
 
 deb: pollen-$(VERSION).deb
 
@@ -42,9 +42,11 @@ libpollen:
 templatizer-d:
 	make -C templatizer-d
 
-templatizer-rs:
+pollen-rs:
 ifneq ($(shell which cargo),)
-	make -C templatizer-rs
+	make -C pollen-rs
+else
+	$(warning not building pollen-rs/ as cargo was not found)
 endif
 
 runtime/pollenrt0.o runtime/libpollen.a: runtime
@@ -110,7 +112,7 @@ clean: alire-clean
 	make -C templatizer-d clean
 	make -C runtime clean
 ifneq ($(shell which cargo),)
-	make -C templatizer-rs clean
+	make -C pollen-rs clean
 endif
 	make -C apps clean
 	make -C tests clean
@@ -162,7 +164,7 @@ alire: install-alire.sh
 alire-clean: install-alire.sh
 	./install-alire.sh remove
 
-.PHONY: dependencies plugins libpollen templatizer-d templatizer-rs \
+.PHONY: dependencies plugins libpollen templatizer-d pollen-rs \
   test deb termux $(LIBYEAST_A) \
   install install-site \
   clean dist-clean site-clean alire-clean \

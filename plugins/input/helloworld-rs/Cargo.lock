@@ -4,17 +4,17 @@
 name = "helloworld-rs"
 version = "0.1.0"
 dependencies = [
- "templatizer",
- "templatizer-sys",
+ "pollen",
+ "pollen-sys",
 ]
 
 [[package]]
-name = "templatizer"
+name = "pollen"
 version = "0.1.0"
 dependencies = [
- "templatizer-sys",
+ "pollen-sys",
 ]
 
 [[package]]
-name = "templatizer-sys"
+name = "pollen-sys"
 version = "0.1.0"

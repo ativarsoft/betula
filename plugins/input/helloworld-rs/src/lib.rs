@@ -1,8 +1,8 @@
 /* Copyright (C) 2022 Mateus de Lima Oliveira */
 
-extern crate templatizer_sys;
-extern crate templatizer;
-use templatizer::
+extern crate pollen_sys;
+extern crate pollen;
+use pollen::
 {
     templatizer::
     {
