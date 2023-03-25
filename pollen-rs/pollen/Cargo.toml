@@ -2,9 +2,12 @@
 name = "pollen"
 description = "Runtime for the pollen programming language"
 license = "MIT"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Mateus de Lima Oliveira <mateus@ativarsoft.com>"]
 edition = "2018"
+homepage = "https://pollen-lang.org"
+repository = "https://github.com/ativarsoft/pollen-lang"
+readme = "../../README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
