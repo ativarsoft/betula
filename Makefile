@@ -20,7 +20,9 @@ endif
 
 LIBYEAST_A=yeast/libyeast.a
 
-HTML_PAGES=notes.html
+# Avoid HTML content that may seem uninteligible to non-developers as
+# search engines categorise them as placeholder text in drafts.
+HTML_PAGES= #notes.html
 HTDOCS?=/var/www/html/
 
 all: alire $(EXEC) libpollen templatizer-d pollen-rs plugins $(HTML_PAGES)
