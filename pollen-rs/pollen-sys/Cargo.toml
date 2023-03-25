@@ -1,5 +1,7 @@
 [package]
 name = "pollen-sys"
+description = "Bindings for the pollen package"
+license = "MIT"
 version = "0.1.0"
 authors = ["Mateus de Lima Oliveira <mateus@ativarsoft.com>"]
 edition = "2018"
