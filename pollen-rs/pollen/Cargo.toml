@@ -1,5 +1,7 @@
 [package]
 name = "pollen"
+description = "Runtime for the pollen programming language"
+license = "MIT"
 version = "0.1.0"
 authors = ["Mateus de Lima Oliveira <mateus@ativarsoft.com>"]
 edition = "2018"
