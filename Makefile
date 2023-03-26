@@ -25,7 +25,7 @@ LIBYEAST_A=yeast/libyeast.a
 HTML_PAGES= #notes.html
 HTDOCS?=/var/www/html/
 
-all: alire $(EXEC) libpollen templatizer-d pollen-rs plugins $(HTML_PAGES)
+all: $(EXEC) libpollen templatizer-d pollen-rs plugins $(HTML_PAGES)
 
 deb: pollen-$(VERSION).deb
 
