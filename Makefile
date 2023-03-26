@@ -161,10 +161,10 @@ install-deb: pollen-$(VERSION).deb
 	dpkg -i pollen-$(VERSION).deb
 
 alire: install-alire.sh
-	./install-alire.sh install
+	#./install-alire.sh install
 
 alire-clean: install-alire.sh
-	./install-alire.sh remove
+	#./install-alire.sh remove
 
 .PHONY: dependencies plugins libpollen templatizer-d pollen-rs \
   test deb termux $(LIBYEAST_A) \
