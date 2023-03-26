@@ -1,9 +1,9 @@
-$('#pollen-form').submit(function(event) {
+$('#seafood-form').submit(function(event) {
   event.preventDefault(); // Prevent default form submission behavior
 
   // Get form data
   var formData = {
-    'script': $('textarea[name=pollen-code]').val(),
+    'script': $('textarea[name=seafood-code]').val(),
     'template': $('#template').val(),
     'output': $('#output').val()
   };
@@ -13,7 +13,7 @@ $('#pollen-form').submit(function(event) {
   // Send Ajax POST request with url-encoded query string
   $.ajax({
     type: 'POST',
-    url: 'https://playground.pollen-lang.org/playground.tmpl',
+    url: 'https://playground.seafood-lang.org/playground.tmpl',
     data: queryString,
     contentType: 'application/x-www-form-urlencoded',
     dataType: 'html',
