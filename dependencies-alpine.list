@@ -1,14 +1,15 @@
-build-essential
 flex
 bison
-libapr1-dev
-libexpat1-dev
-liblmdb-dev
+apr-dev
+expat-dev
+lmdb-dev
 libvirt-dev
-libsqlite3-dev
+sqlite-dev
 ldc
 cargo
 valgrind
 llvm-dev
 apache2
+rust
+libxslt
 
