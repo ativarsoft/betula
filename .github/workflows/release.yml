@@ -29,8 +29,11 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           files: |
             Release.txt
             ${{ matrix.artifact_name }}
           asset_name: ${{ matrix.asset_name }}
+          tag: ${{ github.ref }}
+          overwrite: true
 
