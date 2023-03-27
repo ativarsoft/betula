@@ -9,7 +9,7 @@ LDFLAGS=-ltemplatizer
 EXEC= sanity #cookie percent json
 
 ../templatizer:	$(error Templatizer executable not found)
-l
+
 pollen.conf:
 	true $(shell ./create-config.sh)
 	test $(.SHELLSTATUS)
