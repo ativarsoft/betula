@@ -8,11 +8,11 @@ runs:
       with:
         branch: v3.15
     - name: Run script inside Alpine chroot as root
-    run: |
-      cat /etc/alpine-release
-      sudo apk update
-      sudo make dependencies
-      make
-      make test
-    shell: alpine.sh {0}
+      run: |
+        cat /etc/alpine-release
+        sudo apk update
+        sudo make dependencies
+        make
+        make test
+      shell: alpine.sh {0}
 
