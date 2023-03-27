@@ -8,7 +8,8 @@ CFLAGS=-O0 -ggdb -I../include
 LDFLAGS=-ltemplatizer
 EXEC= sanity #cookie percent json
 
-../templatizer:	$(error Templatizer executable not found)
+../templatizer:
+	$(error Templatizer executable not found)
 
 pollen.conf:
 	true $(shell ./create-config.sh)
