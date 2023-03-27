@@ -1,17 +1,18 @@
 runs:
   using: "composite"
   steps:
+    - uses: actions/checkout@v3
     # GitHub does not provide an official runner for Alpine Linux
+    - name: Setup latest Alpine Linux
     - uses: jirutka/setup-alpine@v1
       with:
         branch: v3.15
-    - uses: actions/checkout@v3
     - name: Run script inside Alpine chroot as root
-    - run: |
-        cat /etc/alpine-release
-        sudo apk update
-        sudo make dependencies
-        make
-        make test
-      shell: alpine.sh {0}
+    run: |
+      cat /etc/alpine-release
+      sudo apk update
+      sudo make dependencies
+      make
+      make test
+    shell: alpine.sh {0}
 
