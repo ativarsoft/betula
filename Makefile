@@ -30,10 +30,10 @@ all: $(EXEC) libpollen templatizer-d pollen-rs plugins $(HTML_PAGES)
 deb: pollen-$(VERSION).deb
 
 dependencies:
-ifndef ($(shell which apt-get),)
+ifneq ($(shell which apt-get),)
 	apt-get install $(shell cat dependencies.list)
 endif
-ifndef ($(shell which apk),)
+ifneq ($(shell which apk),)
 	apk add $(shell cat dependencies.list)
 endif
 
