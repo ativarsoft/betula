@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: alpine-latest
+          - os: ubuntu-latest
             artifact_name: templatizer
             asset_name: seafood-alpine-amd64
 
