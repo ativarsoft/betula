@@ -19,13 +19,13 @@ verify_checksum()
     return
   fi
   file="$1"
-  md5file="$file.md5"
+  md5file="$file".md5
   if [ -f "$md5file" ]
   then
     echo "Checking '$md5file'."
     md5sum -c "$md5file"
   else
-    echo "Creating $md5file."
+    echo "Creating '$md5file'."
     md5sum "$file" > "$md5file"
   fi
   return $?
