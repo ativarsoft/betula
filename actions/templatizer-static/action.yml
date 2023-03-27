@@ -12,5 +12,5 @@ runs:
         make dependencies
         make
         make test
-      shell: alpine.sh {0}
+      shell: sudo alpine.sh {0}
 
