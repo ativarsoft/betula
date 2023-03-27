@@ -9,9 +9,22 @@ runs:
       run: |
         cat /etc/alpine-release
         apk update
-        apk add sudo
-        sudo make dependencies
+        make dependencies
+      shell: alpine.sh --root {0}
+    - name: Build
+      run: |
         make
+      shell: alpine.sh {0}
+    - name: Run tests
+      run: |
         make test
+      shell: alpine.sh {0}
+    - name: Install on the chroot environment
+      run: |
+        make install
+      shell: alpine.sh --root {0}
+    - name: Clean
+      run: |
+        make clean
       shell: alpine.sh {0}
 
