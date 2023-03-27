@@ -1,0 +1,14 @@
+build-essential
+flex
+bison
+libapr1-dev
+libexpat1-dev
+liblmdb-dev
+libvirt-dev
+libsqlite3-dev
+ldc
+cargo
+valgrind
+llvm-dev
+apache2
+

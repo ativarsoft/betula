@@ -34,7 +34,7 @@ ifneq ($(shell which apt-get),)
 	apt-get install $(shell cat dependencies.list)
 endif
 ifneq ($(shell which apk),)
-	apk add $(shell cat dependencies.list)
+	apk add $(shell cat dependencies-alpine.list)
 endif
 
 $(LIBYEAST_A): yeast/
