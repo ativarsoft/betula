@@ -6,6 +6,19 @@ on:
       - "v*.*"
 
 jobs:
+  publish:
+    name: Publish for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_name: pollen-*.deb
+            asset_name: mything-ubuntu-amd64
+          - os: alpine-latest
+            artifact_name: templatizer
+            asset_name: templatizer-alpine-amd64
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -20,5 +33,6 @@ jobs:
         with:
           files: |
             Release.txt
-            pollen-*.deb
+            ${{ matrix.artifact_name }}
+          asset_name: ${{ matrix.asset_name }}
 
