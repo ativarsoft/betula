@@ -1,3 +1,5 @@
+bash
+make
 flex
 bison
 apr-dev
