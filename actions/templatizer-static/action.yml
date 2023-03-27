@@ -14,7 +14,7 @@ runs:
       shell: alpine.sh --root {0}
     - name: Build
       run: |
-        make --jobs=1
+        make templatizer --jobs=1
       shell: alpine.sh {0}
     - name: Run tests
       run: |
