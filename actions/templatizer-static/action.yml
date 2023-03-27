@@ -9,6 +9,7 @@ runs:
       run: |
         cat /etc/alpine-release
         apk update
+        apk add make
         make dependencies
       shell: alpine.sh --root {0}
     - name: Build
