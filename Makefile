@@ -30,7 +30,12 @@ all: $(EXEC) libpollen templatizer-d pollen-rs plugins $(HTML_PAGES)
 deb: pollen-$(VERSION).deb
 
 dependencies:
+ifndef ($(shell which apt-get),)
 	apt-get install $(shell cat dependencies.list)
+endif
+ifndef ($(shell which apk),)
+	apk add $(shell cat dependencies.list)
+endif
 
 $(LIBYEAST_A): yeast/
 	make -C yeast

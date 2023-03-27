@@ -12,16 +12,13 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
-            artifact_name: pollen-*.deb
-            asset_name: seafood-ubuntu-amd64
-          - os: debian-bullseye
-            artifact_name: pollen-*.deb
-            asset_name: seafood-bullseye-amd64
+          - os: alpine-latest
+            artifact_name: templatizer
+            asset_name: seafood-alpine-amd64
 
     steps:
       - uses: actions/checkout@v3
-      - uses: ./actions/templatizer
+      - uses: ./actions/templatizer-static
       - name: Build
         run: echo ${{ github.sha }} > Release.txt
       - name: Test
