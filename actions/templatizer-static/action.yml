@@ -5,8 +5,6 @@ runs:
     # GitHub does not provide an official runner for Alpine Linux
     - name: Setup latest Alpine Linux
       uses: jirutka/setup-alpine@v1
-        with:
-          branch: v3.15
     - name: Run script inside Alpine chroot as root
       run: |
         cat /etc/alpine-release
