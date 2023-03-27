@@ -16,10 +16,10 @@ runs:
       run: |
         make --jobs=1
       shell: alpine.sh {0}
-    #- name: Run tests
-      #run: |
-      #  make test --jobs=1
-      #shell: alpine.sh {0}
+    - name: Run tests
+      run: |
+        make test --jobs=1
+      shell: alpine.sh {0}
     - name: Install on the chroot environment
       run: |
         make install  --jobs=1

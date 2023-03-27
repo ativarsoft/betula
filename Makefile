@@ -77,7 +77,7 @@ templatizer: yeast/libyeast.a y.tab.o lex.yy.o pollen.o interpreter.o opcode.o j
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 test: templatizer plugins libpollen templatizer-d runtime/pollenrt0.o runtime/libpollen.a
-	$(MAKE) -C tests test
+	$(MAKE) -C tests test --jobs=1
 
 install: templatizer
 	mkdir -p $(PREFIX)/lib/cgi-bin/
