@@ -18,6 +18,7 @@ tests/pollen.conf
 
 # rust builds
 target
+Cargo.lock
 
 alire
 alr*.AppImage
