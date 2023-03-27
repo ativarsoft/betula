@@ -10,22 +10,22 @@ runs:
         cat /etc/alpine-release
         apk update
         apk add make
-        make dependencies
+        make dependencies --jobs=1
       shell: alpine.sh --root {0}
     - name: Build
       run: |
-        make
+        make --jobs=1
       shell: alpine.sh {0}
     - name: Run tests
       run: |
-        make test
+        make test --jobs=1
       shell: alpine.sh {0}
     - name: Install on the chroot environment
       run: |
-        make install
+        make install  --jobs=1
       shell: alpine.sh --root {0}
     - name: Clean
       run: |
-        make clean
+        make clean --jobs=1
       shell: alpine.sh {0}
 
