@@ -5,21 +5,13 @@ runs:
     - uses: jirutka/setup-alpine@v1
       with:
         branch: v3.15
-    - run: cat /etc/alpine-release
-      shell: alpine.sh {0}
-
     - uses: actions/checkout@v3
-    - name: Update repository
-      run: sudo apk update
-      shell: bash
-    - name: Install dependencies
-      # run: sudo apt-get install libexpat1-dev flex bison build-essential libapr1-dev ldc liblmdb-dev libvirt-dev
-      run: sudo make dependencies
-      shell: bash
-    - name: Build
-      run: make
-      shell: bash
-    - name: Test
-      run: make test
-      shell: bash
+    - name: Run script inside Alpine chroot as root
+    - run: |
+        cat /etc/alpine-release
+        sudo apk update
+        sudo make dependencies
+        make
+        make test
+      shell: alpine.sh {0}
 
