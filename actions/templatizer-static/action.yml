@@ -12,6 +12,10 @@ runs:
         apk add make
         make dependencies --jobs=1
       shell: alpine.sh --root {0}
+    - name: Clean
+      run: |
+        make clean --jobs=1
+      shell: alpine.sh {0}
     - name: Build
       run: |
         make --jobs=1
@@ -24,8 +28,4 @@ runs:
       run: |
         make install --jobs=1
       shell: alpine.sh --root {0}
-    - name: Clean
-      run: |
-        make clean --jobs=1
-      shell: alpine.sh {0}
 
