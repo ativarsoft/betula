@@ -8,3 +8,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./actions/templatizer
+    runs-on: alpine-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./actions/templatizer-static
+
