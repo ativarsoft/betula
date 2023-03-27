@@ -14,6 +14,10 @@ get_valgrind | read VALGRIND
 
 verify_checksum()
 {
+  if test "$1" == ""
+  then
+    return
+  fi
   file="$1"
   md5file="$file.md5"
   if [ -f "$md5file" ]
