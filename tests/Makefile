@@ -31,7 +31,7 @@ kv.xhtml: kv.tmpl ../templatizer pollen.conf
 pipeline1.xhtml: pipeline1.tmpl ../templatizer pollen.conf
 	$(shell ./run-templatizer.sh $< $@)
 selfclosing.xhtml: selfclosing.tmpl ../templatizer pollen.conf
-	$(shell  $(shell ./run-templatizer.sh $< $@))
+	$(shell  ./run-templatizer.sh $< $@)
 controlflow.xhtml: controlflow.tmpl ../templatizer pollen.conf
 	$(shell ./run-templatizer.sh $< $@)
 echo.xhtml: echo.tmpl ../templatizer pollen.conf
@@ -39,7 +39,7 @@ echo.xhtml: echo.tmpl ../templatizer pollen.conf
 sanity.xhtml: sanity.tmpl ../templatizer pollen.conf
 	$(shell ./run-templatizer.sh $< $@)
 noplugin.xhtml: noplugin.tmpl ../templatizer pollen.conf
-	$(shell  $(shell ./run-templatizer.sh $< $@))
+	$(shell  ./run-templatizer.sh $< $@)
 include.xhtml: include.tmpl ../templatizer pollen.conf
 	$(shell ./run-templatizer.sh $< $@)
 playground.xhtml: playground.tmpl ../templatizer pollen.conf
