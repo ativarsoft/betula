@@ -12,12 +12,10 @@ jobs:
     strategy:
       matrix:
         include:
+          # Builds for multiple runners provided by GitHub can be added here.
           - os: ubuntu-latest
             artifact_name: pollen-*.deb
             asset_name: seafood-ubuntu-amd64
-          - os: debian-bullseye
-            artifact_name: pollen-*.deb
-            asset_name: seafood-bullseye-amd64
 
     steps:
       - uses: actions/checkout@v3
