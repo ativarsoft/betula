@@ -5,7 +5,7 @@
 
 extern crate pollen_sys;
 
-mod chacha20;
+pub mod chacha20;
 
 pub mod templatizer {
     pub type Context = pollen_sys::templatizer::Context;

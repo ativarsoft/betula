@@ -1,4 +1,9 @@
-mod chacha20 {
+pub mod chacha20 {
+
+    //
+    // Utility functions
+    //
+
     fn u32_to_u8_little(value: u32) -> [u8;4] {
         let mut data: [u8;4] = [0;4];
         data[0] = (value >> (0 * 8) & 0xFF) as u8;
@@ -22,9 +27,9 @@ mod chacha20 {
         return rotated_value;
     }
 
-    /*
-     * Encryption / Decryption
-     */
+    //
+    // Encryption / Decryption
+    //
 
     fn quarter_round(x: [u32;16], a: u32, b: u32, c: u32, d: u32) -> [u32;16] {
         let mut x: [u32;16] = x;
@@ -55,11 +60,11 @@ mod chacha20 {
             x = quarter_round(x, 3, 4,  9, 14);
             i = i + 1;
         }
-        for i in 0..input.len() {
+        for i in 0 .. input.len() {
             x[i as usize] = x[i as usize] + input[i as usize];
         }
         let mut output: [u8;64] = [0;64];
-        for i in 0..input.len() {
+        for i in 0 .. input.len() {
             let first: usize = 4 * i;
             let buffer = u32_to_u8_little(x[i as usize]);
             output[first + 0] = buffer[0];
@@ -68,6 +73,44 @@ mod chacha20 {
             output[first + 3] = buffer[3];
         }
         return output;
+    }
+
+    pub struct ChaCha20 {
+        input: [u32; 16],
+    }
+
+    impl ChaCha20 {
+        pub fn encrypt_bytes(&mut self, m: [u8; 64], mut c: [u8; 64], bytes: usize) {
+            if bytes == 0 {
+                return;
+            }
+            let c_first = 0;
+            let m_first = 0;
+            let mut c_index: usize = c_first;
+            let mut m_index: usize = m_first;
+            let mut remaining_bytes: usize = bytes;
+            loop {
+                let output: [u8; 64] = salsa20_word_to_byte(self.input);
+                self.input[12] = self.input[12] + 1;
+                if self.input[12] == 0 {
+                    self.input[13] = self.input[13] + 1;
+                    // stopping at 2^70 bytes per nonce is user's
+                    // responsibility
+                }
+                if remaining_bytes <= 64 {
+                    for j in 0 .. (remaining_bytes - 1) {
+                        c[j + c_index] = m[j + m_index] ^ output[j];
+                    }
+                    return;
+                }
+                for j in 0 .. 64 {
+                    c[j + c_index] = m[j + m_index] ^ output[j];
+                }
+                remaining_bytes -= 64;
+                c_index += 64;
+                m_index += 64;
+            }
+        }
     }
 }
 
