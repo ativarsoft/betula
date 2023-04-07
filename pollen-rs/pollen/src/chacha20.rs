@@ -1,3 +1,6 @@
+static sigma: &'static str = "expand 32-byte k";
+static tau: &'static str = "expand 16-byte k";
+
 pub mod chacha20 {
 
     //
@@ -140,6 +143,39 @@ pub mod chacha20 {
                 };
             }
             self.encrypt_bytes(stream, stream, bytes);
+        }
+
+
+        fn string_to_key(&self, s: &str) -> [u8; 32] {
+            let mut key: [u8; 32] = [0; 32];
+            for i in 0 .. s.len() {
+                let ptr: *const u8 = (s.as_ptr() as usize + i) as *const u8;
+                key[i] = unsafe { *ptr };
+            }
+            return key;
+        }
+
+        pub fn key_setup(&mut self, k: *const u8, k_bits: usize, _iv_bits: usize) {
+            let mut k_index: usize = 0;
+            let k_ptr = (k as usize + k_index) as *const u8;
+            let k_slice: [u8; 4] = {
+                let slice = unsafe { core::slice::from_raw_parts(k_ptr, 4) };
+                let mut tmp = [0; 4];
+                for i in 0 .. 4 {
+                    tmp[i] = slice[i];
+                };
+                tmp
+            };
+            self.input[3] = u8_to_u32_little(k_slice);
+            let constants: [u8; 32] = {
+                if k_bits == 256 {
+                    k_index += 16;
+                    self.string_to_key(crate::chacha20::sigma)
+                } else {
+                    self.string_to_key(crate::chacha20::tau)
+                }
+            };
+            self.input[11] = u8_to_u32_little(k_slice);
         }
 
         pub fn test_quarter_round() -> bool {
