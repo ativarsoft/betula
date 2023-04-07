@@ -80,7 +80,7 @@ pub mod chacha20 {
     }
 
     impl ChaCha20 {
-        pub fn encrypt_bytes(&mut self, m: [u8; 64], mut c: [u8; 64], bytes: usize) {
+        pub fn encrypt_bytes(&mut self, m: *const u8, c: *mut u8, bytes: usize) {
             if bytes == 0 {
                 return;
             }
@@ -99,17 +99,54 @@ pub mod chacha20 {
                 }
                 if remaining_bytes <= 64 {
                     for j in 0 .. (remaining_bytes - 1) {
-                        c[j + c_index] = m[j + m_index] ^ output[j];
+                        let index = j + m_index;
+                        let m_ptr = (m as usize + index) as *const u8;
+                        let m_byte = unsafe { *m_ptr };
+                        let c_byte = m_byte ^ output[j];
+                        let index = j + c_index;
+                        let c_ptr = (c as usize + index) as *mut u8;
+                        unsafe {
+                            *c_ptr = c_byte;
+                        };
                     }
                     return;
                 }
                 for j in 0 .. 64 {
-                    c[j + c_index] = m[j + m_index] ^ output[j];
+                    let index = j + m_index;
+                    let m_ptr = (m as usize + index) as *const u8;
+                    let m_byte = unsafe { *m_ptr };
+                    let c_byte = m_byte ^ output[j];
+                    let index = j + c_index;
+                    let c_ptr = (c as usize + index) as *mut u8;
+                    unsafe {
+                        *c_ptr = c_byte;
+                    };
                 }
                 remaining_bytes -= 64;
                 c_index += 64;
                 m_index += 64;
             }
+        }
+
+        pub fn decrypt_bytes(&mut self, m: *mut u8, c: *const u8, bytes: usize) {
+            self.encrypt_bytes(c, m, bytes);
+        }
+
+        pub fn keystream_bytes(&mut self, stream: *mut u8, bytes: usize) {
+            for i in 0 .. bytes {
+                let stream_ptr = ((stream as usize) + i) as *mut u8;
+                unsafe {
+                    *stream_ptr = 0;
+                };
+            }
+            self.encrypt_bytes(stream, stream, bytes);
+        }
+
+        pub fn test_quarter_round() -> bool {
+            let input: [u32; 16] = [0; 16];
+            quarter_round(input, 2, 7, 8, 13);
+            // TODO: check output.
+            return true;
         }
     }
 }
