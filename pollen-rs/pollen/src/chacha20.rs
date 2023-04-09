@@ -194,6 +194,10 @@ pub mod chacha20 {
             self.input[15] = u8_to_u32_little(&iv_slice[(4 * 2) .. (4 * 3)]);
         }
 
+        pub fn block_counter_setup(&mut self, block_counter: u32) {
+            self.input[12] = block_counter;
+        }
+
         pub fn test_quarter_round() -> bool {
             let input: [u32; 16] = [0; 16];
             quarter_round(input, 2, 7, 8, 13);
