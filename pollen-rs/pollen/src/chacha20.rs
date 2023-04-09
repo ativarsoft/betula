@@ -215,5 +215,13 @@ pub mod chacha20 {
             obj.key_setup(k_slice, k_bits, _iv_bits);
         };
     }
+
+    pub fn block_counter_setup(handle: *mut ChaCha20, block_counter: u32) {
+        assert_ne!(handle as usize, 0);
+        unsafe {
+            let mut obj: &mut ChaCha20 = &mut *handle;
+            obj.block_counter_setup(block_counter);
+        };
+    }
 }
 
