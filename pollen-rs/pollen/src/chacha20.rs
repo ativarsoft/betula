@@ -159,6 +159,12 @@ pub mod chacha20 {
             let mut k_index: usize = 0;
             let k_slice = &k[k_index + (4 * 0) .. k_index + (4 * 1)];
             self.input[4] = u8_to_u32_little(&k_slice);
+            let k_slice = &k[k_index + (4 * 1) .. k_index + (4 * 2)];
+            self.input[5] = u8_to_u32_little(&k_slice);
+            let k_slice = &k[k_index + (4 * 2) .. k_index + (4 * 3)];
+            self.input[6] = u8_to_u32_little(&k_slice);
+            let k_slice = &k[k_index + (4 * 3) .. k_index + (4 * 4)];
+            self.input[7] = u8_to_u32_little(&k_slice);
             let constants: [u8; 32] = {
                 if k_bits == 256 {
                     k_index += 16;
