@@ -216,6 +216,16 @@ pub mod chacha20 {
         };
     }
 
+    pub fn iv_setup(handle: *mut ChaCha20, iv: *const u8) {
+        assert_ne!(handle as usize, 0);
+        assert_ne!(iv as usize, 0);
+        unsafe {
+            let iv_slice = core::slice::from_raw_parts(iv, 12);
+            let mut obj: &mut ChaCha20 = &mut *handle;
+            obj.iv_setup(iv_slice);
+        };
+    }
+
     pub fn block_counter_setup(handle: *mut ChaCha20, block_counter: u32) {
         assert_ne!(handle as usize, 0);
         unsafe {
