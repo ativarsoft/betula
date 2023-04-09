@@ -36,13 +36,13 @@ pub mod chacha20 {
 
     fn quarter_round(x: [u32;16], a: usize, b: usize, c: usize, d: usize) -> [u32;16] {
         let mut x: [u32;16] = x; // Create an array with the same name, but mutable
-        x[a] = ((x[a] as u64 + x[b] as u64) | 0xffffff) as u32;
+        x[a] = ((x[a] as u64 + x[b] as u64) & 0xffffffff) as u32;
         x[d] = rotate_left(x[d] ^ x[a], 16);
-        x[c] = ((x[c] as u64 + x[d as usize] as u64) | 0xffffff) as u32;
+        x[c] = ((x[c] as u64 + x[d as usize] as u64) & 0xffffffff) as u32;
         x[b] = rotate_left(x[b] ^ x[c], 12);
-        x[a] = ((x[a] as u64 + x[b as usize] as u64) | 0xffffff) as u32;
+        x[a] = ((x[a] as u64 + x[b as usize] as u64) & 0xffffffff) as u32;
         x[d] = rotate_left(x[d] ^ x[a], 8);
-        x[c] = ((x[c] as u64 + x[d] as u64) | 0xffffff) as u32;
+        x[c] = ((x[c] as u64 + x[d] as u64) & 0xffffffff) as u32;
         x[b] = rotate_left(x[b] ^ x[c], 7);
         return x;
     }
