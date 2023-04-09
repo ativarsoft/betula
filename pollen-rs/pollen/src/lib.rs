@@ -105,9 +105,12 @@ pub mod templatizer {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
     fn it_works() {
         assert_eq!(2 + 2, 4);
+        assert_eq!(chacha20::chacha20::ChaCha20::test_quarter_round(), true);
     }
 }
 

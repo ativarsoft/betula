@@ -1,5 +1,5 @@
-static sigma: &'static str = "expand 32-byte k";
-static tau: &'static str = "expand 16-byte k";
+static SIGMA: &'static str = "expand 32-byte k";
+static TAU: &'static str = "expand 16-byte k";
 
 pub mod chacha20 {
 
@@ -16,7 +16,7 @@ pub mod chacha20 {
         return data;
     }
 
-    fn u8_to_u32_little(data: [u8;4]) -> u32 {
+    fn u8_to_u32_little(data: &[u8]) -> u32 {
         let mut value: u32 = 0;
         value = value | ((data[0] as u32) << (0 * 8));
         value = value | ((data[1] as u32) << (1 * 8));
@@ -155,27 +155,30 @@ pub mod chacha20 {
             return key;
         }
 
-        pub fn key_setup(&mut self, k: *const u8, k_bits: usize, _iv_bits: usize) {
+        pub fn key_setup(&mut self, k: &[u8], k_bits: usize, _iv_bits: usize) {
             let mut k_index: usize = 0;
-            let k_ptr = (k as usize + k_index) as *const u8;
-            let k_slice: [u8; 4] = {
-                let slice = unsafe { core::slice::from_raw_parts(k_ptr, 4) };
-                let mut tmp = [0; 4];
-                for i in 0 .. 4 {
-                    tmp[i] = slice[i];
-                };
-                tmp
-            };
-            self.input[3] = u8_to_u32_little(k_slice);
+            let k_slice = &k[k_index + (4 * 0) .. k_index + (4 * 1)];
+            self.input[4] = u8_to_u32_little(&k_slice);
             let constants: [u8; 32] = {
                 if k_bits == 256 {
                     k_index += 16;
-                    self.string_to_key(crate::chacha20::sigma)
+                    self.string_to_key(crate::chacha20::SIGMA)
                 } else {
-                    self.string_to_key(crate::chacha20::tau)
+                    self.string_to_key(crate::chacha20::TAU)
                 }
             };
-            self.input[11] = u8_to_u32_little(k_slice);
+            let k_slice = &k[k_index + (4 * 0) .. k_index + (4 * 1)];
+            self.input[8] = u8_to_u32_little(k_slice);
+            let k_slice = &k[k_index + (4 * 1) .. k_index + (4 * 2)];
+            self.input[9] = u8_to_u32_little(k_slice);
+            let k_slice = &k[k_index + (4 * 2) .. k_index + (4 * 3)];
+            self.input[10] = u8_to_u32_little(k_slice);
+            let k_slice = &k[k_index + (4 * 3) .. k_index + (4 * 4)];
+            self.input[11] = u8_to_u32_little(&k_slice);
+            self.input[0] = u8_to_u32_little(&constants[0 .. (4 * 1)]);
+            self.input[1] = u8_to_u32_little(&constants[0 .. (4 * 2)]);
+            self.input[2] = u8_to_u32_little(&constants[0 .. (4 * 3)]);
+            self.input[3] = u8_to_u32_little(&constants[0 .. (4 * 4)]);
         }
 
         pub fn test_quarter_round() -> bool {
@@ -184,6 +187,16 @@ pub mod chacha20 {
             // TODO: check output.
             return true;
         }
+    }
+
+    pub fn key_setup(handle: *mut ChaCha20, k: *const u8, k_bits: usize, _iv_bits: usize) {
+        assert_ne!(handle as usize, 0);
+        assert_eq!(k_bits % 8, 0);
+        unsafe {
+            let k_slice = core::slice::from_raw_parts(k, k_bits / 8);
+            let mut obj: &mut ChaCha20 = &mut *handle;
+            obj.key_setup(k_slice, k_bits, _iv_bits);
+        };
     }
 }
 
