@@ -187,6 +187,13 @@ pub mod chacha20 {
             self.input[3] = u8_to_u32_little(&constants[0 .. (4 * 4)]);
         }
 
+        pub fn iv_setup(&mut self, iv: &[u8]) {
+            let iv_slice: &[u8] = &iv[0 .. 12];
+            self.input[13] = u8_to_u32_little(&iv_slice[(4 * 0) .. (4 * 1)]);
+            self.input[14] = u8_to_u32_little(&iv_slice[(4 * 1) .. (4 * 2)]);
+            self.input[15] = u8_to_u32_little(&iv_slice[(4 * 2) .. (4 * 3)]);
+        }
+
         pub fn test_quarter_round() -> bool {
             let input: [u32; 16] = [0; 16];
             quarter_round(input, 2, 7, 8, 13);
