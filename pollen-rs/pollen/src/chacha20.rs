@@ -34,16 +34,16 @@ pub mod chacha20 {
     // Encryption / Decryption
     //
 
-    fn quarter_round(x: [u32;16], a: u32, b: u32, c: u32, d: u32) -> [u32;16] {
-        let mut x: [u32;16] = x;
-        x[a as usize] = x[a as usize] + x[b as usize];
-        x[d as usize] = rotate_left(x[d as usize] ^ x[a as usize], 16);
-        x[c as usize] = x[c as usize] + x[d as usize];
-        x[b as usize] = rotate_left(x[b as usize] ^ x[c as usize], 12);
-        x[a as usize] = x[a as usize] + x[b as usize];
-        x[d as usize] = rotate_left(x[d as usize] ^ x[a as usize], 8);
-        x[c as usize] = x[c as usize] + x[d as usize];
-        x[b as usize] = rotate_left(x[b as usize] ^ x[c as usize], 7);
+    fn quarter_round(x: [u32;16], a: usize, b: usize, c: usize, d: usize) -> [u32;16] {
+        let mut x: [u32;16] = x; // Create an array with the same name, but mutable
+        x[a] = ((x[a] as u64 + x[b] as u64) | 0xffffff) as u32;
+        x[d] = rotate_left(x[d] ^ x[a], 16);
+        x[c] = ((x[c] as u64 + x[d as usize] as u64) | 0xffffff) as u32;
+        x[b] = rotate_left(x[b] ^ x[c], 12);
+        x[a] = ((x[a] as u64 + x[b as usize] as u64) | 0xffffff) as u32;
+        x[d] = rotate_left(x[d] ^ x[a], 8);
+        x[c] = ((x[c] as u64 + x[d] as u64) | 0xffffff) as u32;
+        x[b] = rotate_left(x[b] ^ x[c], 7);
         return x;
     }
 
@@ -199,9 +199,26 @@ pub mod chacha20 {
         }
 
         pub fn test_quarter_round() -> bool {
-            let input: [u32; 16] = [0; 16];
-            quarter_round(input, 2, 7, 8, 13);
-            // TODO: check output.
+            assert_eq!(rotate_left(0xaabbccdd, 8), 0xbbccddaa);
+            let input: [u32; 16] = [
+                0x879531e0, 0xc5ecf37d, 0x516461b1, 0xc9a62f8a,
+                0x44c20ef3, 0x3390af7f, 0xd9fc690b, 0x2a5f714c,
+                0x53372767, 0xb00a5631, 0x974c541a, 0x359e9963,
+                0x5c971061, 0x3d631689, 0x2098d9d6, 0x91dbd320,
+            ];
+            let tmp = quarter_round(input, 2, 7, 8, 13);
+            let tmp = quarter_round(tmp, 2, 7, 8, 13);
+            let output = quarter_round(input, 2, 7, 8, 13);
+            let expected_matrix = [
+                0x879531e0, 0xc5ecf37d, 0xbdb886dc, 0xc9a62f8a,
+                0x44c20ef3, 0x3390af7f, 0xd9fc690b, 0xcfacafd2,
+                0xe46bea80, 0xb00a5631, 0x974c541a, 0x359e9963,
+                0x5c971061, 0xccc07c79, 0x2098d9d6, 0x91dbd320,
+            ];
+            if output != expected_matrix {
+                assert_eq!(output, expected_matrix);
+                return false;
+            }
             return true;
         }
     }
@@ -234,4 +251,3 @@ pub mod chacha20 {
         };
     }
 }
-
