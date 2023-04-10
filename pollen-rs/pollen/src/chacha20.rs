@@ -1,3 +1,5 @@
+// Copyright (C) 2023 Mateus de Lima Oliveira
+
 static SIGMA: &'static str = "expand 32-byte k";
 static TAU: &'static str = "expand 16-byte k";
 
