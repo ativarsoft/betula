@@ -6,7 +6,7 @@ templatizer:
 	cargo build --release --offline
 
 test:
-	cargo test
+	RUST_BACKTRACE="1" cargo test
 
 clean:
 	cargo clean
