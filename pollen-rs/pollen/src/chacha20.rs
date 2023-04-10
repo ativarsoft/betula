@@ -87,7 +87,10 @@ pub mod chacha20 {
             i = i + 1;
         }
         for i in 0 .. input.len() {
-            x[i as usize] = x[i as usize] + input[i as usize];
+            x[i as usize] =
+                ((x[i as usize] as u64 +
+                input[i as usize] as u64) &
+                0xffffffff) as u32;
         }
         let mut output: [u8;64] = [0;64];
         for i in 0 .. input.len() {
@@ -130,7 +133,7 @@ pub mod chacha20 {
                     // responsibility
                 }
                 if remaining_bytes <= 64 {
-                    for j in 0 .. (remaining_bytes - 1) {
+                    for j in 0 .. remaining_bytes {
                         c[j + c_index] = m[j + m_index] ^ output[j];
                     }
                     return;
@@ -189,10 +192,10 @@ pub mod chacha20 {
             self.input[10] = u8_to_u32_little(k_slice);
             let k_slice = &k[k_index + (4 * 3) .. k_index + (4 * 4)];
             self.input[11] = u8_to_u32_little(&k_slice);
-            self.input[0] = u8_to_u32_little(&constants[0 .. (4 * 1)]);
-            self.input[1] = u8_to_u32_little(&constants[0 .. (4 * 2)]);
-            self.input[2] = u8_to_u32_little(&constants[0 .. (4 * 3)]);
-            self.input[3] = u8_to_u32_little(&constants[0 .. (4 * 4)]);
+            self.input[0] = u8_to_u32_little(&constants[(4 * 0) .. (4 * 1)]);
+            self.input[1] = u8_to_u32_little(&constants[(4 * 1) .. (4 * 2)]);
+            self.input[2] = u8_to_u32_little(&constants[(4 * 2) .. (4 * 3)]);
+            self.input[3] = u8_to_u32_little(&constants[(4 * 3) .. (4 * 4)]);
         }
 
         pub fn iv_setup(&mut self, iv: &[u8]) {
