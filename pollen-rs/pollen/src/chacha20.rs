@@ -23,7 +23,8 @@ static TEST1_EXPECTED_CYPHERTEXT: [u8; 8 * 8] =
 
 pub mod chacha20 {
 
-    type Context = crate::templatizer::Templatizer;
+    pub type Allocator = extern "C" fn(bytes: usize) -> *mut u8;
+    pub type Free = extern "C" fn(*mut u8);
 
     //
     // Utility functions
@@ -101,11 +102,16 @@ pub mod chacha20 {
     }
 
     pub struct ChaCha20 {
-        ctx: &'static mut Context,
+        malloc: Allocator,
+        free: Free,
         input: [u32; 16],
     }
 
     impl ChaCha20 {
+        pub fn dump_state(&self) -> [u32; 16] {
+            return self.input;
+        }
+
         pub fn encrypt_bytes(&mut self, m: &mut [u8], c: &mut [u8], bytes: usize) {
             if bytes == 0 {
                 return;
@@ -143,11 +149,8 @@ pub mod chacha20 {
         }
 
         pub fn keystream_bytes(&mut self, stream: &mut [u8], bytes: usize) {
-            let buffer = self.ctx.allocate_memory(bytes);
-            let zero: &mut [u8] = unsafe {
-                core::slice::from_raw_parts_mut(buffer, bytes)
-            };
-            self.encrypt_bytes(zero, stream, bytes);
+            let zeroed_buffer = self.allocate_memory(bytes);
+            self.encrypt_bytes(zeroed_buffer, stream, bytes);
         }
 
 
@@ -203,9 +206,22 @@ pub mod chacha20 {
             self.input[12] = block_counter;
         }
 
-        pub fn new(ctx: &'static mut Context) -> Self {
+        fn allocate_memory(&mut self, bytes: usize) -> &'static mut [u8] {
+            let buffer: *mut u8 = (self.malloc)(bytes);
+            let buffer_slice: &mut [u8] = unsafe {
+                core::slice::from_raw_parts_mut(buffer, bytes)
+            };
+            let mut iterator = buffer_slice.iter_mut();
+            for c in iterator.next() {
+                *c = 0;
+            }
+            return buffer_slice;
+        }
+
+        pub fn new(malloc: Allocator, free: Free) -> Self {
             return ChaCha20 {
-                ctx: ctx,
+                malloc: malloc,
+                free: free,
                 input: [0; 16],
             };
         }
@@ -241,25 +257,21 @@ pub mod chacha20 {
             return rc;
         }
 
-        pub fn test1(ctx: &'static mut Context) -> bool {
-            let key: [u8; 16] = [0; 16];
+        pub fn test1(malloc: Allocator, free: Free) {
+            let key: [u8; 32] = [0; 32];
             let iv: [u8; 12] = [0; 12];
             let block_counter: u32 = 0;
             let mut m: [u8; 64] = [0; 64];
             let mut c: [u8; 64] = [0; 64];
-            let mut obj = ChaCha20::new(ctx);
-            obj.key_setup(&key[..], 256, 0);
-            obj.iv_setup(&iv[..]);
+            let mut obj = ChaCha20::new(malloc, free);
+            obj.key_setup(&key[0 .. 32], 256, 0);
+            obj.iv_setup(&iv[0 .. 12]);
             obj.block_counter_setup(block_counter);
-            if obj.check_state(&crate::chacha20::TEST1_EXPECTED_STATE) == false {
-                return false;
-            }
+            let current_state: [u32; 16] = obj.dump_state();
+            assert_eq!(current_state, crate::chacha20::TEST1_EXPECTED_STATE);
             let len: usize = m.len();
             obj.encrypt_bytes(&mut m, &mut c, len);
-            if c != *&crate::chacha20::TEST1_EXPECTED_CYPHERTEXT {
-                return false;
-            }
-            return true;
+            assert_eq!(c, *&crate::chacha20::TEST1_EXPECTED_CYPHERTEXT);
         }
     }
 
@@ -311,5 +323,31 @@ pub mod chacha20 {
         }
         obj.keystream_bytes(stream_slice, bytes);
     }
+
+}
+
+#[cfg(test)]
+pub mod tests {
+
+    use super::chacha20::*;
+
+    #[test]
+    fn quarter_round() {
+        let rc = ChaCha20::test_quarter_round();
+        assert_eq!(rc, true);
+    }
+
+    #[test]
+    fn test1() {
+        ChaCha20::test1(dummy_allocator, dummy_free);
+    }
+
+    extern "C"
+    fn dummy_allocator(bytes: usize) -> *mut u8 {
+        return 0 as *mut u8;
+    }
+
+    extern "C"
+    fn dummy_free(ptr: *mut u8) {}
 
 }

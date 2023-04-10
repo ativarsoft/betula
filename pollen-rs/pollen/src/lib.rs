@@ -113,21 +113,9 @@ pub mod templatizer {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
     fn it_works() {
         assert_eq!(2 + 2, 4);
-    }
-
-    fn chacha20_quarter_round() {
-        assert_eq!(chacha20::chacha20::ChaCha20::test_quarter_round(), true);
-    }
-
-    fn chacha20_test1() {
-        let ptr = 0 as *mut templatizer::Templatizer;
-        let ctx = unsafe { &mut *ptr };
-        assert_eq!(chacha20::chacha20::ChaCha20::test1(ctx), true);
     }
 }
 
