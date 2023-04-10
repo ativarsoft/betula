@@ -5,7 +5,10 @@ all: templatizer
 templatizer:
 	cargo build --release --offline
 
+test:
+	cargo test
+
 clean:
 	cargo clean
 
-.PHONY: templatizer clean
+.PHONY: templatizer test clean
