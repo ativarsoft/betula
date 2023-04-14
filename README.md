@@ -5,6 +5,8 @@ Scripts are a series of complex instructions provided by
 the runtime. New element tags can be added to the
 runtime by using general purpose plugins.
 
+Static checking is used on the C language for a zero-defect program.
+
 An [HTML template](https://en.wikipedia.org/wiki/Web_template_system)
 is an HTML model. Templates are
 preformatted HTML in which text or image content
