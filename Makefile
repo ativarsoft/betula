@@ -136,8 +136,11 @@ site-clean:
 
 # MISRA-C standard compliance check for
 # failproof software
-misra: templatizer.c
+misra: pollen.c
 	cppcheck --addon=misra.py $^
+
+clang-analyser: pollen.c
+	scan-build make
 
 termux:
 	TERMUX="y" make
