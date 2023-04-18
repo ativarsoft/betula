@@ -17,6 +17,7 @@ tests/pollen.conf
 /debian/control
 
 # rust builds
+build
 target
 Cargo.lock
 

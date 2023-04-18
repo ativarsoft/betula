@@ -1,0 +1,24 @@
+[package]
+name = "betulaxmlrs"
+description = "Freestanding ChaCha20 cypher"
+license = "MIT"
+version = "0.1.1"
+authors = ["Mateus de Lima Oliveira <mateus@ativarsoft.com>"]
+edition = "2018"
+homepage = "https://ativarsoft.com"
+repository = "https://github.com/ativarsoft/mlo-chacha20-rs"
+readme = "README.md"
+
+[lib]
+crate-type = ["rlib", "staticlib"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+xml-rs = "0.8.4"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"

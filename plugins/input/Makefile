@@ -71,6 +71,10 @@ in_json.so: jsonc.o
 playground.so: playground.o
 	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
+in_xml.so: in_xml.o
+	LIBS+=betula-xml-rs/build/libbetulaxmlrs.a
+	$(CC) --shared -fPIC $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
+
 install:
 	mkdir -p $(INSTALL_DIR)
 	cp $(PLUGINS) $(INSTALL_DIR)
