@@ -4,7 +4,7 @@ extern crate xml;
 
 use std::fs::File;
 use std::io::BufReader;
-//use std::path::Path;
+use std::path::Path;
 
 use xml::reader::{EventReader, XmlEvent};
 use xml::name::{OwnedName};
@@ -61,7 +61,7 @@ pub struct Context<'a> {
     /* It contains data from user input */
     input: LinkedList<Input>,
     /* These stacks contain control flow information from template. */
-    //tags: Vec<String>,
+    tags: Vec<String>,
     //labels: Vec<StartNodeIndex>,
     tmpl: &'a String
 }
@@ -143,11 +143,11 @@ fn print_character_data_node(text: &String, input: &mut LinkedList<Input>) {
     }
 }
 
-/*fn parse_template_tag(_data: &mut Context, _attributes: &Vec<OwnedAttribute>) {
+fn parse_template_tag(_data: &mut Context, _attributes: &Vec<OwnedAttribute>) {
     //This tag has not been obsoleted.
-}*/
+}
 
-/*fn parse_include_tag(data: &mut Context, attributes: &Vec<OwnedAttribute>) {
+fn parse_include_tag(data: &mut Context, attributes: &Vec<OwnedAttribute>) {
     for attr in attributes {
         match &*attr.name.local_name {
             "file" => {
@@ -156,9 +156,9 @@ fn print_character_data_node(text: &String, input: &mut LinkedList<Input>) {
             _ => (),
         }
     }
-}*/
+}
 
-/*fn tag_pool_add(data: &mut Context, el: &String) {
+fn tag_pool_add(data: &mut Context, el: &String) {
 }
 
 fn tag_pool_lookup(data: &mut Context, el: &String) -> usize {
@@ -169,9 +169,9 @@ fn tag_pool_lookup(data: &mut Context, el: &String) -> usize {
     }
     tag_pool_add(data, el);
     return data.tags.len();
-}*/
+}
 
-/*fn start(data: &mut Context, name: &OwnedName, attributes: &Vec<OwnedAttribute>) {
+fn start(data: &mut Context, name: &OwnedName, attributes: &Vec<OwnedAttribute>) {
     if name.local_name == "templatizer" {
         parse_template_tag(data, attributes);
     }
@@ -179,9 +179,9 @@ fn tag_pool_lookup(data: &mut Context, el: &String) -> usize {
         parse_include_tag(data, attributes);
     }
     tag_pool_lookup(data, &name.local_name);
-}*/
+}
 
-/*fn read_input_jump_instruction(data: &mut Context) -> ControlFlow {
+fn read_input_jump_instruction(data: &mut Context) -> ControlFlow {
     match data.input.pop_back() {
         Some(Input::ControlFlow {control}) => {
             control
@@ -193,7 +193,7 @@ fn tag_pool_lookup(data: &mut Context, el: &String) -> usize {
             panic!("missing input for tag that requires control flow input");
         }
     }
-}*/
+}
 
 /* print node */
 fn interpret_template_node(data: &mut Context, i: usize) -> Option<usize> {
@@ -285,7 +285,7 @@ pub fn new<'a>(tmpl: &'a String) -> Context<'a> {
     Context {
         nodes: Vec::new(),
         input: LinkedList::new(),
-        //tags: Vec::new(),
+        tags: Vec::new(),
         //labels: Vec::new(),
         tmpl: tmpl
     }
