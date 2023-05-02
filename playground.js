@@ -1,4 +1,4 @@
-$('#seafood-form').submit(function(event) {
+$('#betula-form').submit(function(event) {
   event.preventDefault(); // Prevent default form submission behavior
 
   // Get form data
