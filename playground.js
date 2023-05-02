@@ -3,7 +3,7 @@ $('#seafood-form').submit(function(event) {
 
   // Get form data
   var formData = {
-    'script': $('textarea[name=seafood-code]').val(),
+    'script': $('textarea[name=betula-code]').val(),
     'template': $('#template').val(),
     'output': $('#output').val()
   };
@@ -13,7 +13,7 @@ $('#seafood-form').submit(function(event) {
   // Send Ajax POST request with url-encoded query string
   $.ajax({
     type: 'POST',
-    url: 'https://playground.seafood-lang.org/playground.tmpl',
+    url: 'playground.tmpl',
     data: queryString,
     contentType: 'application/x-www-form-urlencoded',
     dataType: 'html',
