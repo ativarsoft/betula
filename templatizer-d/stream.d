@@ -56,14 +56,17 @@ tmpl_stream_t tmpl_fmemopen
     return stream;
 }
 
+@system
+static void free_stream(tmpl_stream_t stream)
+{
+    import core.memory : GC;
+    GC.free(stream);
+}
+
 extern(C)
 int tmpl_fclose(tmpl_stream_t stream)
 {
-    auto free = () @trusted {
-        import core.memory : GC;
-        GC.free(stream);
-    };
-    free();
+    free_stream(stream);
     return 0;
 }
 
