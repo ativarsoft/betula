@@ -2,7 +2,7 @@ CFLAGS=-Wall -Wpedantic -fPIC -O0 -ggdb -I../../include -L../../libpollen
 LDFLAGS=-Wl,--no-as-needed
 LIBS=-lpollen
 PLUGINS=math.so
-MATH_RS=math-rs/build/libmath_rs.a
+MATH_RS=math-rs/target/release/libmath_rs.a
 
 all: $(PLUGINS)
 
