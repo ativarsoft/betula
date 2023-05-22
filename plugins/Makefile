@@ -11,6 +11,7 @@ all:
 	make -C database
 	make -C codegen
 	make -C linker
+	make -C intrinsics
 	make -C app
 	make -C tests
 
@@ -22,6 +23,7 @@ install:
 	make -C database install
 	make -C codegen install
 	make -C linker install
+	make -C intrinsics install
 	make -C app install
 	make -C tests install
 
@@ -32,6 +34,7 @@ clean:
 	make -C database clean
 	make -C codegen clean
 	make -C linker clean
+	make -C intrinsics clean
 	make -C app clean
 	make -C tests clean
 

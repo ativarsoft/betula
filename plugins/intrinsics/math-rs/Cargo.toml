@@ -1,0 +1,14 @@
+[package]
+name = "math-rs"
+version = "0.1.0"
+authors = ["Mateus de Lima Oliveira <mateus@ativarsoft.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+pollen = "0.1.1"
+
