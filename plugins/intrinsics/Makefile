@@ -1,5 +1,6 @@
-CFLAGS=-Wall -Wpedantic -fPIC
-LDFLAGS=
+CFLAGS=-Wall -Wpedantic -fPIC -O0 -ggdb -I../../include -L../../libpollen
+LDFLAGS=-Wl,--no-as-needed
+LIBS=-lpollen
 PLUGINS=math.so
 MATH_RS=math-rs/build/libmath_rs.a
 
