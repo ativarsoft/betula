@@ -1,6 +1,11 @@
 /* Copyright (C) 2017-2023 Mateus de Lima Oliveira */
 
-struct Context {
+import list_d;
+
+enum ControlFlow {
+    NEXT_INSTRUCTION,
+    JMP_FOWARD,
+    JMP_BACKWARD
 };
 
 struct NodeStart {
@@ -15,6 +20,15 @@ struct NodeEnd {
 
 struct NodeCharacterData {
     string data;
+};
+
+union Node {
+};
+
+alias NodeList = List!Node;
+
+extern(C++) final struct Context {
+    extern(C) NodeList nodes;
 };
 
 @trusted
@@ -163,15 +177,9 @@ static void print_character_data_node(ref Context data, ref NodeCharacterData n)
     }
 }
 
-enum control_flow {
-	JMP_BACKWARD,
-	JMP_FOWARD,
-	NEXT_INSTRUCTION
-};
-
-/*static enum control_flow print_node(struct context *data, struct node *n)
+static ControlFlow print_node(ref Context data, ref Node n)
 {
-	struct input *p;
+	/*struct input *p;
 	enum control_flow r;
 
 	switch (n->type) {
@@ -183,9 +191,9 @@ enum control_flow {
 			}
 			p = TAILQ_FIRST(data->input);
 			if (p->data.control_flow == TMPL_TRUE)
-				r = NEXT_INSTRUCTION;
+				r = ControlFlow.NEXT_INSTRUCTION;
 			else
-				r = JMP_FOWARD;
+				r = ControlFlow.JMP_FOWARD;
 			TAILQ_REMOVE(data->input, p, entries);
 			templatizer_free(data, p);
 			return r;
@@ -214,30 +222,34 @@ enum control_flow {
 	case NODE_CHARACTER_DATA:
 		print_character_data_node(data, &n->data.character_data);
 		break;
-	}
-	return NEXT_INSTRUCTION;
+	}*/
+	return ControlFlow.NEXT_INSTRUCTION;
 }
 
-void print_list(tmpl_ctx_t data)
+@trusted
+void flush()
 {
-	struct node *p;
+    import core.stdc.stdio : fflush, stdout;
+    fflush(stdout);
+}
 
-	p = TAILQ_FIRST(data->nodes);
-	while (p != TAILQ_LAST(data->nodes, node_list_head)) {
-		switch (print_node(data, p)) {
-			case JMP_FOWARD:
-			p = TAILQ_NEXT(p->data.start.jmp, entries);
-			break;
-			case JMP_BACKWARD:
-			p = p->data.end.jmp;
-			break;
-			default:
-			p = TAILQ_NEXT(p, entries);
-			break;
-		}
-#if 1
-		fflush(stdout);
-#endif
-	}
-}*/
+void print_list(ref Context data)
+{
+    auto p = data.nodes.createCursor();
+    while (p.isValid()) {
+        Node n = p.get();
+        switch (print_node(data, n)) {
+            case ControlFlow.JMP_FOWARD:
+            //p = TAILQ_NEXT(p->data.start.jmp, entries);
+            break;
+            case ControlFlow.JMP_BACKWARD:
+            //p = p.data.end.jmp;
+            break;
+            default:
+            p.next();
+            break;
+        }
+        flush();
+    }
+}
 
