@@ -18,6 +18,8 @@ ifeq ($(DEBUG),y)
 CFLAGS+=-DDEBUG
 endif
 
+include dlang.mk
+
 LIBYEAST_A=yeast/libyeast.a
 
 # Avoid HTML content that may seem uninteligible to non-developers as
@@ -73,7 +75,7 @@ opcode.o: opcode.c opcode.h
 storage.o: storage.c storage.h
 templatizer.o: templatizer.c
 
-templatizer: yeast/libyeast.a y.tab.o lex.yy.o pollen.o interpreter.o opcode.o jit.o linker.o
+templatizer: yeast/libyeast.a y.tab.o lex.yy.o pollen.o interpreter.o opcode.o jit.o linker.o linker_d.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 test: templatizer plugins libpollen templatizer-d runtime/pollenrt0.o runtime/libpollen.a
