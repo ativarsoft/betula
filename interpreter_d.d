@@ -107,9 +107,9 @@ static void dump_string(ref Context data)
 
 	if (data.input.isEmpty())
 		return;
-	/*p = TAILQ_FIRST(data->input);
+	p = data.input.getFirst();
 	//fputs(p->data.filler_text, stdout);
-	s= p->data.filler_text;
+	/*s= p->data.filler_text;
         print_html_escaped(s, strlen(s));
 	TAILQ_REMOVE(data->input, p, entries);
 	templatizer_free(data, p);*/

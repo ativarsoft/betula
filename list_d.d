@@ -18,9 +18,13 @@ template List(T)
         }*/
 
         bool isEmpty() {
-           if (head is null)
-               return true;
-           return false;
+            if (head is null)
+                return true;
+            return false;
+        }
+
+        T* getFirst() {
+            return &head.value;
         }
 
         void add(T value)
