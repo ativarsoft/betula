@@ -43,8 +43,9 @@ struct Input {
 
 alias InputList = List!Input;
 
-extern(C++) final struct Context {
-    extern(C) NodeList nodes;
+struct Context {
+    NodeList nodes;
+    InputList input;
 };
 
 @trusted
@@ -104,9 +105,9 @@ static void dump_string(ref Context data)
 	const(Input) *p;
 	string s;
 
-	/*if (TAILQ_EMPTY(data->input))
+	if (data.input.isEmpty())
 		return;
-	p = TAILQ_FIRST(data->input);
+	/*p = TAILQ_FIRST(data->input);
 	//fputs(p->data.filler_text, stdout);
 	s= p->data.filler_text;
         print_html_escaped(s, strlen(s));

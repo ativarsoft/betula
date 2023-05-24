@@ -17,6 +17,12 @@ template List(T)
             tail = null;
         }*/
 
+        bool isEmpty() {
+           if (head is null)
+               return true;
+           return false;
+        }
+
         void add(T value)
         {
             import core.stdc.stdlib : calloc;
