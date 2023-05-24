@@ -3,6 +3,9 @@
 
 import list_d;
 
+enum TMPL_TRUE = 1;
+enum TMPL_FALSE = 0;
+
 enum ControlFlow {
     NEXT_INSTRUCTION,
     JMP_FOWARD,
@@ -13,17 +16,34 @@ struct NodeStart {
     string el;
     string[] attr;
     size_t num_attributes;
+    bool jmp;
 };
 
 struct NodeEnd {
     string el;
+    bool jmp;
+    bool conditional_jmp;
 };
 
 struct NodeCharacterData {
     string data;
 };
 
+enum NodeType {
+    NODE_START,
+    NODE_END,
+    NODE_CHARACTER_DATA
+};
+
+union NodeData {
+    NodeStart start;
+    NodeEnd end;
+    NodeCharacterData character_data;
+};
+
 union Node {
+    NodeType type;
+    NodeData data;
 };
 
 alias NodeList = List!Node;
@@ -200,54 +220,98 @@ static void print_character_data_node(ref Context data, ref NodeCharacterData n)
     }
 }
 
+@trusted
+static void printError(string s)
+{
+    import core.stdc.stdio : fputc, stderr;
+    foreach(char c; s) {
+        if (c == '\0')
+            break;
+        fputc(c, stderr);
+    }
+}
+
+@trusted void exit(int errorCode)
+{
+    import stdlib = core.stdc.stdlib : exit;
+    stdlib.exit(errorCode);
+}
+
+@trusted NodeStart getNodeStart(ref Node n)
+{
+    assert(n.type == NodeType.NODE_START);
+    return n.data.start;
+}
+
+@trusted NodeEnd getNodeEnd(ref Node n)
+{
+    assert(n.type == NodeType.NODE_END);
+    return n.data.end;
+}
+
+@trusted NodeCharacterData getNodeCharacterData(ref Node n)
+{
+    assert(n.type == NodeType.NODE_CHARACTER_DATA);
+    return n.data.character_data;
+}
+
 @safe
 static ControlFlow print_node(ref Context data, ref Node n)
 {
-	/*struct input *p;
-	enum control_flow r;
+    ControlFlow r;
 
-	switch (n->type) {
-	case NODE_START:
-		if (n->data.start.jmp) {
-			if (TAILQ_EMPTY(data->input)) {
-				fprintf(stderr, "missing input for tag that requires input\n");
-				exit(1);
-			}
-			p = TAILQ_FIRST(data->input);
-			if (p->data.control_flow == TMPL_TRUE)
-				r = ControlFlow.NEXT_INSTRUCTION;
-			else
-				r = ControlFlow.JMP_FOWARD;
-			TAILQ_REMOVE(data->input, p, entries);
-			templatizer_free(data, p);
-			return r;
-		}
-		print_start_node(data, &n->data.start);
-		break;
-	case NODE_END:
-		if (n->data.end.jmp) {
-			if (n->data.end.conditional_jmp == false)
-				return JMP_BACKWARD;
-			if (TAILQ_EMPTY(data->input)) {
-				fprintf(stderr, "missing input for tag that requires input\n");
-				exit(1);
-			}
-			p = TAILQ_FIRST(data->input);
-			if (p->data.control_flow == TMPL_TRUE)
-				r = JMP_BACKWARD;
-			else
-				r = NEXT_INSTRUCTION;
-			TAILQ_REMOVE(data->input, p, entries);
-			templatizer_free(data, p);
-			return r;
-		}
-		print_end_node(&n->data.end);
-		break;
-	case NODE_CHARACTER_DATA:
-		print_character_data_node(data, &n->data.character_data);
-		break;
-	}*/
-	return ControlFlow.NEXT_INSTRUCTION;
+    switch (n.type) {
+        case NodeType.NODE_START:
+        NodeStart startNode = getNodeStart(n);
+        if (startNode.jmp) {
+            if (data.input.isEmpty()) {
+                printError("missing input for tag that requires input\n");
+                exit(1);
+            }
+            const(Input) p = data.input.getFirst();
+            if (p.data.control_flow == TMPL_TRUE)
+                r = ControlFlow.NEXT_INSTRUCTION;
+            else
+                r = ControlFlow.JMP_FOWARD;
+            data.input.removeHead();
+            return r;
+        }
+        NodeStart nodeStart = getNodeStart(n);
+        print_start_node(data, nodeStart);
+        break;
+
+        case NodeType.NODE_END:
+        NodeEnd endNode = getNodeEnd(n);
+        if (endNode.jmp) {
+            if (endNode.conditional_jmp == false)
+                return ControlFlow.JMP_BACKWARD;
+            if (data.input.isEmpty()) {
+                printError("missing input for tag that requires input\n");
+                exit(1);
+            }
+            const(Input) p = data.input.getFirst();
+            if (p.data.control_flow == TMPL_TRUE)
+                r = ControlFlow.JMP_BACKWARD;
+            else
+                r = ControlFlow.NEXT_INSTRUCTION;
+            data.input.removeHead();
+            return r;
+        }
+        //NodeEnd endNode = getNodeEnd(n);
+        print_end_node(endNode);
+        break;
+
+        case NodeType.NODE_CHARACTER_DATA:
+        NodeCharacterData characterDataNode = getNodeCharacterData(n);
+        print_character_data_node(data, characterDataNode);
+        break;
+
+        default:
+        printError("Error: unknown node type.\n");
+        assert(0);
+        break;
+    }
+    return ControlFlow.NEXT_INSTRUCTION;
 }
 
 @trusted
