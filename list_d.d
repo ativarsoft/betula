@@ -23,8 +23,8 @@ template List(T)
             return false;
         }
 
-        T* getFirst() {
-            return &head.value;
+        T getFirst() @safe {
+            return head.value;
         }
 
         void add(T value)

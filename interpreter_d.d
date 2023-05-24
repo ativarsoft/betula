@@ -1,3 +1,4 @@
+
 /* Copyright (C) 2017-2023 Mateus de Lima Oliveira */
 
 import list_d;
@@ -99,20 +100,25 @@ static void print_html_escaped(string s)
     }
 }
 
+@trusted
+string getFillerText(ref const(Input) p)
+{
+    assert(p.type == InputType.INPUT_FILLER_TEXT);
+    return p.data.filler_text;
+}
+
 @safe
 static void dump_string(ref Context data)
 {
-	const(Input) *p;
-	string s;
+    string s;
 
-	if (data.input.isEmpty())
-		return;
-	p = data.input.getFirst();
-	//fputs(p->data.filler_text, stdout);
-	/*s= p->data.filler_text;
-        print_html_escaped(s, strlen(s));
-	TAILQ_REMOVE(data->input, p, entries);
-	templatizer_free(data, p);*/
+    if (data.input.isEmpty())
+        return;
+    const(Input) p = data.input.getFirst();
+    //fputs(p->data.filler_text, stdout);
+    s = p.getFillerText();
+    print_html_escaped(s);
+    /*TAILQ_REMOVE(data->input, p, entries);*/
 }
 
 // NOTE: not all keywords here are related to control flow anymore.
@@ -194,6 +200,7 @@ static void print_character_data_node(ref Context data, ref NodeCharacterData n)
     }
 }
 
+@safe
 static ControlFlow print_node(ref Context data, ref Node n)
 {
 	/*struct input *p;
