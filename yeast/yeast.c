@@ -10,7 +10,7 @@
 #include <pwd.h>
 #include "yeast.h"
 
-string_t get_home()
+string_t get_home(void)
 {
     string_t home_dir;
     struct passwd *pw = getpwuid(getuid());

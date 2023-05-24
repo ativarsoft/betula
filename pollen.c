@@ -166,19 +166,19 @@ static chars_ptr_t templatizer_strdup(tmpl_ctx_t data, string_t s)
 	return apr_pstrdup(data->pools.process, s);
 }
 
-static string_t tmpl_process_strdup(tmpl_ctx_t data, string_t s)
+static chars_ptr_t tmpl_process_strdup(tmpl_ctx_t data, string_t s)
 {
 	return apr_pstrdup(data->pools.process, s);
 }
 
-static string_t tmpl_connection_strndup(tmpl_ctx_t ctx, string_t ptr, size_t length)
+static chars_ptr_t tmpl_connection_strndup(tmpl_ctx_t ctx, string_t ptr, size_t length)
 {
 	return apr_pstrndup(ctx->pools.connection, ptr, length);
 }
 
-void_ptr_t tmpl_process_malloc(ctx, size)
-tmpl_ctx_t ctx;
-size_t size;
+void_ptr_t tmpl_process_malloc
+    (tmpl_ctx_t ctx,
+     size_t size)
 {
 	return templatizer_malloc(ctx, size);
 }
@@ -347,7 +347,7 @@ enum plugin_variable_type {
 
 struct plugin_variable {
 	TAILQ_ENTRY(plugin_variable) entries;
-	char *name;
+	const char *name;
 	enum plugin_variable_type type_id;
 	union {
 		int l;
@@ -357,10 +357,10 @@ struct plugin_variable {
 
 TAILQ_HEAD(plugin_variable_list_head, plugin_variable);
 
-static int tmpl_try_get_int_variable(ctx, name, value)
-tmpl_ctx_t ctx;
-string_t name;
-int *value;
+static int tmpl_try_get_int_variable
+    (tmpl_ctx_t ctx,
+     string_t name,
+     int *value)
 {
 	struct plugin_variable *np = NULL;
 	struct plugin_variable_list_head *head =
@@ -382,9 +382,9 @@ int *value;
 
 /* This function returns zero if the variable value
  * is undefined. */
-static int tmpl_get_int_variable(ctx, name)
-tmpl_ctx_t ctx;
-string_t name;
+static int tmpl_get_int_variable
+    (tmpl_ctx_t ctx,
+     string_t name)
 {
 	int l;
 	int rc;
@@ -396,10 +396,10 @@ string_t name;
 	return l;
 }
 
-static int tmpl_set_int_variable(ctx, name, value)
-tmpl_ctx_t ctx;
-string_t name;
-int value;
+static int tmpl_set_int_variable
+    (tmpl_ctx_t ctx,
+     string_t name,
+     int value)
 {
 	struct plugin_variable *np = NULL;
 	struct plugin_variable_list_head *head =
@@ -478,7 +478,7 @@ static bool is_absolute_path(string_t path)
 tmpl_lib_t tmpl_load_library(tmpl_ctx_t data, string_t path)
 {
 	tmpl_lib_t handle;
-	string_t path_translated, *dir, *full_path;
+	string_t path_translated, dir, full_path;
 
 	if (noplugin != false) {
 		fputs("Script tried to load a plugin "

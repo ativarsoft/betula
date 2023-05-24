@@ -11,6 +11,7 @@
 #include <pollen/pollen.h>
 #include <pollen/query.h>
 #include <pollen/stream.h>
+#include <pollen/percent.h>
 
 #define FILE_EXTENSION ".tmpl"
 #define BUFFER_SIZE 4096
@@ -56,7 +57,8 @@ int save_data(string_t data, size_t len)
 		tmpl_fputs("Error running file.\n", stdout);
 		return 1;
 	}
-	unlink(fd);
+	/*unlink(fd);*/
+	unlink(filename);
 	fclose(file);
 	return 0;
 }
@@ -108,7 +110,7 @@ static int init(tmpl_ctx_t data, tmpl_cb_t cb)
 	return 0;
 }
 
-static void quit() {}
+static void quit(void) {}
 
 const tmpl_plugin_record_t templatizer_plugin_v1 = {
 	&init,

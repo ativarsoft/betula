@@ -7,7 +7,7 @@ all: $(LIBS)
 
 $(MATH_RS): src/lib.rs
 ifneq ($(shell which cargo),)
-	cargo build --release #--out-dir="build/" -Z unstable-options
+	cargo build --release --offline #--out-dir="build/" -Z unstable-options
 endif
 
 install:

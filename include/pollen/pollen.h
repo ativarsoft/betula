@@ -179,24 +179,24 @@ struct pollen_callbacks {
 	int (*add_if_node)(tmpl_ctx_t ctx);
 	int (*add_swhile_node)(tmpl_ctx_t ctx);
 	int (*add_ewhile_node)(tmpl_ctx_t ctx);
-	int (*add_call_special_node)(tmpl_ctx_t ctx, void (*f)());
+	int (*add_call_special_node)(tmpl_ctx_t ctx, void (*f)(void));
 
-	int (*codegen_sanity_check)();
+	int (*codegen_sanity_check)(tmpl_ctx_t ctx);
 
-	void (*noplugin)();
+	void (*noplugin)(void);
 
 	void (*exit)(tmpl_ctx_t ctx, int status);
 	int (*get_num_plugin_parameters)(tmpl_ctx_t ctx);
 	int (*get_plugin_parameter)(tmpl_ctx_t ctx, int index, const char **param_ptr, size_t *param_length);
 
-	const char *(*get_version_string)();
-	const char *(*get_copyright_string)();
+	const char *(*get_version_string)(void);
+	const char *(*get_copyright_string)(void);
 	int (*get_int_variable)(tmpl_ctx_t ctx, const char *name);
 	int (*set_int_variable)(tmpl_ctx_t ctx, const char *name, int value);
 
-	int (*regex_compile)();
-	int (*regex_execute)();
-	int (*regex_cleanup)();
+	int (*regex_compile)(void);
+	int (*regex_execute)(void);
+	int (*regex_cleanup)(void);
 
 	/*
 	 * I/O functions:
@@ -234,15 +234,15 @@ struct pollen_callbacks {
 	int (*sql_connect)(const char *s, tmpl_sql_t **connection);
 	int (*sql_disconnect)(tmpl_sql_t *connection);
 	int (*sql_execute)(tmpl_sql_t *connection);
-	int (*sql_prepare)();
-	int (*vm_define)();
+	int (*sql_prepare)(void);
+	int (*vm_define)(void);
 	int (*vm_start)(const char *name);
 	int (*vm_destroy)(const char *name);
 };
 
 struct pollen_plugin {
 	int (*init)(tmpl_ctx_t data, tmpl_cb_t cb);
-	void (*quit)();
+	void (*quit)(void);
 };
 
 typedef struct pollen_plugin *tmpl_plugin_t, tmpl_plugin_record_t;

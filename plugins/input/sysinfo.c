@@ -21,9 +21,10 @@ static int init(tmpl_ctx_t ctx, tmpl_cb_t cb)
 	return sysinfo(ctx, cb);
 }
 
-static void quit() {}
+static void quit(void) {}
 
 const tmpl_plugin_record_t templatizer_plugin_v1 = {
 	.init = &init,
 	.quit = &quit
 };
+

@@ -21,9 +21,9 @@ typedef void *void_ptr_t;
 
 extern string_t config_codegen;
 
-string_t yeast_get_home();
+string_t yeast_get_home(void);
 
-int read_config_file();
+int read_config_file(void);
 
 #define FREE_STRING(ctx, string)                \
     do {                                        \

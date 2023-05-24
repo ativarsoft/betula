@@ -19,11 +19,11 @@ typedef void *tmpl_sym_t;
 #endif
 
 #define POLLEN_GET_CODEGEN(tmpl) \
-    ((tmpl != NULL)? (tmpl->codegen) : (abort(), 1))
+    ((tmpl != NULL)? (tmpl->codegen) : (abort(), NULL))
 #define POLLEN_SET_CODEGEN(tmpl, x) \
-    ((tmpl != NULL)? (tmpl->codegen = x) : (abort(), 1))
+    ((tmpl != NULL)? (tmpl->codegen = x) : (abort(), NULL))
 #define POLLEN_GET_PLUGIN_HANDLE(tmpl) \
-    ((tmpl != NULL)? (tmpl->plugin_handle) : (abort(), 1))
+    ((tmpl != NULL)? (tmpl->plugin_handle) : (abort(), NULL))
 
 /* Define a type for the codegen plugin context */
 typedef struct pollen_codegen_plugin {

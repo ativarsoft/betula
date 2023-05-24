@@ -9,7 +9,7 @@ export VERSION=$(shell ./version.sh)
 export PREFIX?=/usr
 export PLUGIN_DIR?=$(PREFIX)/lib/pollen/plugins/
 
-ifeq ($(TERMUX),y)
+ifneq ($(TERMUX_VERSION),)
 CFLAGS+=-DTERMUX
 LIBS=-lexpat -ldl -lapr-1 -lsqlite3
 endif
@@ -33,7 +33,11 @@ deb: pollen-$(VERSION).deb
 
 dependencies:
 ifneq ($(shell which apt-get),)
+ifneq ($(TERMUX_VERSION),)
+	apt-get install $(shell cat dependencies.termux)
+else
 	apt-get install $(shell cat dependencies.list)
+endif
 endif
 ifneq ($(shell which apk),)
 	apk add $(shell cat dependencies-alpine.list)
@@ -144,9 +148,6 @@ misra: pollen.c
 clang-analyser: pollen.c
 	scan-build make
 
-termux:
-	TERMUX="y" make
-
 debug:
 	DEBUG="y" make
 
@@ -180,7 +181,7 @@ alire-clean: install-alire.sh
 	#./install-alire.sh remove
 
 .PHONY: dependencies plugins libpollen templatizer-d pollen-rs \
-  test deb termux $(LIBYEAST_A) \
+  test deb $(LIBYEAST_A) \
   install install-site \
   clean dist-clean site-clean alire-clean \
   docker docker-push docker-run

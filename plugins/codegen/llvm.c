@@ -97,8 +97,8 @@ static int gen_add_node_start(tmpl_ctx_t ctx, const char *el, const char **attr)
 
     int x = atoi(x_str);
     int y = atoi(y_str);
-    LLVMValueRef sum = LLVMBuildAdd(builder, x, y, "sum");
-    LLVMBuildRet(builder, sum);
+    //LLVMValueRef sum = LLVMBuildAdd(builder, x, y, "sum");
+    //LLVMBuildRet(builder, sum);
     return 0;
 }
 
@@ -128,8 +128,8 @@ static int gen_sub_node_start(tmpl_ctx_t ctx, const char *el, const char **attr)
 
     int x = atoi(x_str);
     int y = atoi(y_str);
-    LLVMValueRef diff = LLVMBuildSub(builder, x, y, "diff");
-    LLVMBuildRet(builder, diff);
+    //LLVMValueRef diff = LLVMBuildSub(builder, x, y, "diff");
+    //LLVMBuildRet(builder, diff);
     return 0;
 }
 
@@ -160,15 +160,15 @@ static int gen_mul_node_start(tmpl_ctx_t ctx, const char *el, const char **attr)
         return -1;
     } else if (y_str == NULL) {
         int x = atoi(x_str);
-        LLVMValueRef last = LLVMBuildLoad(builder, last_expr, "x_val");
-        LLVMValueRef c = LLVMConstInt(LLVMTypeOf(last_expr), atoi(x_str), 1);
-        LLVMValueRef prod = LLVMBuildMul(builder, last, c, "prod");
-        last_expr = prod;
+        //LLVMValueRef last = LLVMBuildLoad(builder, last_expr, "x_val");
+        //LLVMValueRef c = LLVMConstInt(LLVMTypeOf(last_expr), atoi(x_str), 1);
+        //LLVMValueRef prod = LLVMBuildMul(builder, last, c, "prod");
+        //last_expr = prod;
     } else if (x_str != NULL && y_str != NULL) {
     	int x = atoi(x_str);
         int y = atoi(y_str);
-        LLVMValueRef prod = LLVMBuildMul(builder, x, y, "prod");
-        last_expr = prod;
+        //LLVMValueRef prod = LLVMBuildMul(builder, x, y, "prod");
+        //last_expr = prod;
     } else {
     	abort();
     }
@@ -201,8 +201,8 @@ static int gen_div_node_start(tmpl_ctx_t ctx, const char *el, const char **attr)
 
     int x = atoi(x_str);
     int y = atoi(y_str);
-    LLVMValueRef quot = LLVMBuildSDiv(builder, x, y, "quot");
-    LLVMBuildRet(builder, quot);
+    //LLVMValueRef quot = LLVMBuildSDiv(builder, x, y, "quot");
+    //LLVMBuildRet(builder, quot);
     return 0;
 }
 

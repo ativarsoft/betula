@@ -15,6 +15,7 @@
 typedef int (*declare_variable_t)(struct context *data, char *name, char *type);
 typedef apr_pool_t *tmpl_pool_t;
 typedef struct pollen_codegen_plugin *tmpl_codegen_t;
+typedef void *tmpl_lib_t;
 
 struct plugin_variable;
 
@@ -102,13 +103,13 @@ TAILQ_HEAD(input_list_head, input);
 typedef struct input *input_t;
 
 struct element_start_callback {
-	TAILQ_ENTRY(element_callback) entries;
+	TAILQ_ENTRY(element_start_callback) entries;
 	const char *el;
 	on_element_start_callback_t f;
 };
 
 struct element_end_callback {
-	TAILQ_ENTRY(element_callback) entries;
+	TAILQ_ENTRY(element_end_callback) entries;
 	const char *el;
 	on_element_end_callback_t f;
 };
@@ -146,7 +147,7 @@ struct context {
 	declare_variable_t declare_variable;
 	struct prototype *current_prototype;
 
-	void *plugin_handle;
+	tmpl_lib_t plugin_handle;
 	tmpl_plugin_t plugin_data;
 	struct plugin_parameters_head plugin_parameters;
 	struct plugin_variable_list_head *plugin_variables;

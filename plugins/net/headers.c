@@ -22,13 +22,13 @@ tmpl_cb_t cb;
 	cb->send_header(data, NULL, NULL);
 }
 
-static int init(struct context *data, struct templatizer_callbacks *cb)
+static int init(tmpl_ctx_t data, struct pollen_callbacks *cb)
 {
 	send_default_headers(data, cb);
 	return 0;
 }
 
-static void quit() {}
+static void quit(void) {}
 
 const tmpl_plugin_record_t templatizer_plugin_v1 = {
 	&init,
