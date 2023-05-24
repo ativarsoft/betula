@@ -20,12 +20,6 @@ extern(C++) final class String {
     extern(C) char[] data;
 
     @safe
-    char[] get() {
-        assert(data != null);
-        return data;
-    }
-
-    @safe
     size_t getLength() {
         return data.length;
     }
@@ -39,6 +33,12 @@ extern(C++) final class String {
         data = p[0 .. requestedLength];
         return previousLength;
     }
+}
+
+@safe
+char[] get(ref String s) {
+    assert(s.data != null);
+    return s.data;
 }
 
 @trusted
@@ -66,13 +66,13 @@ void appendString(String s, string tail)
 extern(C++) final class StringCursor {
     extern(C) string data;
     extern(C) size_t pos;
+}
 
-    @safe
-    char get() {
-        size_t i = pos;
-        pos++;
-        return data[i];
-    }
+@safe
+char get(StringCursor cursor) {
+    size_t i = cursor.pos;
+    cursor.pos++;
+    return cursor.data[i];
 }
 
 @trusted
@@ -98,7 +98,7 @@ void xmlGetNode(XMLContext ctx, string buffer)
 {
     StringCursor cursor = createStringCursor(buffer);
     char c;
-    c = cursor.get();
+    c = get(cursor);
     switch (c) {
         case '<':
         xmlGetStartElement();
