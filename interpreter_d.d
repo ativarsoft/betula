@@ -27,6 +27,22 @@ union Node {
 
 alias NodeList = List!Node;
 
+enum InputType {
+    INPUT_FILLER_TEXT,
+    INPUT_CONTROL_FLOW
+};
+
+struct Input {
+    InputType type;
+    union InputData {
+        string filler_text;
+        bool control_flow;
+    };
+    InputData data;
+};
+
+alias InputList = List!Input;
+
 extern(C++) final struct Context {
     extern(C) NodeList nodes;
 };
@@ -85,10 +101,10 @@ static void print_html_escaped(string s)
 @safe
 static void dump_string(ref Context data)
 {
-	/*struct input *p;
-	const char *s;
+	const(Input) *p;
+	string s;
 
-	if (TAILQ_EMPTY(data->input))
+	/*if (TAILQ_EMPTY(data->input))
 		return;
 	p = TAILQ_FIRST(data->input);
 	//fputs(p->data.filler_text, stdout);
