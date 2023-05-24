@@ -118,7 +118,7 @@ static void dump_string(ref Context data)
     //fputs(p->data.filler_text, stdout);
     s = p.getFillerText();
     print_html_escaped(s);
-    /*TAILQ_REMOVE(data->input, p, entries);*/
+    data.input.removeHead();
 }
 
 // NOTE: not all keywords here are related to control flow anymore.

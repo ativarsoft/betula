@@ -46,6 +46,17 @@ template List(T)
             }
         }
 
+        @trusted
+        void removeHead()
+        {
+            Node currentNode = head;
+
+            head = currentNode.next;
+
+            import core.stdc.stdlib : free;
+            free(cast(void *) currentNode);            
+        }
+
         void remove(T value)
         {
             Node prevNode = null;
