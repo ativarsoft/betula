@@ -13,13 +13,11 @@ void createString(ref char[] s, size_t len)
 }
 
 @trusted
-void strdup(string s, ref char[] ret)
+void strdup(string s, ref char[] duplicate)
 {
-    char[] duplicate;
     createString(duplicate, s.length);
     for (int i = 0; i < s.length; i++)
         duplicate[i] = s[i];
-    ret = duplicate;
 }
 
 /* This is useful for storing identifiers when they are larger
@@ -71,23 +69,23 @@ void appendString(String s, string tail)
     }
 }
 
-extern(C++) final class StringCursor {
-    extern(C) string data;
-    extern(C) size_t pos;
+struct StringCursor {
+    string data;
+    size_t pos;
 }
 
 @safe
-char get(StringCursor cursor) {
+char get(StringCursor *cursor) {
     size_t i = cursor.pos;
     cursor.pos++;
     return cursor.data[i];
 }
 
 @trusted
-StringCursor createStringCursor(string s)
+StringCursor *createStringCursor(string s)
 {
     import core.stdc.stdlib : calloc;
-    auto cls = cast(StringCursor) calloc(1, StringCursor.sizeof);
+    auto cls = cast(StringCursor *) calloc(1, StringCursor.sizeof);
     cls.data = s;
     cls.pos = 0;
     return cls;
@@ -104,7 +102,7 @@ void xmlGetStartElement()
 @safe
 void xmlGetNode(XMLContext ctx, string buffer)
 {
-    StringCursor cursor = createStringCursor(buffer);
+    StringCursor *cursor = createStringCursor(buffer);
     char c;
     c = get(cursor);
     switch (c) {
