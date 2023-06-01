@@ -3,15 +3,23 @@
 /* Memory-safe XML parser */
 
 @trusted
-char[] strdup(string s)
+void createString(ref char[] s, size_t len)
 {
+    assert(s.ptr == null);
     import core.stdc.stdlib : calloc;
-    auto buffer = cast(char *) calloc(s.length, char.sizeof);
+    auto buffer = cast(char *) calloc(len, char.sizeof);
     assert(buffer != null);
-    auto duplicate = cast(char[]) buffer[0 .. s.length];
+    s = buffer[0 .. len];
+}
+
+@trusted
+void strdup(string s, ref char[] ret)
+{
+    char[] duplicate;
+    createString(duplicate, s.length);
     for (int i = 0; i < s.length; i++)
         duplicate[i] = s[i];
-    return duplicate;
+    ret = duplicate;
 }
 
 /* This is useful for storing identifiers when they are larger
@@ -45,7 +53,7 @@ char[] get(ref String s) {
 String createString(string s) {
     import core.stdc.stdlib : calloc;
     auto cls = cast(String) calloc(1, String.sizeof);
-    cls.data = strdup(s);
+    strdup(s, cls.data);
     return cls;
 }
 
