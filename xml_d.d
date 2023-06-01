@@ -22,23 +22,24 @@ void strdup(string s, ref char[] duplicate)
 
 /* This is useful for storing identifiers when they are larger
  * than the input buffer. */
-extern(C++) final class String {
-    extern(C) char[] data;
+struct String {
+    char[] data;
+}
 
-    @safe
-    size_t getLength() {
-        return data.length;
-    }
+@safe
+size_t getLength(ref String s) {
+    return s.data.length;
+}
 
-    @system
-    size_t realloc(size_t requestedLength) {
-        size_t previousLength = data.length;
-        import core.stdc.stdlib : realloc;
-        auto p = cast(char *) realloc(cast(void *) data, requestedLength);
-        assert(p != null);
-        data = p[0 .. requestedLength];
-        return previousLength;
-    }
+@system
+size_t realloc(ref char[] s, size_t requestedLength) {
+    assert(s.ptr != null);
+    size_t previousLength = s.length;
+    import core.stdc.stdlib : realloc;
+    auto p = cast(char *) realloc(cast(void *) s.ptr, requestedLength * char.sizeof);
+    assert(p != null);
+    s = p[0 .. requestedLength];
+    return previousLength;
 }
 
 @safe
@@ -48,9 +49,9 @@ char[] get(ref String s) {
 }
 
 @trusted
-String createString(string s) {
+String *createString(string s) {
     import core.stdc.stdlib : calloc;
-    auto cls = cast(String) calloc(1, String.sizeof);
+    auto cls = cast(String *) calloc(1, String.sizeof);
     strdup(s, cls.data);
     return cls;
 }
@@ -59,7 +60,7 @@ String createString(string s) {
 void appendString(String s, string tail)
 {
     size_t previousLength = s.getLength();
-    s.realloc(previousLength + tail.length);
+    realloc(s.data, previousLength + tail.length);
     size_t j = 0;
     for (size_t i = 0; i < s.data.length; i++) {
         char c = tail[j];
