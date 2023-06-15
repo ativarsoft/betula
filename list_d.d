@@ -23,8 +23,8 @@ template List(T)
             return false;
         }
 
-        T getFirst() @safe {
-            return head.value;
+        T *getFirst() @safe {
+            return &head.value;
         }
 
         void add(T value)
@@ -112,10 +112,10 @@ template List(T)
             return current !is null;
         }
 
-        T get()
+        T *get()
         {
             assert (isValid());
-            return current.value;
+            return &current.value;
         }
 
         void next()

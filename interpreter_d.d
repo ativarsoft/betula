@@ -1,4 +1,3 @@
-
 /* Copyright (C) 2017-2023 Mateus de Lima Oliveira */
 
 import list_d;
@@ -70,24 +69,26 @@ struct Context {
 };
 
 @trusted
-static void putchar(int c)
+static void putchar(const(int) c)
 {
     import stdio = core.stdc.stdio : putchar;
     stdio.putchar(c);
 }
 
-@safe
-static void puts(string s)
+@live @trusted
+static void puts(scope const(string) s)
 {
-    foreach (char c; s) {
+    int c = 0;
+    for (size_t i = 0; s[i]; i++) {
+        c = s[i];
         if (c == '\0')
             break;
         putchar(c);
     }
 }
 
-@safe
-static int strcmp(string a, string b)
+@live @safe
+static int strcmp(scope string a, scope string b)
 {
     char c1, c2;
     for (int i = 0; i < a.length && i < b.length; i++) {
@@ -104,10 +105,12 @@ static int strcmp(string a, string b)
     return 0;
 }
 
-@safe
-static void print_html_escaped(string s)
+@live @safe
+static void print_html_escaped(scope string s)
 {
-    foreach (char c; s) {
+    char c = '\0';
+    for (int i = 0; s[i]; i++) {
+        c = s[i];
         switch (c) {
             case '\"': puts("&quot;"); break;   //quotation mark
             case '\'': puts("&apos;"); break;   //apostrophe 
@@ -121,28 +124,27 @@ static void print_html_escaped(string s)
 }
 
 @trusted
-string getFillerText(ref const(Input) p)
+string getFillerText(scope return const(Input) *p)
 {
     assert(p.type == InputType.INPUT_FILLER_TEXT);
     return p.data.filler_text;
 }
 
-@safe
-static void dump_string(ref Context data)
+@live @safe
+static void dump_string(scope Context *data)
 {
-    string s;
-
     if (data.input.isEmpty())
         return;
-    const(Input) p = data.input.getFirst();
+    scope const(Input) *p = data.input.getFirst();
     //fputs(p->data.filler_text, stdout);
-    s = p.getFillerText();
+    scope string s = p.getFillerText();
     print_html_escaped(s);
     data.input.removeHead();
 }
 
 // NOTE: not all keywords here are related to control flow anymore.
-@safe static bool is_control_flow_keyword(string el)
+@live @safe
+static bool is_control_flow_keyword(scope string el)
 {
 	if (strcmp("if", el) == 0
 		|| strcmp("swhile", el) == 0
@@ -151,8 +153,8 @@ static void dump_string(ref Context data)
 	return false;
 }
 
-@safe
-static void print_start_node(ref Context data, ref NodeStart n)
+@live @safe
+static void print_start_node(scope Context *data, scope NodeStart *n)
 {
     int i;
 
@@ -184,8 +186,8 @@ static void print_start_node(ref Context data, ref NodeStart n)
     putchar('>');
 }
 
-@safe
-static void print_end_node(ref NodeEnd n)
+@live @safe
+static void print_end_node(scope const(NodeEnd) *n)
 {
     if (strcmp("templatizer", n.el) == 0)
         return;
@@ -197,13 +199,15 @@ static void print_end_node(ref NodeEnd n)
     putchar('>');
 }
 
-@safe
-static void print_character_data_node(ref Context data, ref NodeCharacterData n)
+@live @safe
+static void print_character_data_node(scope Context *data, scope NodeCharacterData *n)
 {
-    string s = n.data;
+    scope string s = n.data;
     bool just_print = false;
+    char c = '\0';
 
-    foreach (char c; s) {
+    for (int i = 0; i < s.length; i++) {
+        c = s[i];
         if (c == '\0')
             break;
         if (just_print) {
@@ -237,38 +241,38 @@ static void printError(string s)
     stdlib.exit(errorCode);
 }
 
-@trusted NodeStart getNodeStart(ref Node n)
+@trusted NodeStart *getNodeStart(scope return Node *n)
 {
     assert(n.type == NodeType.NODE_START);
-    return n.data.start;
+    return &n.data.start;
 }
 
-@trusted NodeEnd getNodeEnd(ref Node n)
+@trusted NodeEnd *getNodeEnd(scope return Node *n)
 {
     assert(n.type == NodeType.NODE_END);
-    return n.data.end;
+    return &n.data.end;
 }
 
-@trusted NodeCharacterData getNodeCharacterData(ref Node n)
+@trusted NodeCharacterData *getNodeCharacterData(scope return Node *n)
 {
     assert(n.type == NodeType.NODE_CHARACTER_DATA);
-    return n.data.character_data;
+    return &n.data.character_data;
 }
 
-@safe
-static ControlFlow print_node(ref Context data, ref Node n)
+@live @safe
+static ControlFlow print_node(scope Context *data, scope Node *n)
 {
     ControlFlow r;
 
     switch (n.type) {
         case NodeType.NODE_START:
-        NodeStart startNode = getNodeStart(n);
+        scope NodeStart *startNode = getNodeStart(n);
         if (startNode.jmp) {
             if (data.input.isEmpty()) {
                 printError("missing input for tag that requires input\n");
                 exit(1);
             }
-            const(Input) p = data.input.getFirst();
+            scope const(Input) *p = data.input.getFirst();
             if (p.data.control_flow == TMPL_TRUE)
                 r = ControlFlow.NEXT_INSTRUCTION;
             else
@@ -276,12 +280,12 @@ static ControlFlow print_node(ref Context data, ref Node n)
             data.input.removeHead();
             return r;
         }
-        NodeStart nodeStart = getNodeStart(n);
+        scope NodeStart *nodeStart = getNodeStart(n);
         print_start_node(data, nodeStart);
         break;
 
         case NodeType.NODE_END:
-        NodeEnd endNode = getNodeEnd(n);
+        scope NodeEnd *endNode = getNodeEnd(n);
         if (endNode.jmp) {
             if (endNode.conditional_jmp == false)
                 return ControlFlow.JMP_BACKWARD;
@@ -289,7 +293,7 @@ static ControlFlow print_node(ref Context data, ref Node n)
                 printError("missing input for tag that requires input\n");
                 exit(1);
             }
-            const(Input) p = data.input.getFirst();
+            scope const(Input) *p = data.input.getFirst();
             if (p.data.control_flow == TMPL_TRUE)
                 r = ControlFlow.JMP_BACKWARD;
             else
@@ -302,7 +306,7 @@ static ControlFlow print_node(ref Context data, ref Node n)
         break;
 
         case NodeType.NODE_CHARACTER_DATA:
-        NodeCharacterData characterDataNode = getNodeCharacterData(n);
+        scope NodeCharacterData *characterDataNode = getNodeCharacterData(n);
         print_character_data_node(data, characterDataNode);
         break;
 
@@ -321,11 +325,12 @@ void flush()
     fflush(stdout);
 }
 
-void print_list(ref Context data)
+@safe
+void print_list(scope Context *data)
 {
     auto p = data.nodes.createCursor();
     while (p.isValid()) {
-        Node n = p.get();
+        scope Node *n = p.get();
         switch (print_node(data, n)) {
             case ControlFlow.JMP_FOWARD:
             //p = TAILQ_NEXT(p->data.start.jmp, entries);
