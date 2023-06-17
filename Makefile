@@ -180,9 +180,13 @@ alire: install-alire.sh
 alire-clean: install-alire.sh
 	#./install-alire.sh remove
 
+strip: $(EXEC)
+	strip $(EXEC)
+
 .PHONY: dependencies plugins libpollen templatizer-d pollen-rs \
   test deb $(LIBYEAST_A) \
   install install-site \
   clean dist-clean site-clean alire-clean \
-  docker docker-push docker-run
+  docker docker-push docker-run \
+  strip
 

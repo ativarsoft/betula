@@ -12,6 +12,9 @@ runs:
     - name: Build
       run: make --jobs=1
       shell: bash
+    - name: Strip symbols
+      run: make strip
+      shell: bash
     - name: Test
       run: make test
       shell: bash
