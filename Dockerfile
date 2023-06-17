@@ -1,4 +1,4 @@
-FROM debian:bullseye
+FROM debian:bookworm
 RUN apt-get update
 RUN apt-get install -y git build-essential
 RUN git clone https://github.com/ativarsoft/pollen-lang.git
