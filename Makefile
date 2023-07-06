@@ -25,7 +25,7 @@ LIBYEAST_A=yeast/libyeast.a
 # Avoid HTML content that may seem uninteligible to non-developers as
 # search engines categorise them as placeholder text in drafts.
 HTML_PAGES= #notes.html
-HTDOCS?=/var/www/html/
+HTDOCS?=/var/www/betula/
 
 all: $(EXEC) libpollen templatizer-d pollen-rs plugins $(HTML_PAGES)
 
@@ -164,12 +164,14 @@ notes.html: notes.xml log.xsl
 	./notes.sh
 
 install-site: $(HTML_PAGES)
+	mkdir -p $(HTDOCS)
 	cp *.html *.tmpl *.js $(HTDOCS)
 	cp pollen.png  pollen-social-card.png  pollen-social-card.svg  pollen.svg $(HTDOCS)
 	cp -r foundation/ $(HTDOCS)
 	cp $(PREFIX)/lib/pollen/plugins/* $(HTDOCS)
 	chmod g+w $(HTDOCS)
 	chown www-data:root $(HTDOCS)
+	cp conf/betula.conf $(PREFIX)/etc/apache2/sites-available/
 
 install-deb: pollen-$(VERSION).deb
 	dpkg -i pollen-$(VERSION).deb
