@@ -1,8 +1,8 @@
 FROM debian:bookworm
 RUN apt-get update
 RUN apt-get install -y git build-essential
-RUN git clone https://github.com/ativarsoft/pollen-lang.git
-WORKDIR pollen-lang
+RUN git clone https://github.com/ativarsoft/betula.git
+WORKDIR betula
 RUN make clean
 RUN apt-get install -y $(cat dependencies.list)
 RUN make

@@ -152,13 +152,13 @@ debug:
 	DEBUG="y" make
 
 docker:
-	docker build -t ativarsoft/pollen-$(VERSION) --no-cache .
+	docker build -t betula/$(VERSION) --no-cache .
 
 docker-push:
-	docker push ativarsoft/pollen-$(VERSION)
+	docker push betula/$(VERSION)
 
 docker-run:
-	docker run -p12000:80 ativarsoft/pollen-$(VERSION)
+	docker run -p12000:80 betula/$(VERSION)
 
 notes.html: notes.xml log.xsl
 	./notes.sh
