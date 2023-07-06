@@ -11,5 +11,6 @@ a2enconf sysinfo
 a2enmod cgi
 a2enmod actions
 a2ensite betula
+a2ensite betula-ssl
 service apache2 restart
 

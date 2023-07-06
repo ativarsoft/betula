@@ -118,6 +118,7 @@ pollen-$(VERSION).deb: debian/control templatizer include/templatizer.h conf/tem
 	cp conf/sysinfo.conf.original pollen-$(VERSION)/etc/apache2/conf-available/sysinfo.conf
 	mkdir -p pollen-$(VERSION)/etc/apache2/sites-available/
 	cp conf/betula.conf pollen-$(VERSION)/etc/apache2/sites-available/
+	cp conf/betula-ssl.conf pollen-$(VERSION)/etc/apache2/sites-available/
 	PREFIX="$(shell pwd)/pollen-$(VERSION)"/usr make install
 	dpkg-deb --build pollen-$(VERSION)
 
