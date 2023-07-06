@@ -158,11 +158,20 @@ debug:
 docker:
 	docker build -t ativarsoft/betula:$(VERSION) --no-cache .
 
+docker-website:
+	docker build -t ativarsoft/betula-website:$(VERSION) --no-cache --file Dockerfile.website .
+
 docker-push:
 	docker push ativarsoft/betula:$(VERSION)
 
+docker-website-push:
+	docker push ativarsoft/betula-website:$(VERSION)
+
 docker-run:
 	docker run -p12000:80 ativarsoft/betula:$(VERSION)
+
+docker-website-run:
+	docker run -p12000:80 ativarsoft/betula-website:$(VERSION)
 
 notes.html: notes.xml log.xsl
 	./notes.sh
