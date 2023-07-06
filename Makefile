@@ -171,7 +171,7 @@ docker-run:
 	docker run -p12000:80 ativarsoft/betula:$(VERSION)
 
 docker-website-run:
-	docker run -p12000:80 ativarsoft/betula-website:$(VERSION)
+	docker run -p12001:12001 ativarsoft/betula-website:$(VERSION)
 
 notes.html: notes.xml log.xsl
 	./notes.sh
