@@ -152,13 +152,13 @@ debug:
 	DEBUG="y" make
 
 docker:
-	docker build -t betula/$(VERSION) --no-cache .
+	docker build -t ativarsoft/betula:$(VERSION) --no-cache .
 
 docker-push:
-	docker push betula/$(VERSION)
+	docker push ativarsoft/betula:$(VERSION)
 
 docker-run:
-	docker run -p12000:80 betula/$(VERSION)
+	docker run -p12000:80 ativarsoft/betula:$(VERSION)
 
 notes.html: notes.xml log.xsl
 	./notes.sh
