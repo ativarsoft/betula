@@ -1,5 +1,6 @@
 FROM debian:bookworm
 RUN apt-get update
+RUN apt-get install apt-utils
 RUN apt-get install -y git build-essential
 RUN git clone https://github.com/ativarsoft/betula.git
 WORKDIR betula
