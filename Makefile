@@ -6,7 +6,6 @@ export CFLAGS=-fPIC -Wall -O0 -ggdb -I"$(shell pwd)/include" $(APR_CFLAGS)
 LIBS?=-lexpat -ldl -lapr-1
 EXEC=templatizer
 export VERSION=$(shell ./version.sh)
-export ETC?=/etc
 export PREFIX?=/usr
 export PLUGIN_DIR?=$(PREFIX)/lib/pollen/plugins/
 
@@ -117,7 +116,9 @@ pollen-$(VERSION).deb: debian/control templatizer include/templatizer.h conf/tem
 	mkdir -p pollen-$(VERSION)/etc/apache2/conf-available/
 	cp conf/templatizer.conf.original pollen-$(VERSION)/etc/apache2/conf-available/templatizer.conf
 	cp conf/sysinfo.conf.original pollen-$(VERSION)/etc/apache2/conf-available/sysinfo.conf
-	PREFIX="$(shell pwd)/pollen-$(VERSION)"/usr ETC="$(shell pwd)/pollen-$(VERSION)/etc" make install
+	mkdir -p pollen-$(VERSION)/etc/apache2/sites-available/
+	cp conf/betula.conf pollen-$(VERSION)/etc/apache2/sites-available/
+	PREFIX="$(shell pwd)/pollen-$(VERSION)"/usr make install
 	dpkg-deb --build pollen-$(VERSION)
 
 clean: alire-clean
@@ -172,7 +173,6 @@ install-site: $(HTML_PAGES)
 	cp $(PREFIX)/lib/pollen/plugins/* $(HTDOCS)
 	chmod g+w $(HTDOCS)
 	chown www-data:root $(HTDOCS)
-	cp conf/betula.conf $(ETC)/etc/apache2/sites-available/
 
 install-deb: pollen-$(VERSION).deb
 	dpkg -i pollen-$(VERSION).deb
