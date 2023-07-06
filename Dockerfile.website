@@ -1,5 +1,5 @@
 FROM ativarsoft/betula:1.018
 RUN make install-site
-EXPOSE 12001
+EXPOSE 80
 CMD ["apache2ctl", "-D", "FOREGROUND"]
 
