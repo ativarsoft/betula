@@ -12,5 +12,7 @@ a2enmod cgi
 a2enmod actions
 a2ensite betula
 a2ensite betula-ssl
+a2ensite gcloud-betula
+a2ensite gcloud-betula-ssl
 service apache2 restart
 
