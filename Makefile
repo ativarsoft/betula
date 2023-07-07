@@ -172,6 +172,12 @@ docker-run:
 docker-website-run:
 	docker run -p12001:12001 ativarsoft/betula-website:$(VERSION)
 
+docker-stop-all:
+	docker kill $(docker ps -q)
+
+docker-rm-all:
+	docker ps -aq | xargs docker stop | xargs docker rm
+
 notes.html: notes.xml log.xsl
 	./notes.sh
 
