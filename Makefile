@@ -31,6 +31,9 @@ all: $(EXEC) libpollen templatizer-d pollen-rs plugins $(HTML_PAGES)
 
 deb: pollen-$(VERSION).deb
 
+deb-install: pollen-$(VERSION).deb
+	PATH="/usr/sbin:$(PATH)" dpkg -i pollen-$(VERSION).deb
+
 dependencies:
 ifneq ($(shell which apt-get),)
 ifneq ($(TERMUX_VERSION),)
