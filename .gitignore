@@ -26,3 +26,6 @@ alr*.AppImage
 
 tests/*.bc
 
+*.deb
+pollen-*/
+
