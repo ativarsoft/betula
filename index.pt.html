@@ -40,6 +40,10 @@
         <img src="https://pollen-lang.org/pollen-social-card.svg" alt="Betula" style="height: 4em;">
       </div>
       <div class="title-bar-right">
+        <select style="width: 4em;" onchange="if (this.options[this.selectedIndex].value) {window.location.href = this.options[this.selectedIndex].value}">
+          <option value="index.html">🇺🇸</option>
+          <option selected="selected" value="index.pt.html">🇧🇷</option>
+        </select>
         <button class="menu-icon" type="button" data-open="betula-canvas-menu"></button>
       </div>
     </div>
@@ -155,3 +159,4 @@
     <script>hljs.highlightAll();</script>
   </body>
 </html>
+
