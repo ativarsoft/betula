@@ -94,7 +94,8 @@ endif
 install: templatizer
 	mkdir -p $(PREFIX)/lib/cgi-bin/
 	mkdir -p $(PREFIX)/include
-	mkdir -p $(PLUGIN_DIR)
+	#mkdir -p $(PLUGIN_DIR)
+	mkdir -p $(PREFIX)/lib/pollen/plugins/
 	install templatizer $(PREFIX)/lib/cgi-bin/
 	make -C libpollen install
 	cp include/templatizer.h $(PREFIX)/include
