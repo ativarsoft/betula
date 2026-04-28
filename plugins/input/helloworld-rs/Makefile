@@ -1,9 +1,9 @@
 PREFIX?=/usr
 PLUGIN_DIR?=$(PREFIX)/lib/pollen/plugins
 
-all: helloworld_rs
+all: target/release/libhelloworld_rs.so
 
-helloworld_rs:
+target/release/libhelloworld_rs.so: src/lib.rs
 	cargo build --release --offline
 
 clean:
