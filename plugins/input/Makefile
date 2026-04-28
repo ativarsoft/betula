@@ -2,7 +2,10 @@
 
 CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb
 LDFLAGS=-Wl,--no-as-needed
-PLUGINS=in_helloworld.so in_query.so helloworld_d.so true.so false.so \
+ifneq ($(shell which ldc2),)
+DPLUGINS=helloworld_d.so
+endif
+PLUGINS=in_helloworld.so in_query.so true.so false.so $(DPLUGINS) \
   null.so sysinfo.so playground.so
 CFLAGS+=-I../../include -L"../../libpollen"
 

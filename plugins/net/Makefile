@@ -1,5 +1,8 @@
 CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb -I../../include
-PLUGINS= headers.so copyright.so html.so noplugin.so
+ifneq ($(shell which ldc2),)
+DPLUGINS=noplugin.so
+endif
+PLUGINS= headers.so copyright.so html.so $(DPLUGINS)
 
 D=ldc2
 ifeq ($(D),dmd)

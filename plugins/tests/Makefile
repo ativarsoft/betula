@@ -1,5 +1,8 @@
 CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb -I../../include
-PLUGINS=sqlite.so sanity_checks.so
+ifneq ($(shell which ldc2),)
+DPLUGINS=sqlite.so sanity_checks.so
+endif
+PLUGINS=$(DPLUGINS)
 CFLAGS+=-L"../../libtemplatizer"
 
 D=ldc2

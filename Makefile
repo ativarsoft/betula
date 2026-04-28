@@ -27,7 +27,11 @@ LIBYEAST_A=yeast/libyeast.a
 HTML_PAGES= #notes.html
 HTDOCS?=/var/www/betula/
 
-all: $(EXEC) libpollen templatizer-d pollen-rs plugins $(HTML_PAGES)
+ifneq ($(shell which ldc2),)
+DRUNTIME=templatizer-d
+endif
+
+all: $(EXEC) libpollen $(DRUNTIME) pollen-rs plugins $(HTML_PAGES)
 
 deb: pollen-$(VERSION).deb
 
@@ -82,7 +86,11 @@ opcode.o: opcode.c opcode.h
 storage.o: storage.c storage.h
 templatizer.o: templatizer.c
 
-templatizer: yeast/libyeast.a y.tab.o lex.yy.o pollen.o interpreter.o opcode.o jit.o linker.o linker_d.o interpreter_d.o list_d.o xml_d.o
+ifneq ($(shell which ldc2),)
+DSOURCE=linker_d.o interpreter_d.o list_d.o xml_d.o
+endif
+
+templatizer: yeast/libyeast.a y.tab.o lex.yy.o pollen.o interpreter.o opcode.o jit.o linker.o $(DSOURCE)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 test: templatizer plugins libpollen templatizer-d runtime/pollenrt0.o runtime/libpollen.a

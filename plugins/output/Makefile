@@ -1,5 +1,8 @@
 CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb -I../../include
-PLUGINS=echo.so
+ifneq ($(shell which ldc2),)
+DPLUGINS=echo.so
+endif
+PLUGINS=$(DPLUGINS)
 CFLAGS+=-L"../../libtemplatizer"
 
 PREFIX?=/usr

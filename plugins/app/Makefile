@@ -1,5 +1,8 @@
 CFLAGS=-fPIC -Wall -Wpedantic -O0 -ggdb -I../../include
-PLUGINS=dating.so nslookup.so
+ifneq ($(shell which ldc2),)
+DPLUGINS=dating.so nslookup.so
+endif
+PLUGINS=$(DPLUGINS)
 CFLAGS+=-L"../../libtemplatizer"
 
 D=ldc2
