@@ -26,7 +26,7 @@ int link_file(string_t filename, string_t outputname)
             pollenrt0, filename, "-lpollen",
             "-o", outputname, NULL};
         extern char **environ;
-        char * const* argsp = args;
+        char * const* argsp = (char * const*) args;
         if (execve("/usr/bin/cc", argsp, environ) == -1) {
             perror("execve");
             return 1;
