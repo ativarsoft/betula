@@ -21,12 +21,13 @@ int link_file(string_t filename, string_t outputname)
         perror("fork");
         exit(EXIT_FAILURE);
     } else if (pid == 0) {
-        char * const* args = {"cc",
+        const char *args[] = {"cc",
             "-L", POLLEN_LIBRARY_SEARCH_PATH,
             pollenrt0, filename, "-lpollen",
             "-o", outputname, NULL};
         extern char **environ;
-        if (execve("/usr/bin/cc", args, environ) == -1) {
+        char * const* argsp = args;
+        if (execve("/usr/bin/cc", argsp, environ) == -1) {
             perror("execve");
             return 1;
         }
