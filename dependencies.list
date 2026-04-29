@@ -10,6 +10,7 @@ ldc
 cargo
 rustc
 valgrind
+llvm
 llvm-dev
 apache2
 xsltproc
