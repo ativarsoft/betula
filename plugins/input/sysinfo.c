@@ -2,6 +2,7 @@
 
 #include <pollen/pollen.h>
 #include <pollen/system.h>
+#include <stdio.h>
 
 #define BUFFER_SIZE 16
 
