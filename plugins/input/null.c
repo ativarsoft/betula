@@ -2,7 +2,7 @@
 
 #include <pollen/pollen.h>
 
-static int init()
+static int init(tmpl_ctx_t data, tmpl_cb_t cb)
 {
 	return 0;
 }
