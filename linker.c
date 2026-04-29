@@ -21,7 +21,7 @@ int link_file(string_t filename, string_t outputname)
         perror("fork");
         exit(EXIT_FAILURE);
     } else if (pid == 0) {
-        const char *args[] = {"cc",
+        const char * const* args = {"cc",
             "-L", POLLEN_LIBRARY_SEARCH_PATH,
             pollenrt0, filename, "-lpollen",
             "-o", outputname, NULL};
