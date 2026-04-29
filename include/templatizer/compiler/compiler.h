@@ -3,7 +3,7 @@
 #ifndef TMPL_COMPILER_H
 #define TMPL_COMPILER_H
 
-#include <bsd/sys/queue.h>
+#include <sys/queue.h>
 #include <expat.h>
 #include <apr_pools.h>
 #include <apr_strings.h>

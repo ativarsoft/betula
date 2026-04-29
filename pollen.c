@@ -10,7 +10,7 @@
 #include <stdlib.h> /* atoi() */
 #include <string.h>
 #include <ctype.h>
-#include <bsd/sys/queue.h>
+#include <sys/queue.h>
 #include <expat.h>
 #include <templatizer.h>
 #include "pollen.h"
