@@ -3,6 +3,7 @@
 #include <pollen/pollen.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <threads.h>
 #include <llvm-c/Core.h>
 #include <llvm-c/ExecutionEngine.h>
