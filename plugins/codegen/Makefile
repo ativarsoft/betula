@@ -1,3 +1,4 @@
+LLVM_CONFIG=$(shell which llvm-config || which llvm-config-14 || which llvm-config-17 || which llvm-config-18 || which llvm-config-19 || which llvm-config-20 || which llvm-config-21)
 LLVM_CFLAGS=$(shell llvm-config --cflags)
 LLVM_LDFLAGS=$(shell llvm-config --ldflags)
 LLVM_LIBS=$(shell llvm-config --libs)
